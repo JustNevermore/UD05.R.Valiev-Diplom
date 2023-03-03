@@ -432,6 +432,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1174225498}
     m_Modifications:
+    - target: {fileID: 2538745307931026099, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
+      propertyPath: TrailModule.worldSpace
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2538745307931026099, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
+      propertyPath: TrailModule.dieWithParticles
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5953977592163608830, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
       propertyPath: m_Name
       value: Sword8_Gold
@@ -442,43 +450,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6479298600411886148, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.828
+      value: 0.632
       objectReference: {fileID: 0}
     - target: {fileID: 6479298600411886148, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.2724514
+      value: 1.3064898
       objectReference: {fileID: 0}
     - target: {fileID: 6479298600411886148, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.259
+      value: 0.084
       objectReference: {fileID: 0}
     - target: {fileID: 6479298600411886148, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.10578722
+      value: 0.59755576
       objectReference: {fileID: 0}
     - target: {fileID: 6479298600411886148, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.27433833
+      value: -0.09020689
       objectReference: {fileID: 0}
     - target: {fileID: 6479298600411886148, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.53720367
+      value: 0.78781086
       objectReference: {fileID: 0}
     - target: {fileID: 6479298600411886148, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.790544
+      value: -0.11892796
       objectReference: {fileID: 0}
     - target: {fileID: 6479298600411886148, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 114.850006
+      value: 4.564
       objectReference: {fileID: 0}
     - target: {fileID: 6479298600411886148, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 130.388
+      value: 104.974
       objectReference: {fileID: 0}
     - target: {fileID: 6479298600411886148, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -17.660004
+      value: -16.569
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7193085109a5a7348b773a9d48156fa9, type: 3}
@@ -594,6 +602,7 @@ GameObject:
   - component: {fileID: 1174225498}
   - component: {fileID: 1174225497}
   - component: {fileID: 1174225496}
+  - component: {fileID: 1174225499}
   - component: {fileID: 1174225495}
   m_Layer: 0
   m_Name: Player
@@ -616,6 +625,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   rotateSpeed: 500
+  attackSpeed: 2
+  turnDeadZone: 0.4
 --- !u!136 &1174225496
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -663,6 +674,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1174225499
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1174225494}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 083fede0ef41c1d4dafc13f4bef60674, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &1282920328
 GameObject:
   m_ObjectHideFlags: 0

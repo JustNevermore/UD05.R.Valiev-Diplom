@@ -7,9 +7,15 @@ namespace DefaultNamespace
     {
         private Joystick joystick;
         private Rigidbody rb;
+        private Animator anim;
 
+        [Header("Variables")]
         [SerializeField] private float moveSpeed = 5f;
         [SerializeField] private float rotateSpeed = 500f;
+        [SerializeField] private float attackSpeed = 2f;
+        [SerializeField, Range(0f, 1f)] private float turnDeadZone = 0.4f;
+        
+        private float attackCooldown = 0f;
 
         private Vector3 input;
 
@@ -17,16 +23,19 @@ namespace DefaultNamespace
         {
             rb = GetComponent<Rigidbody>();
             joystick = FindObjectOfType<Joystick>();
+            anim = GetComponent<Animator>();
         }
 
         private void Update()
         {
             GetInput();
-            ChangeRotation();
+            Attack();
+            attackCooldown -= Time.deltaTime;
         }
 
         private void FixedUpdate()
         {
+            ChangeRotation();
             Move();
         }
 
@@ -52,7 +61,23 @@ namespace DefaultNamespace
 
         private void Move()
         {
-            rb.MovePosition(transform.position + transform.forward * (input.magnitude * moveSpeed * Time.deltaTime));
+            if (input.magnitude > turnDeadZone)
+            {
+                rb.MovePosition(transform.position + transform.forward *
+                    (input.magnitude * moveSpeed * Time.deltaTime));
+            }
+        }
+
+        private void Attack()
+        {
+            if (attackCooldown <= 0)
+            {
+                if (Input.GetKeyDown(KeyCode.A))
+                {
+                    anim.SetTrigger("Attack");
+                    attackCooldown = 1f / attackSpeed;
+                }
+            }
         }
     }
 }
