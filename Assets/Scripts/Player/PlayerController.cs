@@ -33,6 +33,7 @@ namespace Player
         {
             GetInput();
             Attack();
+            AltAttack();
             attackCooldown -= Time.deltaTime;
         }
 
@@ -86,7 +87,13 @@ namespace Player
 
         private void AltAttack()
         {
-            
+            if (attackCooldown <= 0)
+            {
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    _anim.DoAltAttack();
+                }
+            }
         }
 
         private void Special()

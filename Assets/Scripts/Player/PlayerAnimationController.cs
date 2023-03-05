@@ -12,6 +12,7 @@ namespace Player
         private Animator _anim;
         
         private static readonly int Attack = Animator.StringToHash("Attack");
+        private static readonly int AltAttack = Animator.StringToHash("AltAttack");
 
         private void Awake()
         {
@@ -34,6 +35,11 @@ namespace Player
         public void DoAttack()
         {
             _anim.SetTrigger(Attack);
+        }
+
+        public void DoAltAttack()
+        {
+            _anim.SetTrigger(AltAttack);
         }
     }
 }
