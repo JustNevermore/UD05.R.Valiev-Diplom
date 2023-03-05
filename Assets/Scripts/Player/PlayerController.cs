@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
+using Weapons;
 
-namespace DefaultNamespace
+namespace Player
 {
     public class PlayerController : MonoBehaviour
     {
         private Rigidbody _rigidbody;
+        private PlayerAnimationController _anim;
+        private Weapon _weapon;
 
         [Header("Variables")]
         [SerializeField] private float moveSpeed = 5f;
@@ -22,6 +25,8 @@ namespace DefaultNamespace
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
+            _anim = GetComponent<PlayerAnimationController>();
+            _weapon = GetComponentInChildren<Weapon>();
         }
 
         private void Update()
@@ -72,10 +77,21 @@ namespace DefaultNamespace
             {
                 if (Input.GetMouseButtonDown(1))
                 {
-                    //do attack
+                    _weapon.DoAttack();
+                    _anim.DoAttack();
                     attackCooldown = 1f / attackSpeed;
                 }
             }
+        }
+
+        private void AltAttack()
+        {
+            
+        }
+
+        private void Special()
+        {
+            
         }
     }
 }
