@@ -27,7 +27,7 @@ namespace Enemies
         private void IncomingDamage(float damage)
         {
             Debug.Log($"Enemy get {damage} damage");
-            _rigidbody.AddForce(Vector3.up * 5, ForceMode.Impulse);
+            _rigidbody.AddForce(Vector3.up * 3, ForceMode.Impulse);
         }
     }
 }

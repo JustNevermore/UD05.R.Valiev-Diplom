@@ -13,12 +13,16 @@ namespace Player
         [SerializeField] private float moveSpeed = 5f;
         [SerializeField] private float rotateSpeed = 500f;
         [SerializeField] private float attackSpeed = 2f;
+        [SerializeField] private float altAttackSpeed = 2f;
+        [SerializeField] private float specialSpeed = 1f;
+        [SerializeField] private float specialForce = 5f;
         [SerializeField, Range(0f, 1f)] private float turnDeadZone = 0.4f;
 
         private const string HorizontalAxis = "Horizontal";
         private const string VerticalAxis = "Vertical";
 
         private float attackCooldown = 0f;
+        private float actionCooldown = 0f;
 
         private Vector3 input;
 
@@ -32,15 +36,24 @@ namespace Player
         private void Update()
         {
             GetInput();
-            Attack();
-            AltAttack();
+            if (attackCooldown <= 0 && actionCooldown <= 0)
+            {
+                Attack();
+                AltAttack();
+                Special();
+            }
+            
             attackCooldown -= Time.deltaTime;
+            actionCooldown -= Time.deltaTime;
         }
 
         private void FixedUpdate()
         {
-            ChangeRotation();
-            Move();
+            if (actionCooldown <= 0)
+            {
+                ChangeRotation();
+                Move();
+            }
         }
 
         private void GetInput()
@@ -74,31 +87,31 @@ namespace Player
 
         private void Attack()
         {
-            if (attackCooldown <= 0)
+            if (Input.GetMouseButtonDown(1))
             {
-                if (Input.GetMouseButtonDown(1))
-                {
-                    _weapon.DoAttack();
-                    _anim.DoAttack();
-                    attackCooldown = 1f / attackSpeed;
-                }
+                _weapon.DoAttack();
+                _anim.DoAttack();
+                attackCooldown = 1f / attackSpeed;
             }
         }
 
         private void AltAttack()
         {
-            if (attackCooldown <= 0)
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    _anim.DoAltAttack();
-                }
+                _anim.DoAltAttack();
+                actionCooldown = 1f / altAttackSpeed;
             }
         }
 
         private void Special()
         {
-            
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                _anim.DoSpecial();
+                _rigidbody.AddForce(transform.forward * specialForce, ForceMode.Impulse);
+                actionCooldown = 1f / specialSpeed;
+            }
         }
     }
 }
