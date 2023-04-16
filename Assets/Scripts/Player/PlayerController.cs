@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using Weapons;
+using Zenject;
 
 namespace Player
 {
@@ -26,7 +26,8 @@ namespace Player
 
         private void Update()
         {
-            GetInput();
+            GetActionInput();
+            GetMoveInput();
         }
 
         private void FixedUpdate()
@@ -35,7 +36,7 @@ namespace Player
             Move();
         }
 
-        private void GetInput()
+        private void GetMoveInput()
         {
             input = new Vector3(SimpleInput.GetAxis(HorizontalAxis), 0, SimpleInput.GetAxis(VerticalAxis));
         }
@@ -62,6 +63,11 @@ namespace Player
                 _rigidbody.MovePosition(transform.position + transform.forward *
                     (input.magnitude * moveSpeed * Time.deltaTime));
             }
+        }
+
+        private void GetActionInput()
+        {
+            
         }
     }
 }
