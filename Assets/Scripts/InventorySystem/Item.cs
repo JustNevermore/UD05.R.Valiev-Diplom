@@ -1,3 +1,4 @@
+using System;
 using Player;
 using TMPro;
 using Ui.InventorySecondaryUi;
@@ -9,37 +10,43 @@ namespace InventorySystem
 {
     public class Item : MonoBehaviour
     {
-        private int _itemAmount;
-        
-        [SerializeField] private ItemConfig itemStats;
+        private ItemData _itemData;
+        private ItemConfig _itemConfig;
         private readonly Vector2 _anchorMin = new Vector2(1, 0);
         private readonly Vector2 _anchorMax = new Vector2(1, 0);
         private readonly Vector2 _pivotPos = new Vector2(1, 0);
         [SerializeField] private float fontSize = 50;
         [SerializeField] private Color textColor = Color.red;
 
-        public ItemConfig ItemStats => itemStats;
-
-        public int ItemAmount => _itemAmount;
+        public ItemData Data => _itemData;
 
         private PlayerStats _playerStats;
+        private AllItemsContainer _allItemsContainer;
         private ItemStatsWindow _itemStatsWindow;
 
+        private TextMeshProUGUI _amountText;
+
         [Inject]
-        private void Construct(PlayerStats playerStats, ItemStatsWindow itemStatsWindow)
+        private void Construct(PlayerStats playerStats, AllItemsContainer allItemsContainer, ItemStatsWindow itemStatsWindow)
         {
             _playerStats = playerStats;
+            _allItemsContainer = allItemsContainer;
             _itemStatsWindow = itemStatsWindow;
         }
 
-        private void Awake()
+        public void Init(ItemData data)
         {
+            _itemData = data;
+            _itemConfig = _allItemsContainer.GetConfigById(_itemData.ItemId);
+
+            _itemData.AmountChange += UpdateAmountCounter;
+
             if (!GetComponent<Image>())
             {
                 gameObject.AddComponent<Image>();
             }
             
-            gameObject.GetComponent<Image>().sprite = ItemStats.ItemIcon;
+            gameObject.GetComponent<Image>().sprite = _itemConfig.ItemIcon;
 
             if (!GetComponent<DragDrop>())
             {
@@ -51,66 +58,43 @@ namespace InventorySystem
                 gameObject.AddComponent<CanvasGroup>();
             }
             
-            if (itemStats.IsStackable)
+            if (_itemConfig.IsStackable)
             {
-                if (_itemAmount < 1)
-                {
-                    _itemAmount = 1;
-                }
-                
-                if (!GetComponent<StackableItemMarker>())
-                {
-                    gameObject.AddComponent<StackableItemMarker>();
-                }
-
                 if (transform.childCount == 0)
                 {
-                    var amountText = Instantiate(new GameObject("AmountText"), transform);
-                    var textParam = amountText.AddComponent<TextMeshProUGUI>();
-                    textParam.alignment = TextAlignmentOptions.Right;
-                    textParam.rectTransform.anchorMin = _anchorMin;
-                    textParam.rectTransform.anchorMax = _anchorMax;
-                    textParam.rectTransform.pivot = _pivotPos;
-                    textParam.color = textColor;
-                    textParam.fontSize = fontSize;
-                    textParam.fontStyle = FontStyles.Bold;
-                    textParam.text = _itemAmount.ToString();
+                    var amountObj = new GameObject("AmountText");
+                    amountObj.transform.SetParent(transform);
+                    _amountText = amountObj.AddComponent<TextMeshProUGUI>();
+                    _amountText.alignment = TextAlignmentOptions.Right;
+                    _amountText.rectTransform.anchorMin = _anchorMin;
+                    _amountText.rectTransform.anchorMax = _anchorMax;
+                    _amountText.rectTransform.pivot = _pivotPos;
+                    _amountText.color = textColor;
+                    _amountText.fontSize = fontSize;
+                    _amountText.fontStyle = FontStyles.Bold;
+                    _amountText.text = _itemData.ItemAmount.ToString();
                 }
             }
         }
 
-        public void IncreaseAmount(int amount)
+        private void UpdateAmountCounter()
         {
-            _itemAmount += amount;
-            GetComponentInChildren<TextMeshProUGUI>().text = _itemAmount.ToString();
+            _amountText.text = _itemData.ItemAmount.ToString();
         }
 
-        public void DecreaseAmount(int amount)
-        {
-            _itemAmount -= amount;
-            if (_itemAmount == 0)
-            {
-                Destroy(gameObject);
-            }
-            GetComponentInChildren<TextMeshProUGUI>().text = _itemAmount.ToString();
-        }
-        
         public void UseItem()
         {
-            if (itemStats.Type == ItemType.Consumable)
-            {
-                _playerStats.UseConsumable(itemStats);
-                DecreaseAmount(1);
-            }
-            else
-            {
-                
-            }
+            _playerStats.UseConsumable(_itemConfig);
         }
 
         public void ShowStats()
         {
-            _itemStatsWindow.DisplayItemStats(itemStats);
+            _itemStatsWindow.DisplayItemStats(_itemConfig);
+        }
+
+        private void OnDestroy()
+        {
+            _itemData.AmountChange -= UpdateAmountCounter;
         }
     }
 }

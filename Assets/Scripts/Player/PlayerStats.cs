@@ -119,6 +119,7 @@ namespace Player
 
         private void Start()
         {
+            //todo не забыть убрать золото
             _gold = 1000000;
             
             RecalculateStats();

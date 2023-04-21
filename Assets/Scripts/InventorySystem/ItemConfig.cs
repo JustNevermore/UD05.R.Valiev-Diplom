@@ -8,6 +8,9 @@ namespace InventorySystem
     
     public class ItemConfig : ScriptableObject
     {
+        private int itemId;
+        public int ItemId => itemId;
+
         [Header("Base")]
         [SerializeField] private ItemType itemType;
         [SerializeField] private bool isStackable;
@@ -80,5 +83,10 @@ namespace InventorySystem
         public ConsumableType TypeOfConsumable => typeOfConsumable;
         public float RestoreAmount => restoreAmount;
         public float RestoreTime => restoreTime;
+
+        public void SetId(int id)
+        {
+            itemId = id;
+        }
     }
 }

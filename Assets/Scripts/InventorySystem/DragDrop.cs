@@ -19,17 +19,14 @@ namespace InventorySystem
             _rectTransform = GetComponent<RectTransform>();
             _canvasGroup = GetComponent<CanvasGroup>();
         }
-        
+
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (GetComponentInParent<ConsumableSlot>())
-            {
-                eventData.pointerClick.GetComponent<Item>().UseItem();
-            }
-            else
-            {
-                eventData.pointerClick.GetComponent<Item>().ShowStats();
-            }
+            var item = eventData.pointerDrag.GetComponent<Item>();
+
+            //todo изменить реализацию
+            
+            item.ShowStats();
         }
 
         public void OnBeginDrag(PointerEventData eventData)
