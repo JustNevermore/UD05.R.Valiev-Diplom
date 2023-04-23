@@ -23,9 +23,6 @@ namespace InventorySystem
         public void OnPointerClick(PointerEventData eventData)
         {
             var item = eventData.pointerDrag.GetComponent<Item>();
-
-            //todo изменить реализацию
-            
             item.ShowStats();
         }
 

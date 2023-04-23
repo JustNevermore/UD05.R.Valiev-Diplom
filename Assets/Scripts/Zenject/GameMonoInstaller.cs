@@ -1,6 +1,8 @@
 using System;
 using InventorySystem;
+using Managers_Controllers;
 using Player;
+using SaveSystem;
 using Ui;
 using Ui.InventorySecondaryUi;
 using Ui.MoveHandlers;
@@ -22,6 +24,9 @@ public class GameMonoInstaller : MonoInstaller
     public override void InstallBindings()
     {
         SignalsInstaller.Install(Container);
+        Container.BindInterfacesAndSelfTo<SaveSystemManager>().AsSingle().NonLazy();
+        Container.Bind<SaveSystemJson>().AsSingle().NonLazy();
+        
         Container.BindInstance(playerController).AsSingle().NonLazy();
         Container.BindInstance(playerStats).AsSingle().NonLazy();
         Container.BindInstance(allItemsContainer).AsSingle().NonLazy();

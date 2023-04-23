@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SaveSystem;
 using UnityEngine;
 using Zenject;
 
@@ -6,6 +7,10 @@ namespace InventorySystem
 {
     public class InventoryController : MonoBehaviour
     {
+        private const int ItemSlotsCount = 8;
+
+        private DiContainer _diContainer;
+        private AllItemsContainer _allItemsContainer;
         private InventoryWindow _inventoryWindow;
 
         private List<ItemData> _inventoryItems;
@@ -40,16 +45,115 @@ namespace InventorySystem
 
 
         [Inject]
-        private void Construct(InventoryWindow inventoryWindow)
+        private void Construct(DiContainer diContainer, AllItemsContainer allItemsContainer, InventoryWindow inventoryWindow)
         {
+            _diContainer = diContainer;
+            _allItemsContainer = allItemsContainer;
             _inventoryWindow = inventoryWindow;
+            
+            _inventoryItems = new List<ItemData>();
         }
 
         private void Start()
         {
-            _inventoryItems = new List<ItemData>();
+            
         }
 
+        private void FillInventory()
+        {
+            FillItemSlot(_weapon, _weaponSlot);
+            FillItemSlot(_necklace, _necklaceSlot);
+            FillItemSlot(_ring, _ringSlot);
+            FillItemSlot(_armor, _armorSlot);
+            FillItemSlot(_cons1, _conSlot1);
+            FillItemSlot(_cons2, _conSlot2);
+            FillItemSlot(_cons3, _conSlot3);
+            FillItemSlot(_cons4, _conSlot4);
+            
+            foreach (var item in _inventoryItems)
+            {
+                FillItemSlot(item, _inventoryWindow);
+            }
+        }
+
+        private void FillItemSlot(ItemData item, Component parent)
+        {
+            if (item != null)
+            {
+                var newItem = _diContainer.InstantiateComponent<Item>(new GameObject("Item"));
+                newItem.transform.SetParent(parent.transform);
+                newItem.Init(item);
+            }
+        }
+
+        public void SetInventoryData(ItemSaveData[] data)
+        {
+            _weapon = SetItemData(data[0]);
+            _necklace = SetItemData(data[1]);
+            _ring = SetItemData(data[2]);
+            _armor = SetItemData(data[3]);
+            _cons1 = SetItemData(data[4]);
+            _cons2 = SetItemData(data[5]);
+            _cons3 = SetItemData(data[6]);
+            _cons4 = SetItemData(data[7]);
+
+            for (int i = ItemSlotsCount; i < data.Length; i++)
+            {
+                _inventoryItems.Add(SetItemData(data[i]));
+            }
+            
+            FillInventory();
+        }
+
+        private ItemData SetItemData(ItemSaveData data)
+        {
+            if (data.ItemId != 0)
+            {
+                var newItem = new ItemData(data.ItemId, _allItemsContainer);
+                newItem.ItemAmount = data.ItemAmount;
+                newItem.BelongToPlayer = true;
+                return newItem;
+            }
+
+            return null;
+        }
+
+        public ItemSaveData[] GetInventoryData()
+        {
+            var count = _inventoryItems.Count + ItemSlotsCount;
+            var data = new ItemSaveData[count];
+
+            data[0] = GetItemData(_weapon);
+            data[1] = GetItemData(_necklace);
+            data[2] = GetItemData(_ring);
+            data[3] = GetItemData(_armor);
+            data[4] = GetItemData(_cons1);
+            data[5] = GetItemData(_cons2);
+            data[6] = GetItemData(_cons3);
+            data[7] = GetItemData(_cons4);
+
+            for (int i = ItemSlotsCount, x = 0; i < data.Length && x < _inventoryItems.Count; i++, x++)
+            {
+                data[i] = GetItemData(_inventoryItems[x]);
+            }
+
+            return data;
+        }
+
+        private ItemSaveData GetItemData(ItemData data)
+        {
+            if (data != null)
+            {
+                var saveData = new ItemSaveData(data.ItemId, data.ItemAmount);
+                return saveData;
+            }
+            else
+            {
+                var saveData = new ItemSaveData();
+                return saveData;
+            }
+        }
+        
         public void AddToInventory(ItemData item)
         {
             _inventoryItems.Add(item);

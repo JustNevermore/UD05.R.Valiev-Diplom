@@ -1,5 +1,5 @@
 ﻿using System;
-using UnityEngine;
+using Zenject;
 
 namespace InventorySystem
 {
@@ -10,7 +10,7 @@ namespace InventorySystem
         private int _itemId;
         private bool _isStackable;
         private ItemType _itemType;
-        private int _itemAmount = 1;
+        private int _itemAmount;
 
         public int ItemAmount
         {
@@ -27,12 +27,21 @@ namespace InventorySystem
         public ItemType Type => _itemType;
         public bool BelongToPlayer;
 
-
-        public void SetStatus(int id, bool stackable, ItemType type)
+        public ItemData()
+        {
+            _itemId = 0;
+            _itemAmount = 1;
+            BelongToPlayer = false;
+        }
+        
+        public ItemData(int id, AllItemsContainer container)
         {
             _itemId = id;
-            _isStackable = stackable;
-            _itemType = type;
+            var config = container.GetConfigById(_itemId);
+            _isStackable = config.IsStackable;
+            _itemType = config.Type;
+            _itemAmount = 1;
+            BelongToPlayer = false;
         }
 
         public void CopyData(ItemData refItem)
@@ -41,7 +50,6 @@ namespace InventorySystem
             _isStackable = refItem.IsStackable;
             _itemType = refItem.Type;
             ItemAmount = refItem.ItemAmount;
-            BelongToPlayer = refItem.BelongToPlayer;
         }
     }
 }

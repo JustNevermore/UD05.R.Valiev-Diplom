@@ -31,8 +31,7 @@ namespace InventorySystem
         {
             foreach (var item in _allItemsContainer.AllItemsList)
             {
-                var itemStatus = new ItemData();
-                itemStatus.SetStatus(item.ItemId, item.IsStackable, item.Type);
+                var itemStatus = new ItemData(item.ItemId, _allItemsContainer);
                 _merchantItems.Add(itemStatus);
             }
             
@@ -64,7 +63,6 @@ namespace InventorySystem
             
             if (itemStatus.BelongToPlayer)
             {
-                // _inventoryController.RemoveFromInventory(itemStatus);
                 _playerStats.IncreaseGold( Convert.ToInt32(
                     _allItemsContainer.GetConfigById(itemStatus.ItemId).ItemCost * sellMultiplier));
                 Destroy(obj.gameObject);

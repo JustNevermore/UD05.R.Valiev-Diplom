@@ -152,18 +152,25 @@ namespace InventorySystem
             }
             else // перемещаем из слота
             {
-                if (item.Type == ItemType.Consumable) // проверка на понижение статов для экипировки
+                if (!obj.transform.IsChildOf(transform))
                 {
-                    _inventoryController.RemoveFromSlot(obj.GetComponentInParent<InventorySlot>().SlotType);
-                    _inventoryController.AddToInventory(item);
-                    obj.transform.SetParent(transform);
+                    if (item.Type == ItemType.Consumable) // проверка на понижение статов для экипировки
+                    {
+                        _inventoryController.RemoveFromSlot(obj.GetComponentInParent<InventorySlot>().SlotType);
+                        _inventoryController.AddToInventory(item);
+                        obj.transform.SetParent(transform);
+                    }
+                    else
+                    {
+                        _inventoryController.RemoveFromSlot(obj.GetComponentInParent<InventorySlot>().SlotType);
+                        _inventoryController.AddToInventory(item);
+                        obj.transform.SetParent(transform);
+                        _playerStats.DecreaseStats(_allItemsContainer.GetConfigById(item.ItemId));
+                    }
                 }
                 else
                 {
-                    _inventoryController.RemoveFromSlot(obj.GetComponentInParent<InventorySlot>().SlotType);
-                    _inventoryController.AddToInventory(item);
-                    obj.transform.SetParent(transform);
-                    _playerStats.DecreaseStats(_allItemsContainer.GetConfigById(item.ItemId));
+                    obj.transform.position = anchor;
                 }
             }
         }
