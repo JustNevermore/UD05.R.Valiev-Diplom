@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ItemBehaviours
 {
-    public class Sword : WeaponBehaviour
+    public class SwordComponent : WeaponComponent
     {
         private BoxCollider _collider;
 

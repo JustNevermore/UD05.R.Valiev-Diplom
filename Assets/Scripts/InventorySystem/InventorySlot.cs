@@ -16,7 +16,9 @@ namespace InventorySystem
         private PlayerStats _playerStats;
 
         public EquipmentSlot SlotType => slotType;
+        public ItemType Type => itemType;
 
+        
         [Inject]
         private void Construct(InventoryController inventoryController, AllItemsContainer allItemsContainer, InventoryWindow inventoryWindow, PlayerStats playerStats)
         {

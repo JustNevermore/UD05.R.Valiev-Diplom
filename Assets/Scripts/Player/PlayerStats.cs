@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections;
-using InventorySystem;
+﻿using InventorySystem;
 using ItemBehaviours;
+using Signals;
 using UnityEngine;
+using Zenject;
 
 namespace Player
 {
     public class PlayerStats : MonoBehaviour
     {
-        private float consumableTick = 0.5f;
+        private SignalBus _signalBus;
+        private WeaponHolder _weaponHolder;
 
         private int _currentGold;
 
@@ -77,12 +78,13 @@ namespace Player
         private float _percentBonusDamage;
         private float _percentProtection;
 
-        private WeaponBehaviour _moveSet;
+        private WeaponType _weaponType;
         private float _attackDamage;
         private float _attackMpCost;
         private int _spellChargeCount;
         private float _specialDamage;
         private float _specialMpCost;
+        private WeaponBehaviour _moveSet;
         private GameObject _weaponView;
 
         private NecklaceBehaviour _defenceSkill;
@@ -111,18 +113,27 @@ namespace Player
         public int SpellChargeCount => _spellChargeCount;
         public float TotalSpecialDamage => _totalSpecialDamage;
         public float SpecialMpCost => _specialMpCost;
-        
+
         public Element ElementOfDamage => _elementOfDamage;
         public bool HasDot => _hasDot;
         public float TotalDotDamage => _totalDotDamage;
         public bool HasSlow => _hasSlow;
+        
 
+        [Inject]
+        private void Construct(SignalBus signalBus)
+        {
+            _signalBus = signalBus;
+        }
+        
         private void Start()
         {
+            _weaponHolder = GetComponentInChildren<WeaponHolder>();
+            
             //todo не забыть убрать золото
             _gold = 1000000;
             
-            RecalculateStats();
+            ApplyStats();
         }
 
         public void IncreaseStats(ItemConfig item)
@@ -131,18 +142,55 @@ namespace Player
             _bonusMp += item.BonusMp;
             _percentBonusDamage += item.PercentBonusDamage;
             _percentProtection += item.PercentProtection;
+
+            if (item.WeapType != WeaponType.None)
+            {
+                _weaponType = item.WeapType;
+                _signalBus.Fire(new OnChangeWeaponTypeSignal(_weaponType));
+            }
+            
             _attackDamage += item.AttackDamage;
             _attackMpCost += item.AttackMpCost;
             _spellChargeCount += item.SpellChargeCount;
             _specialDamage += item.SpecialDamage;
             _specialMpCost += item.SpecialMpCost;
-            _elementOfDamage = item.ElementOfDamage;
-            _bonusDamage += item.BonusDamage;
-            _hasDot = item.HasDot;
-            _dotDamage += item.DotDamage;
-            _hasSlow = item.HasSlow;
+
+            if (item.MoveSet != null)
+            {
+                _moveSet = item.MoveSet;
+                _signalBus.Fire(new OnWeaponBehawiourChange(_moveSet));
+            }
+
+            if (item.WeaponView != null)
+            {
+                _weaponView = item.WeaponView;
+            }
+
+            if (item.DefenceSkill != null)
+            {
+                _defenceSkill = item.DefenceSkill;
+            }
+
+            if (item.ElementOfDamage != Element.None)
+            {
+                _elementOfDamage = item.ElementOfDamage;
+            }
             
-            RecalculateStats();
+            _bonusDamage += item.BonusDamage;
+
+            if (item.HasDot)
+            {
+                _hasDot = item.HasDot;
+            }
+            
+            _dotDamage += item.DotDamage;
+
+            if (item.HasSlow)
+            {
+                _hasSlow = item.HasSlow;
+            }
+
+            ApplyStats();
         }
 
         public void DecreaseStats(ItemConfig item)
@@ -151,18 +199,55 @@ namespace Player
             _bonusMp -= item.BonusMp;
             _percentBonusDamage -= item.PercentBonusDamage;
             _percentProtection -= item.PercentProtection;
+            
+            if (item.WeapType != WeaponType.None)
+            {
+                _weaponType = WeaponType.None;
+                _signalBus.Fire(new OnChangeWeaponTypeSignal(_weaponType));
+            }
+            
             _attackDamage -= item.AttackDamage;
             _attackMpCost -= item.AttackMpCost;
             _spellChargeCount -= item.SpellChargeCount;
             _specialDamage -= item.SpecialDamage;
             _specialMpCost -= item.SpecialMpCost;
-            _elementOfDamage = item.ElementOfDamage;
-            _bonusDamage -= item.BonusDamage;
-            _hasDot = item.HasDot;
-            _dotDamage -= item.DotDamage;
-            _hasSlow = item.HasSlow;
             
-            RecalculateStats();
+            if (item.MoveSet != null)
+            {
+                _moveSet = null;
+                _signalBus.Fire(new OnWeaponBehawiourChange(_moveSet));
+            }
+            
+            if (item.WeaponView != null)
+            {
+                _weaponView = null;
+            }
+            
+            if (item.DefenceSkill != null)
+            {
+                _defenceSkill = null;
+            }
+            
+            if (item.ElementOfDamage != Element.None)
+            {
+                _elementOfDamage = Element.None;
+            }
+            
+            _bonusDamage -= item.BonusDamage;
+            
+            if (item.HasDot)
+            {
+                _hasDot = false;
+            }
+            
+            _dotDamage -= item.DotDamage;
+            
+            if (item.HasSlow)
+            {
+                _hasSlow = false;
+            }
+
+            ApplyStats();
         }
         
         public void IncreaseGold(int amount)
@@ -185,63 +270,49 @@ namespace Player
             _reviveShards -= amount;
         }
 
-        private void RecalculateStats()
+        private void ApplyStats()
         {
-            _playerMaxHp = baseMaxHp + _bonusHp;
+            if (_weaponView != null)
+            {
+                Instantiate(_weaponView, _weaponHolder.transform);
+            }
+            else
+            {
+                if (_weaponHolder.transform.childCount != 0)
+                {
+                    foreach (Transform child in _weaponHolder.transform)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
+            }
 
+            _playerMaxHp = baseMaxHp + _bonusHp;
             _playerMaxMp = baseMaxMp + _bonusMp;
 
-            _totalAttackDamage = _attackDamage + _bonusDamage +
-                                 (_attackDamage + _bonusDamage) * 0.01f * _percentBonusDamage;
-            _totalSpecialDamage = _specialDamage + _bonusDamage + 
-                                  (_specialDamage + _bonusDamage) * 0.01f * _percentBonusDamage;
+            _totalAttackDamage = _attackDamage + _bonusDamage + _attackDamage * 0.01f * _percentBonusDamage;
+            _totalSpecialDamage = _specialDamage + _bonusDamage + _specialDamage * 0.01f * _percentBonusDamage;
             _totalDotDamage = _dotDamage + _dotDamage * 0.01f * _percentBonusDamage;
         }
 
-        public void UseConsumable(ItemConfig item)
+        public void IncreaseCurrentHp(float amount)
         {
-            //todo подумать над тем как запретить использовать два зелья одновременно
-            
-            switch (item.TypeOfConsumable)
-            {
-                case ConsumableType.HpPotion:
-                    StartCoroutine(HpCoroutine(item.RestoreTime, item.RestoreAmount));
-                    break;
-                case ConsumableType.MpPotion:
-                    StartCoroutine(MpCoroutine(item.RestoreTime, item.RestoreAmount));
-                    break;
-                case ConsumableType.HpCrystal:
-                    _playerCurrentHp += item.RestoreAmount;
-                    break;
-                case ConsumableType.MpCrystal:
-                    _playerCurrentMp += item.RestoreAmount;
-                    break;
-            }
+            _playerCurrentHp += amount;
         }
         
-        // Не могу использовать ref в итераторе, поэтому пришлось разбить логику на две разные корутины
-        private IEnumerator HpCoroutine(float time, float value)
+        public void DecreaseCurrentHp(float amount)
         {
-            var useTime = 0f;
-            var tickValue = value / time * consumableTick;
-            while (useTime < time)
-            {
-                _playerCurrentHp += tickValue;
-                useTime += consumableTick;
-                yield return new WaitForSeconds(consumableTick);
-            }
+            _playerCurrentHp -= amount;
         }
         
-        private IEnumerator MpCoroutine(float time, float value)
+        public void IncreaseCurrentMp(float amount)
         {
-            var useTime = 0f;
-            var tickValue = value / time * consumableTick;
-            while (useTime < time)
-            {
-                _playerCurrentMp += tickValue;
-                useTime += consumableTick;
-                yield return new WaitForSeconds(consumableTick);
-            }
+            _playerCurrentMp += amount;
+        }
+        
+        public void DecreaseCurrentMp(float amount)
+        {
+            _playerCurrentMp -= amount;
         }
     }
 }

@@ -1,16 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace InventorySystem
 {
     public class AllItemsContainer : MonoBehaviour
     {
+        [SerializeField] private Sprite borderImage;
+        [SerializeField] private float fontSize = 50;
+        [SerializeField] private Color textColor = Color.red;
+        
         [SerializeField] private List<ItemConfig> allItemsList = new List<ItemConfig>();
 
         private Dictionary<int, ItemConfig> allItemsDic = new Dictionary<int, ItemConfig>();
 
         public List<ItemConfig> AllItemsList => allItemsList;
+        public Sprite BorderImage => borderImage;
+        public float FontSize => fontSize;
+        public Color TextColor => textColor;
 
         private void Awake()
         {

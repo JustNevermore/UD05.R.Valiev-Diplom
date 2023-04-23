@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Player;
 using SaveSystem;
 using UnityEngine;
 using Zenject;
@@ -12,6 +13,7 @@ namespace InventorySystem
         private DiContainer _diContainer;
         private AllItemsContainer _allItemsContainer;
         private InventoryWindow _inventoryWindow;
+        private PlayerStats _playerStats;
 
         private List<ItemData> _inventoryItems;
         public List<ItemData> InventoryItems => _inventoryItems;
@@ -45,11 +47,12 @@ namespace InventorySystem
 
 
         [Inject]
-        private void Construct(DiContainer diContainer, AllItemsContainer allItemsContainer, InventoryWindow inventoryWindow)
+        private void Construct(DiContainer diContainer, AllItemsContainer allItemsContainer, InventoryWindow inventoryWindow, PlayerStats playerStats)
         {
             _diContainer = diContainer;
             _allItemsContainer = allItemsContainer;
             _inventoryWindow = inventoryWindow;
+            _playerStats = playerStats;
             
             _inventoryItems = new List<ItemData>();
         }
@@ -59,7 +62,7 @@ namespace InventorySystem
             
         }
 
-        private void FillInventory()
+        private void InitInventory()
         {
             FillItemSlot(_weapon, _weaponSlot);
             FillItemSlot(_necklace, _necklaceSlot);
@@ -74,6 +77,11 @@ namespace InventorySystem
             {
                 FillItemSlot(item, _inventoryWindow);
             }
+            
+            EquipItemInSlot(_weapon);
+            EquipItemInSlot(_necklace);
+            EquipItemInSlot(_ring);
+            EquipItemInSlot(_armor);
         }
 
         private void FillItemSlot(ItemData item, Component parent)
@@ -83,6 +91,14 @@ namespace InventorySystem
                 var newItem = _diContainer.InstantiateComponent<Item>(new GameObject("Item"));
                 newItem.transform.SetParent(parent.transform);
                 newItem.Init(item);
+            }
+        }
+
+        private void EquipItemInSlot(ItemData item)
+        {
+            if (item != null)
+            {
+                _playerStats.IncreaseStats(_allItemsContainer.GetConfigById(item.ItemId));
             }
         }
 
@@ -102,7 +118,7 @@ namespace InventorySystem
                 _inventoryItems.Add(SetItemData(data[i]));
             }
             
-            FillInventory();
+            InitInventory();
         }
 
         private ItemData SetItemData(ItemSaveData data)

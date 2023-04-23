@@ -29,12 +29,12 @@ namespace Managers_Controllers
 
         public void Tick()
         {
-            if (Input.GetKeyDown(KeyCode.G))
+            if (Input.GetKeyDown(KeyCode.T))
             {
                 SaveData();
             }
 
-            if (Input.GetKeyDown(KeyCode.H))
+            if (Input.GetKeyDown(KeyCode.Y))
             {
                 LoadData();
             }
@@ -43,9 +43,9 @@ namespace Managers_Controllers
         private void SaveData()
         {
             Debug.Log("Save data");
-            var data = _inventoryController.GetInventoryData();
-            var gameData = new GameSaveData(data.Length);
-            gameData.SaveItemDatas = data;
+            var inventoryData = _inventoryController.GetInventoryData();
+            var gameData = new GameSaveData(inventoryData.Length);
+            gameData.SaveItemDatas = inventoryData;
             _saveSystem.SaveData(gameData);
         }
 

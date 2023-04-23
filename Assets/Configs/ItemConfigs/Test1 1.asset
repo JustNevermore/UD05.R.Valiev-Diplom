@@ -23,12 +23,13 @@ MonoBehaviour:
   bonusMp: 0
   percentBonusDamage: 0
   percentProtection: 0
-  moveSet: {fileID: 4140945506472585344, guid: fb2508be1a30a314988cb722c4d67686, type: 3}
-  attackDamage: 20
+  weaponType: 1
+  attackDamage: 30
   attackMpCost: 0
   spellChargeCount: 0
-  specialDamage: 30
+  specialDamage: 50
   specialMpCost: 10
+  moveSet: {fileID: 7904940576612079168, guid: b73fc3ad47c2a01489f12f1c2ed96b03, type: 3}
   weaponView: {fileID: 835455971977622867, guid: 79c49f73e08edc346ae397141c47173a, type: 3}
   defenceSkill: {fileID: 0}
   elementOfDamage: 0

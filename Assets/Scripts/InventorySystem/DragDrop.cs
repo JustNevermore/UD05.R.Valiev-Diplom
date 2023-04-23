@@ -11,6 +11,8 @@ namespace InventorySystem
         private CanvasGroup _canvasGroup;
         private Vector3 _dragAnchor;
 
+        private bool _dropItem;
+
         public Vector3 DragAnchor => _dragAnchor;
 
         //Инициализация вызывается на Start для решения проблемы с гонкой Awake
@@ -20,9 +22,24 @@ namespace InventorySystem
             _canvasGroup = GetComponent<CanvasGroup>();
         }
 
+        public void SetDropFlag()
+        {
+            _dropItem = true;
+        }
+
         public void OnPointerClick(PointerEventData eventData)
         {
-            var item = eventData.pointerDrag.GetComponent<Item>();
+            var itemObj = eventData.pointerClick;
+            var item = itemObj.GetComponent<Item>();
+
+            if (itemObj.transform.GetComponentInParent<InventorySlot>())
+            {
+                if (itemObj.transform.GetComponentInParent<InventorySlot>().Type == ItemType.Consumable)
+                {
+                    item.UseItem();
+                }
+            }
+
             item.ShowStats();
         }
 
@@ -40,6 +57,13 @@ namespace InventorySystem
         public void OnEndDrag(PointerEventData eventData)
         {
             _canvasGroup.blocksRaycasts = true;
+            
+            if (!_dropItem)
+            {
+                transform.position = _dragAnchor;
+            }
+
+            _dropItem = false;
         }
     }
 }

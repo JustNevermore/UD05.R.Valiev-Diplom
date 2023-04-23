@@ -1,5 +1,4 @@
 using SystemSettings;
-using UnityEngine;
 using Zenject;
 
 public class ProjectMonoInstaller : MonoInstaller

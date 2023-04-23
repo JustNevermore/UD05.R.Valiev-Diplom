@@ -14,9 +14,9 @@ namespace Ui
         [SerializeField] private float animDuration;
         private float _storagePanelWidth;
 
-        private bool _animBlock = false;
-        private bool _inventoryOpen = false;
-        private bool _merchantOpen = false;
+        private bool _animBlock;
+        private bool _inventoryOpen;
+        private bool _storageOpen;
 
         [Inject]
         private void Construct(InventoryMoveHandler inventoryMoveHandler, StorageMoveHandler storageMoveHandler)
@@ -32,7 +32,7 @@ namespace Ui
 
         public void ToggleInventory()
         {
-            if (_animBlock || _merchantOpen)
+            if (_animBlock)
             {
                 return;
             }
@@ -49,6 +49,12 @@ namespace Ui
             {
                 _inventoryMoveHandler.CloseInventory(animDuration);
                 _inventoryOpen = false;
+
+                if (_storageOpen)
+                {
+                    _storageMoveHandler.CloseStorage(animDuration);
+                    _storageOpen = false;
+                }
             }
         }
 
@@ -63,31 +69,31 @@ namespace Ui
             
             if (!_inventoryOpen)
             {
-                if (!_merchantOpen)
+                if (!_storageOpen)
                 {
                     _inventoryMoveHandler.gameObject.SetActive(true);
                     _inventoryMoveHandler.OpenInventory(animDuration, _storagePanelWidth);
                     _inventoryOpen = true;
                     _storageMoveHandler.gameObject.SetActive(true);
                     _storageMoveHandler.OpenStorage(animDuration);
-                    _merchantOpen = true;
+                    _storageOpen = true;
                 }
             }
             else
             {
-                if (!_merchantOpen)
+                if (!_storageOpen)
                 {
                     _inventoryMoveHandler.PushInventory(_storagePanelWidth, animDuration);
                     _storageMoveHandler.gameObject.SetActive(true);
                     _storageMoveHandler.OpenStorage(animDuration);
-                    _merchantOpen = true;
+                    _storageOpen = true;
                 }
                 else
                 {
                     _inventoryMoveHandler.CloseInventory(animDuration, _storagePanelWidth);
                     _inventoryOpen = false;
                     _storageMoveHandler.CloseStorage(animDuration);
-                    _merchantOpen = false;
+                    _storageOpen = false;
                 }
             }
         }

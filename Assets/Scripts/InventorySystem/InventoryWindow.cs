@@ -29,104 +29,122 @@ namespace InventorySystem
 
             var anchor = obj.GetComponent<DragDrop>().DragAnchor;
             var item = obj.GetComponent<Item>().Data;
+            var itemConfig = _allItemsContainer.GetConfigById(item.ItemId);
+            
+            obj.GetComponent<DragDrop>().SetDropFlag();
 
             // покупаем
             if (!item.BelongToPlayer)
             {
-                if (item.IsStackable) // предмет стакается
+                if (_playerStats.CurrentGold > itemConfig.ItemCost) // хватает ли золота
                 {
-                    var flag = false;
-                    ItemData stackItem = null;
-                    foreach (var invItem in _inventoryController.InventoryItems) // ищем стакаемый предмет
+                    if (item.IsStackable) // предмет стакается
                     {
-                        if (invItem.ItemId == item.ItemId)
+                        var flag = false;
+                        ItemData stackItem = null;
+                        foreach (var invItem in _inventoryController.InventoryItems) // ищем стакаемый предмет
                         {
-                            flag = true;
-                            stackItem = invItem;
+                            if (invItem.ItemId == item.ItemId)
+                            {
+                                flag = true;
+                                stackItem = invItem;
+                            }
+                        }
+
+                        if (_inventoryController.Weapon != null)
+                        {
+                            if (_inventoryController.Weapon.ItemId == item.ItemId)
+                            {
+                                flag = true;
+                                stackItem = _inventoryController.Weapon;
+                            }
+                        }
+
+                        if (_inventoryController.Necklace != null)
+                        {
+                            if (_inventoryController.Necklace.ItemId == item.ItemId)
+                            {
+                                flag = true;
+                                stackItem = _inventoryController.Necklace;
+                            }
+                        }
+
+                        if (_inventoryController.Ring != null)
+                        {
+                            if (_inventoryController.Ring.ItemId == item.ItemId)
+                            {
+                                flag = true;
+                                stackItem = _inventoryController.Ring;
+                            }
+                        }
+
+                        if (_inventoryController.Armor != null)
+                        {
+                            if (_inventoryController.Armor.ItemId == item.ItemId)
+                            {
+                                flag = true;
+                                stackItem = _inventoryController.Armor;
+                            }
+                        }
+
+                        if (_inventoryController.Cons1 != null)
+                        {
+                            if (_inventoryController.Cons1.ItemId == item.ItemId)
+                            {
+                                flag = true;
+                                stackItem = _inventoryController.Cons1;
+                            }
+                        }
+
+                        if (_inventoryController.Cons2 != null)
+                        {
+                            if (_inventoryController.Cons2.ItemId == item.ItemId)
+                            {
+                                flag = true;
+                                stackItem = _inventoryController.Cons2;
+                            }
+                        }
+
+                        if (_inventoryController.Cons3 != null)
+                        {
+                            if (_inventoryController.Cons3.ItemId == item.ItemId)
+                            {
+                                flag = true;
+                                stackItem = _inventoryController.Cons3;
+                            }
+                        }
+
+                        if (_inventoryController.Cons4 != null)
+                        {
+                            if (_inventoryController.Cons4.ItemId == item.ItemId)
+                            {
+                                flag = true;
+                                stackItem = _inventoryController.Cons4;
+                            }
+                        }
+
+                        if (flag)
+                        {
+                            _playerStats.DecreaseGold(itemConfig.ItemCost * item.ItemAmount);
+                            stackItem.ItemAmount += item.ItemAmount;
+                            obj.transform.position = anchor;
+                        }
+                        else
+                        {
+                            _playerStats.DecreaseGold(itemConfig.ItemCost * item.ItemAmount);
+                            var itemDuplicate = new ItemData();
+                            itemDuplicate.CopyData(obj.GetComponent<Item>().Data);
+                            itemDuplicate.BelongToPlayer = true;
+                            _inventoryController.AddToInventory(itemDuplicate);
+                            var newItem = _diContainer.InstantiateComponent<Item>(new GameObject("Item"));
+                            newItem.gameObject.transform.SetParent(transform);
+                            newItem.Init(itemDuplicate);
+                            obj.transform.position = anchor;
                         }
                     }
-
-                    if (_inventoryController.Weapon != null)
+                    else // предмет не стакается
                     {
-                        if (_inventoryController.Weapon.ItemId == item.ItemId)
-                        {
-                            flag = true;
-                            stackItem = _inventoryController.Weapon;
-                        }
-                    }
-
-                    if (_inventoryController.Necklace != null)
-                    {
-                        if (_inventoryController.Necklace.ItemId == item.ItemId)
-                        {
-                            flag = true;
-                            stackItem = _inventoryController.Necklace;
-                        }
-                    }
-
-                    if (_inventoryController.Ring != null)
-                    {
-                        if (_inventoryController.Ring.ItemId == item.ItemId)
-                        {
-                            flag = true;
-                            stackItem = _inventoryController.Ring;
-                        }
-                    }
-
-                    if (_inventoryController.Armor != null)
-                    {
-                        if (_inventoryController.Armor.ItemId == item.ItemId)
-                        {
-                            flag = true;
-                            stackItem = _inventoryController.Armor;
-                        }
-                    }
-
-                    if (_inventoryController.Cons1 != null)
-                    {
-                        if (_inventoryController.Cons1.ItemId == item.ItemId)
-                        {
-                            flag = true;
-                            stackItem = _inventoryController.Cons1;
-                        }
-                    }
-
-                    if (_inventoryController.Cons2 != null)
-                    {
-                        if (_inventoryController.Cons2.ItemId == item.ItemId)
-                        {
-                            flag = true;
-                            stackItem = _inventoryController.Cons2;
-                        }
-                    }
-
-                    if (_inventoryController.Cons3 != null)
-                    {
-                        if (_inventoryController.Cons3.ItemId == item.ItemId)
-                        {
-                            flag = true;
-                            stackItem = _inventoryController.Cons3;
-                        }
-                    }
-
-                    if (_inventoryController.Cons4 != null)
-                    {
-                        if (_inventoryController.Cons4.ItemId == item.ItemId)
-                        {
-                            flag = true;
-                            stackItem = _inventoryController.Cons4;
-                        }
-                    }
-
-                    if (flag)
-                    {
-                        _playerStats.DecreaseGold(_allItemsContainer.GetConfigById(item.ItemId).ItemCost * item.ItemAmount);
-                        stackItem.ItemAmount += item.ItemAmount;
-                        obj.transform.position = anchor;
-                    }
-                    else
-                    {
-                        _playerStats.DecreaseGold(_allItemsContainer.GetConfigById(item.ItemId).ItemCost * item.ItemAmount);
+                        _playerStats.DecreaseGold(itemConfig.ItemCost * item.ItemAmount);
                         var itemDuplicate = new ItemData();
                         itemDuplicate.CopyData(obj.GetComponent<Item>().Data);
                         itemDuplicate.BelongToPlayer = true;
@@ -137,16 +155,8 @@ namespace InventorySystem
                         obj.transform.position = anchor;
                     }
                 }
-                else // предмет не стакается
+                else
                 {
-                    _playerStats.DecreaseGold(_allItemsContainer.GetConfigById(item.ItemId).ItemCost * item.ItemAmount);
-                    var itemDuplicate = new ItemData();
-                    itemDuplicate.CopyData(obj.GetComponent<Item>().Data);
-                    itemDuplicate.BelongToPlayer = true;
-                    _inventoryController.AddToInventory(itemDuplicate);
-                    var newItem = _diContainer.InstantiateComponent<Item>(new GameObject("Item"));
-                    newItem.gameObject.transform.SetParent(transform);
-                    newItem.Init(itemDuplicate);
                     obj.transform.position = anchor;
                 }
             }

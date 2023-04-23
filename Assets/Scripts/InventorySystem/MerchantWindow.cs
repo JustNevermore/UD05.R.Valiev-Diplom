@@ -13,32 +13,32 @@ namespace InventorySystem
 
         private DiContainer _diContainer;
         private AllItemsContainer _allItemsContainer;
-        private InventoryController _inventoryController;
         private PlayerStats _playerStats;
 
-        [SerializeField] private List<ItemData> _merchantItems = new List<ItemData>();
+        private List<ItemData> _merchantItems;
 
         [Inject]
-        private void Construct(DiContainer diContainer, AllItemsContainer allItemsContainer, InventoryController inventoryController, PlayerStats playerStats)
+        private void Construct(DiContainer diContainer, AllItemsContainer allItemsContainer, PlayerStats playerStats)
         {
             _diContainer = diContainer;
             _allItemsContainer = allItemsContainer;
-            _inventoryController = inventoryController;
             _playerStats = playerStats;
+
+            _merchantItems = new List<ItemData>();
         }
         
-        private void Awake()
+        private void Start()
         {
             foreach (var item in _allItemsContainer.AllItemsList)
             {
-                var itemStatus = new ItemData(item.ItemId, _allItemsContainer);
-                _merchantItems.Add(itemStatus);
+                var itemData = new ItemData(item.ItemId, _allItemsContainer);
+                _merchantItems.Add(itemData);
             }
             
-            RedrawInventory();
+            FillMerchant();
         }
 
-        private void RedrawInventory()
+        private void FillMerchant()
         {
             foreach (var obj in GetComponentsInChildren<Item>())
             {
@@ -59,13 +59,22 @@ namespace InventorySystem
             if (obj == null)
                 return;
             
-            var itemStatus = obj.GetComponent<Item>().Data;
+            var item = obj.GetComponent<Item>().Data;
             
-            if (itemStatus.BelongToPlayer)
+            obj.GetComponent<DragDrop>().SetDropFlag();
+            
+            if (!obj.GetComponentInParent<InventorySlot>()) // экипированные в слоты предметы продавать нельзя
             {
-                _playerStats.IncreaseGold( Convert.ToInt32(
-                    _allItemsContainer.GetConfigById(itemStatus.ItemId).ItemCost * sellMultiplier));
-                Destroy(obj.gameObject);
+                if (item.BelongToPlayer)
+                {
+                    _playerStats.IncreaseGold( Convert.ToInt32(
+                        _allItemsContainer.GetConfigById(item.ItemId).ItemCost * sellMultiplier * item.ItemAmount));
+                    Destroy(obj.gameObject);
+                }
+                else
+                {
+                    obj.transform.position = obj.GetComponent<DragDrop>().DragAnchor;
+                }
             }
             else
             {
