@@ -7,7 +7,8 @@ namespace Zenject
         public override void InstallBindings()
         {
             Container.DeclareSignal<OnChangeWeaponTypeSignal>();
-            Container.DeclareSignal<OnWeaponBehawiourChange>();
+            Container.DeclareSignal<OnWeaponBehawiourChangeSignal>();
+            Container.DeclareSignal<OnDefenceSkillChangeSignal>();
         }
     }
 }

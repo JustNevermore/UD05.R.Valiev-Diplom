@@ -1,4 +1,6 @@
-﻿using InventorySystem;
+﻿using System;
+using System.Collections;
+using InventorySystem;
 using ItemBehaviours;
 using Signals;
 using UnityEngine;
@@ -8,6 +10,8 @@ namespace Player
 {
     public class PlayerStats : MonoBehaviour
     {
+        private readonly float _percentMpReg = 0.02f;
+        
         private SignalBus _signalBus;
         private WeaponHolder _weaponHolder;
 
@@ -85,7 +89,6 @@ namespace Player
         private float _specialDamage;
         private float _specialMpCost;
         private WeaponBehaviour _moveSet;
-        private GameObject _weaponView;
 
         private NecklaceBehaviour _defenceSkill;
         
@@ -134,6 +137,16 @@ namespace Player
             _gold = 1000000;
             
             ApplyStats();
+            StartCoroutine(MpRegCoroutine());
+        }
+
+        private IEnumerator MpRegCoroutine()
+        {
+            while (true)
+            {
+                IncreaseCurrentMp(_playerMaxMp * _percentMpReg);
+                yield return new WaitForSeconds(1);
+            }
         }
 
         public void IncreaseStats(ItemConfig item)
@@ -151,24 +164,21 @@ namespace Player
             
             _attackDamage += item.AttackDamage;
             _attackMpCost += item.AttackMpCost;
-            _spellChargeCount += item.SpellChargeCount;
             _specialDamage += item.SpecialDamage;
             _specialMpCost += item.SpecialMpCost;
 
             if (item.MoveSet != null)
             {
                 _moveSet = item.MoveSet;
-                _signalBus.Fire(new OnWeaponBehawiourChange(_moveSet));
-            }
-
-            if (item.WeaponView != null)
-            {
-                _weaponView = item.WeaponView;
+                var weapon = Instantiate(item.WeaponView, _weaponHolder.transform);
+                weapon.GetComponent<WeaponComponent>().Init(this);
+                _signalBus.Fire(new OnWeaponBehawiourChangeSignal(_moveSet));
             }
 
             if (item.DefenceSkill != null)
             {
                 _defenceSkill = item.DefenceSkill;
+                _signalBus.Fire(new OnDefenceSkillChangeSignal(_defenceSkill));
             }
 
             if (item.ElementOfDamage != Element.None)
@@ -208,24 +218,28 @@ namespace Player
             
             _attackDamage -= item.AttackDamage;
             _attackMpCost -= item.AttackMpCost;
-            _spellChargeCount -= item.SpellChargeCount;
             _specialDamage -= item.SpecialDamage;
             _specialMpCost -= item.SpecialMpCost;
-            
+
             if (item.MoveSet != null)
             {
                 _moveSet = null;
-                _signalBus.Fire(new OnWeaponBehawiourChange(_moveSet));
+                
+                if (_weaponHolder.transform.childCount != 0)
+                {
+                    foreach (Transform child in _weaponHolder.transform)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
+                
+                _signalBus.Fire(new OnWeaponBehawiourChangeSignal(_moveSet));
             }
-            
-            if (item.WeaponView != null)
-            {
-                _weaponView = null;
-            }
-            
+
             if (item.DefenceSkill != null)
             {
                 _defenceSkill = null;
+                _signalBus.Fire(new OnDefenceSkillChangeSignal(_defenceSkill));
             }
             
             if (item.ElementOfDamage != Element.None)
@@ -272,21 +286,6 @@ namespace Player
 
         private void ApplyStats()
         {
-            if (_weaponView != null)
-            {
-                Instantiate(_weaponView, _weaponHolder.transform);
-            }
-            else
-            {
-                if (_weaponHolder.transform.childCount != 0)
-                {
-                    foreach (Transform child in _weaponHolder.transform)
-                    {
-                        Destroy(child.gameObject);
-                    }
-                }
-            }
-
             _playerMaxHp = baseMaxHp + _bonusHp;
             _playerMaxMp = baseMaxMp + _bonusMp;
 

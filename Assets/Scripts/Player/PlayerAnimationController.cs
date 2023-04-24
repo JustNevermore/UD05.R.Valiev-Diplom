@@ -16,6 +16,7 @@ namespace Player
 
         [SerializeField] private AnimatorController unarmedAnimator;
         [SerializeField] private AnimatorController swordAnimator;
+        
         private static readonly int MoveBool = Animator.StringToHash("Move");
 
         public Animator Anim => _animator;

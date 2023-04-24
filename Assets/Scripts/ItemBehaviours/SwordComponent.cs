@@ -1,22 +1,23 @@
 ﻿using Markers;
+using Player;
 using UnityEngine;
 
 namespace ItemBehaviours
 {
     public class SwordComponent : WeaponComponent
     {
-        private BoxCollider _collider;
+        private PlayerStats _stats;
 
-        private void Awake()
+        public override void Init(PlayerStats stats)
         {
-            _collider = GetComponent<BoxCollider>();
+            _stats = stats;
         }
-
+        
         private void OnTriggerEnter(Collider col)
         {
             if (col.GetComponent<HurtBox>())
             {
-                col.GetComponent<HurtBox>().GetDamage(10);
+                col.GetComponent<HurtBox>().GetDamage(_stats.TotalAttackDamage);
             }
         }
     }

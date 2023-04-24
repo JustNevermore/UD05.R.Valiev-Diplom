@@ -86,9 +86,7 @@ namespace Ui.InventorySecondaryUi
             CompareToZero(item.AttackDamage, fieldAttackDamage);
             
             CompareToZero(item.AttackMpCost, fieldAttackMpCost);
-            
-            CompareToZero(item.SpellChargeCount, fieldSpellChargeCount);
-            
+
             CompareToZero(item.SpecialDamage, fieldSpecialDamage);
             
             CompareToZero(item.SpecialMpCost, fieldSpecialMpCost);

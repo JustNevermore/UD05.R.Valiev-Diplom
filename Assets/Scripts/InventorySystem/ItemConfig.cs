@@ -44,7 +44,6 @@ namespace InventorySystem
         [SerializeField] private WeaponType weaponType;
         [SerializeField] private float attackDamage;
         [SerializeField] private float attackMpCost;
-        [SerializeField] private int spellChargeCount;
         [SerializeField] private float specialDamage;
         [SerializeField] private float specialMpCost;
         [SerializeField] private WeaponBehaviour moveSet;
@@ -53,7 +52,6 @@ namespace InventorySystem
         public WeaponType WeapType => weaponType;
         public float AttackDamage => attackDamage;
         public float AttackMpCost => attackMpCost;
-        public int SpellChargeCount => spellChargeCount;
         public float SpecialDamage => specialDamage;
         public float SpecialMpCost => specialMpCost;
         public WeaponBehaviour MoveSet => moveSet;

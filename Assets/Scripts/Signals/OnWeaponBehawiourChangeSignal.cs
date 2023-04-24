@@ -2,11 +2,11 @@
 
 namespace Signals
 {
-    public struct OnWeaponBehawiourChange
+    public struct OnWeaponBehawiourChangeSignal
     {
         public WeaponBehaviour Behaviour;
 
-        public OnWeaponBehawiourChange(WeaponBehaviour behaviour)
+        public OnWeaponBehawiourChangeSignal(WeaponBehaviour behaviour)
         {
             Behaviour = behaviour;
         }
