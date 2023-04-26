@@ -1,5 +1,7 @@
 ﻿using System;
 using ItemBehaviours;
+using ItemBehaviours.NecklaceBehaviour;
+using ItemBehaviours.WeaponBehaviour;
 using UnityEngine;
 
 namespace InventorySystem

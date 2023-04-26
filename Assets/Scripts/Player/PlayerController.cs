@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 using ItemBehaviours;
+using ItemBehaviours.NecklaceBehaviour;
+using ItemBehaviours.WeaponBehaviour;
+using Markers;
 using Signals;
 using UnityEngine;
 using Zenject;
@@ -11,8 +15,8 @@ namespace Player
     {
         private Rigidbody _rigidbody;
         private PlayerAnimationController _anim;
-        private SpecialPositionMarker _specialPoint;
-        private Vector3 _specialPointPos;
+        private AttackPositionMarker _attackPoint;
+        private Vector3 _attackPointPos;
         
         private SignalBus _signalBus;
         private PlayerStats _playerStats;
@@ -21,8 +25,9 @@ namespace Player
         [SerializeField] private float moveSpeed = 5f;
         [SerializeField] private float rotateSpeed = 500f;
         [SerializeField, Range(0f, 1f)] private float turnDeadZone = 0.4f;
-        [SerializeField] private float moveTimeout;
-        private readonly float _animDelay = 0.3f;
+        [SerializeField] private GameObject barrierViewPrefab;
+
+        private GameObject _barrierView;
 
         private const string HorizontalAxis = "Horizontal";
         private const string VerticalAxis = "Vertical";
@@ -33,6 +38,10 @@ namespace Player
         private WeaponBehaviour _moveSet;
         private NecklaceBehaviour _defenceSkill;
 
+        private float _attackTimeout = 0.1f;
+        private float _specialTimeout;
+        private float _defenceTimeout;
+
         private float _attackCooldown;
         private float _specialCooldown;
         private float _defenceCooldown;
@@ -42,7 +51,10 @@ namespace Player
         private bool _canAttack;
         private bool _canSpecial;
         private bool _canDefend;
-
+        private bool _attackCd;
+        private bool _specialCd;
+        private bool _defenceCd;
+        
 
         [Inject]
         private void Construct(SignalBus signalBus , PlayerStats playerStats)
@@ -55,7 +67,10 @@ namespace Player
         {
             _rigidbody = GetComponent<Rigidbody>();
             _anim = GetComponent<PlayerAnimationController>();
-            _specialPoint = GetComponentInChildren<SpecialPositionMarker>();
+            _attackPoint = GetComponentInChildren<AttackPositionMarker>();
+
+            _barrierView = Instantiate(barrierViewPrefab, transform);
+            _barrierView.SetActive(false);
         }
 
         private void Start()
@@ -97,9 +112,10 @@ namespace Player
             _moveSet = signal.Behaviour;
             if (_moveSet != null)
             {
-                _moveSet.Init(_playerStats, _anim.Anim, _animDelay);
+                _moveSet.Init(_playerStats, _anim.Anim);
                 _attackCooldown = _moveSet.attackCooldown;
                 _specialCooldown = _moveSet.specialCooldown;
+                _specialTimeout = _moveSet.animTimeout;
             }
         }
 
@@ -108,8 +124,11 @@ namespace Player
             _defenceSkill = signal.DefenceSkill;
             if (_defenceSkill != null)
             {
-                _defenceSkill.Init(_anim.Anim, _rigidbody);
+                _barrierView.SetActive(true);
+                _defenceSkill.Init(_anim.Anim, _rigidbody, _barrierView);
+                _barrierView.SetActive(false);
                 _defenceCooldown = _defenceSkill.defenceCooldown;
+                _defenceTimeout = _defenceSkill.animTimeout;
             }
         }
 
@@ -153,64 +172,84 @@ namespace Player
             }
         }
 
-        private void GetActionInput()
+        private async void GetActionInput()
         {
             if (!_moveSet)
                 return;
 
-            if (Input.GetKeyDown(KeyCode.J) && _canAttack)
+            if (Input.GetKeyDown(KeyCode.J) && _canAttack && !_attackCd)
             {
-                _moveSet.Attack();
+                _attackPointPos = _attackPoint.transform.position;
+                _moveSet.Attack(_attackPointPos);
                 StartCoroutine(AttackCoroutine());
+                _canSpecial = false;
+                _canDefend = false;
+                
+                await UniTask.Delay(TimeSpan.FromSeconds(_attackTimeout));
+                
+                _canSpecial = true;
+                _canDefend = true;
             }
             
-            if (Input.GetKeyDown(KeyCode.K) && _canSpecial)
+            if (Input.GetKeyDown(KeyCode.K) && _canSpecial && !_specialCd)
             {
-                _specialPointPos = _specialPoint.transform.position;
-                _moveSet.Special(_specialPointPos);
+                _attackPointPos = _attackPoint.transform.position;
+                _moveSet.Special(_attackPointPos);
                 StartCoroutine(SpecialCoroutine());
-                StartCoroutine(MoveTimeoutCoroutine());
+                StartCoroutine(MoveTimeoutCoroutine(_specialTimeout));
+                _canAttack = false;
+                _canDefend = false;
+
+                await UniTask.Delay(TimeSpan.FromSeconds(_specialTimeout));
+                
+                _canAttack = true;
+                _canDefend = true;
             }
 
             if (!_defenceSkill)
                 return;
             
-            if (Input.GetKeyDown(KeyCode.L) && _canDefend)
+            if (Input.GetKeyDown(KeyCode.L) && _canDefend && !_defenceCd)
             {
                 _defenceSkill.Defend(_direction);
                 StartCoroutine(DefendCoroutine());
-                StartCoroutine(MoveTimeoutCoroutine());
+                StartCoroutine(MoveTimeoutCoroutine(_defenceTimeout));
+                _canAttack = false;
+                _canSpecial = false;
+
+                await UniTask.Delay(TimeSpan.FromSeconds(_defenceTimeout));
+                
+                _canAttack = true;
+                _canSpecial = true;
             }
         }
 
         private IEnumerator AttackCoroutine()
         {
-            _canAttack = false;
+            _attackCd = true;
             yield return new WaitForSeconds(_attackCooldown);
-            _canAttack = true;
+            _attackCd = false;
         }
         
         private IEnumerator SpecialCoroutine()
         {
-            _canSpecial = false;
+            _specialCd = true;
             yield return new WaitForSeconds(_specialCooldown);
-            _canSpecial = true;
+            _specialCd = false;
         }
         
         private IEnumerator DefendCoroutine()
         {
-            _canDefend = false;
+            _defenceCd = true;
             yield return new WaitForSeconds(_defenceCooldown);
-            _canDefend = true;
+            _defenceCd = false;
         }
 
-        private IEnumerator MoveTimeoutCoroutine()
+        private IEnumerator MoveTimeoutCoroutine(float delay)
         {
             _canMove = false;
-            yield return new WaitForSeconds(moveTimeout);
+            yield return new WaitForSeconds(delay);
             _canMove = true;
-            _rigidbody.isKinematic = true;
-            _rigidbody.isKinematic = false;
         }
     }
 }

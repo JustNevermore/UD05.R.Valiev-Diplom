@@ -1,4 +1,5 @@
 ﻿using ItemBehaviours;
+using ItemBehaviours.WeaponBehaviour;
 
 namespace Signals
 {

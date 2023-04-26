@@ -45,4 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defenceCooldown: 5
+  animTimeout: 0
   defenceCooldownValue: 2
+  animTimeoutValue: 0.3

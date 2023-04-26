@@ -2,6 +2,8 @@
 using System.Collections;
 using InventorySystem;
 using ItemBehaviours;
+using ItemBehaviours.NecklaceBehaviour;
+using ItemBehaviours.WeaponBehaviour;
 using Signals;
 using UnityEngine;
 using Zenject;
@@ -171,7 +173,6 @@ namespace Player
             {
                 _moveSet = item.MoveSet;
                 var weapon = Instantiate(item.WeaponView, _weaponHolder.transform);
-                weapon.GetComponent<WeaponComponent>().Init(this);
                 _signalBus.Fire(new OnWeaponBehawiourChangeSignal(_moveSet));
             }
 

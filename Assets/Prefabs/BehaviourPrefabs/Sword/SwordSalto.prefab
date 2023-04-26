@@ -46,9 +46,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackCooldown: 0.5
   specialCooldown: 3
-  attackCooldownValue: 0.5
+  animTimeout: 0.3
+  attackCooldownValue: 0.3
   specialCooldownValue: 3
+  animTimeoutValue: 0.3
   effectRadius: 7
   effectLayer:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 5120

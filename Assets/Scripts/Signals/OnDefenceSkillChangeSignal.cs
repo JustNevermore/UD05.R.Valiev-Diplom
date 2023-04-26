@@ -1,4 +1,5 @@
 ﻿using ItemBehaviours;
+using ItemBehaviours.NecklaceBehaviour;
 
 namespace Signals
 {
