@@ -16,6 +16,7 @@ namespace Player
 
         [SerializeField] private AnimatorController unarmedAnimator;
         [SerializeField] private AnimatorController swordAnimator;
+        [SerializeField] private AnimatorController bowAnimator;
         
         private static readonly int MoveBool = Animator.StringToHash("Move");
 
@@ -52,6 +53,9 @@ namespace Player
                     break;
                 case WeaponType.Sword:
                     _animator.runtimeAnimatorController = swordAnimator;
+                    break;
+                case WeaponType.Bow:
+                    _animator.runtimeAnimatorController = bowAnimator;
                     break;
             }
         }

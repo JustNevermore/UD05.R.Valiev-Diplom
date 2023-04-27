@@ -71,12 +71,12 @@ namespace ItemBehaviours.NecklaceBehaviour
             Rb.isKinematic = false;
 
             await UniTask.Delay(TimeSpan.FromSeconds(_scaleTime));
-            
-            foreach (var col in _pushColliders)
+
+            if (_pushTargets > 0)
             {
-                if (col)
+                for (int i = 0; i < _pushTargets; i++)
                 {
-                    var rb = col.GetComponent<Rigidbody>();
+                    var rb = _pushColliders[i].GetComponent<Rigidbody>();
                     rb.isKinematic = true; // гасим инерцию
                     rb.isKinematic = false;
                 }

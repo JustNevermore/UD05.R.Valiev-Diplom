@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8004cd8716640db9f5fa93081375983, type: 3}
+  m_Name: Bow 1
+  m_EditorClassIdentifier: 
+  itemType: 1
+  isStackable: 0
+  itemName: Bow test 1
+  itemIcon: {fileID: 21300000, guid: 02800fb9cff14da47a04572790384d8b, type: 3}
+  itemCost: 3000
+  rarity: 38
+  description: dsgdrgr
+  bonusHp: 0
+  bonusMp: 0
+  percentBonusDamage: 0
+  percentProtection: 0
+  weaponType: 3
+  attackDamage: 30
+  attackMpCost: 0
+  specialDamage: 60
+  specialMpCost: 20
+  moveSet: {fileID: 2042927748274642399, guid: 3547908854f596a409b50492144345be, type: 3}
+  weaponView: {fileID: 1964662823482387174, guid: 3ebf9bbf600a6674eb94cc22e68800aa, type: 3}
+  defenceSkill: {fileID: 0}
+  elementOfDamage: 0
+  bonusDamage: 0
+  hasDot: 0
+  dotDamage: 0
+  hasSlow: 0
+  typeOfConsumable: 0
+  restoreAmount: 0
+  restoreTime: 0

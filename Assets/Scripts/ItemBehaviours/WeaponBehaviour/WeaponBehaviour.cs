@@ -1,7 +1,10 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using Managers_Controllers;
+using Markers;
 using Player;
 using UnityEngine;
+using Zenject;
 
 namespace ItemBehaviours.WeaponBehaviour
 {
@@ -11,9 +14,12 @@ namespace ItemBehaviours.WeaponBehaviour
         [HideInInspector] public float specialCooldown;
         [HideInInspector] public float animTimeout;
 
+        protected static readonly int AttackTrigger = Animator.StringToHash("Attack");
+        
         protected PlayerStats Stats;
         protected Animator Anim;
-        protected static readonly int AttackTrigger = Animator.StringToHash("Attack");
+        protected Rigidbody Rb;
+        protected PoolManager PoolManager;
 
         #region SwordProperties
         
@@ -24,10 +30,20 @@ namespace ItemBehaviours.WeaponBehaviour
         
         #endregion
 
-        public virtual void Init(PlayerStats stats, Animator animator)
+        #region BowProperties
+
+        protected readonly float ShootDelay = 0.1f;
+        protected readonly float ProjectileSpeed = 1f;
+
+        #endregion
+        
+        
+        public virtual void Init(PlayerStats stats, Animator animator, Rigidbody rigidbody, PoolManager poolManager)
         {
             Stats = stats;
             Anim = animator;
+            Rb = rigidbody;
+            PoolManager = poolManager;
         }
 
         public abstract void Attack(Vector3 attackPoint);

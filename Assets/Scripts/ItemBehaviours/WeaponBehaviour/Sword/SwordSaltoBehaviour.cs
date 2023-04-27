@@ -1,5 +1,7 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using Enemies;
+using Managers_Controllers;
 using Markers;
 using Player;
 using UnityEngine;
@@ -13,15 +15,17 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
         [SerializeField] private float animTimeoutValue;
         [SerializeField] private float effectRadius;
         [SerializeField] private LayerMask effectLayer;
+        [SerializeField] private float pushForce;
 
         private static readonly int SaltoTrigger = Animator.StringToHash("Salto");
         
         private int _specialHit;
         private Collider[] _colliders = new Collider[30];
+        private float _pushTime = 0.1f;
 
-        public override void Init(PlayerStats stats, Animator animator)
+        public override void Init(PlayerStats stats, Animator animator, Rigidbody rigidbody, PoolManager poolManager)
         {
-            base.Init(stats, animator);
+            base.Init(stats, animator, rigidbody, poolManager);
             attackCooldown = attackCooldownValue;
             specialCooldown = specialCooldownValue;
             animTimeout = animTimeoutValue;
@@ -61,13 +65,28 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
             {
                 for (int i = 0; i < _specialHit; i++)
                 {
-                    if (_colliders[i])
+                    _colliders[i].GetComponent<HurtBox>().GetDamage(Stats.TotalSpecialDamage);
+                    if (_colliders[i].GetComponent<EnemyBase>())
                     {
-                        _colliders[i].GetComponent<HurtBox>().GetDamage(Stats.TotalSpecialDamage);
-                        _colliders[i] = null;
+                        var rb = _colliders[i].GetComponent<Rigidbody>();
+                        rb.AddExplosionForce(pushForce, Rb.transform.position, effectRadius);
                     }
                 }
-                
+            }
+            
+            await UniTask.Delay(TimeSpan.FromSeconds(_pushTime));
+
+            if (_specialHit > 0)
+            {
+                for (int i = 0; i < _specialHit; i++)
+                {
+                    if (_colliders[i].GetComponent<EnemyBase>())
+                    {
+                        var rb = _colliders[i].GetComponent<Rigidbody>();
+                        rb.isKinematic = true; // гасим инерцию
+                        rb.isKinematic = false;
+                    }
+                }
             }
         }
     }

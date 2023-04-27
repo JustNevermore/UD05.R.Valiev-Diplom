@@ -1,6 +1,7 @@
 using System;
 using InventorySystem;
 using Managers_Controllers;
+using Markers;
 using Player;
 using SaveSystem;
 using Ui;
@@ -13,8 +14,9 @@ public class GameMonoInstaller : MonoInstaller
 {
     [SerializeField] private PlayerController playerController;
     [SerializeField] private PlayerStats playerStats;
-    [SerializeField] private ConsumableManager consumableManager;
     [SerializeField] private AllItemsContainer allItemsContainer;
+    [SerializeField] private ConsumableManager consumableManager;
+    [SerializeField] private PoolManager poolManager;
     [SerializeField] private InventoryController inventoryController;
     [SerializeField] private InventoryWindow inventoryWindow;
     [SerializeField] private ItemStatsWindow itemStatsWindow;
@@ -27,11 +29,13 @@ public class GameMonoInstaller : MonoInstaller
         SignalsInstaller.Install(Container);
         Container.BindInterfacesAndSelfTo<SaveSystemManager>().AsSingle().NonLazy();
         Container.Bind<SaveSystemJson>().AsSingle().NonLazy();
+
         
         Container.BindInstance(playerController).AsSingle().NonLazy();
         Container.BindInstance(playerStats).AsSingle().NonLazy();
-        Container.BindInstance(consumableManager).AsSingle().NonLazy();
         Container.BindInstance(allItemsContainer).AsSingle().NonLazy();
+        Container.BindInstance(consumableManager).AsSingle().NonLazy();
+        Container.BindInstance(poolManager).AsSingle().NonLazy();
         Container.BindInstance(inventoryController).AsSingle().NonLazy();
         Container.BindInstance(inventoryWindow).AsSingle().NonLazy();
         Container.BindInstance(itemStatsWindow).AsSingle().NonLazy();

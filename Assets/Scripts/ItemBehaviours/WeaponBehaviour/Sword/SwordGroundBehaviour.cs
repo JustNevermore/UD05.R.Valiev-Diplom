@@ -1,5 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using Managers_Controllers;
 using Markers;
 using Player;
 using UnityEngine;
@@ -20,9 +21,9 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
         private int _specialHit;
         private Collider[] _colliders = new Collider[30];
         
-        public override void Init(PlayerStats stats, Animator animator)
+        public override void Init(PlayerStats stats, Animator animator, Rigidbody rigidbody, PoolManager poolManager)
         {
-            base.Init(stats, animator);
+            base.Init(stats, animator, rigidbody, poolManager);
             attackCooldown = attackCooldownValue;
             specialCooldown = specialCooldownValue;
             animTimeout = animTimeoutValue;
@@ -64,10 +65,8 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
                     if (_colliders[i])
                     {
                         _colliders[i].GetComponent<HurtBox>().GetDamage(Stats.TotalSpecialDamage);
-                        _colliders[i] = null;
                     }
                 }
-                
             }
         }
     }

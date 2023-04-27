@@ -10,27 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d8004cd8716640db9f5fa93081375983, type: 3}
-  m_Name: NewItem
+  m_Name: Sword 3
   m_EditorClassIdentifier: 
-  itemType: 2
+  itemType: 1
   isStackable: 0
-  itemName: Necklace Barrier
-  itemIcon: {fileID: 21300000, guid: d3bcf155879a5d843803b203336d2640, type: 3}
-  itemCost: 9000
-  rarity: 55
-  description: Siefferneo
+  itemName: Sword Slash
+  itemIcon: {fileID: 21300000, guid: bca631348a1cdbe428f9aff35f11f2d1, type: 3}
+  itemCost: 2000
+  rarity: 56
+  description: dsfnfine
   bonusHp: 0
   bonusMp: 0
   percentBonusDamage: 0
   percentProtection: 0
-  weaponType: 0
-  attackDamage: 0
+  weaponType: 1
+  attackDamage: 50
   attackMpCost: 0
-  specialDamage: 0
-  specialMpCost: 0
-  moveSet: {fileID: 0}
-  weaponView: {fileID: 0}
-  defenceSkill: {fileID: 6818853682866822866, guid: 2daaa788a3b67a54e93e2f5d6303b16d, type: 3}
+  specialDamage: 100
+  specialMpCost: 30
+  moveSet: {fileID: 2208022946210129631, guid: 635f806f31bc72b4f9d2461cc6b87f93, type: 3}
+  weaponView: {fileID: 835455971977622867, guid: 79c49f73e08edc346ae397141c47173a, type: 3}
+  defenceSkill: {fileID: 0}
   elementOfDamage: 0
   bonusDamage: 0
   hasDot: 0

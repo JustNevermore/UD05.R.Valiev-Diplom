@@ -54,3 +54,4 @@ MonoBehaviour:
   effectLayer:
     serializedVersion: 2
     m_Bits: 5120
+  pushForce: 2000

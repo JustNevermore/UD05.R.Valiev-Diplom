@@ -334,6 +334,7 @@ GameObject:
   - component: {fileID: 19759951}
   - component: {fileID: 19759950}
   - component: {fileID: 19759952}
+  - component: {fileID: 19759953}
   m_Layer: 0
   m_Name: ManagerObject
   m_TagString: Untagged
@@ -357,14 +358,13 @@ MonoBehaviour:
   fontSize: 50
   textColor: {r: 1, g: 0, b: 0, a: 1}
   allItemsList:
-  - {fileID: 11400000, guid: 297646f262f5ad74ba62c37582baf3ca, type: 2}
-  - {fileID: 11400000, guid: e4e2563c731f4524db4da3cf1b25b73f, type: 2}
-  - {fileID: 11400000, guid: c3deff64b15354344af06a1bdd7e7a71, type: 2}
-  - {fileID: 11400000, guid: ffc9700c6f77f5b4da30546ce1dc547a, type: 2}
-  - {fileID: 11400000, guid: 68a2522c6d95248438ac3e60940309f2, type: 2}
+  - {fileID: 11400000, guid: 05213d1d6d9850a4392ef8ec9eb3357a, type: 2}
+  - {fileID: 11400000, guid: 835560246e4d1204b8a4004501b0ffea, type: 2}
+  - {fileID: 11400000, guid: 12de371b93cc94c4eaebd3fdee5721eb, type: 2}
   - {fileID: 11400000, guid: e4989e2863baea1489540d179ff9d985, type: 2}
   - {fileID: 11400000, guid: 8fbbb545ba5d4544cafab2db2335c9ff, type: 2}
   - {fileID: 11400000, guid: 54faef4fec6692f4987285505ef69aa1, type: 2}
+  - {fileID: 11400000, guid: ffc9700c6f77f5b4da30546ce1dc547a, type: 2}
 --- !u!4 &19759951
 Transform:
   m_ObjectHideFlags: 0
@@ -392,6 +392,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b179d3141500463bab80132f081c6fcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &19759953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19759949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f76e8056214dfab070825eafe92461, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arrowPoolCapacity: 10
+  arrowPoolExpand: 0
+  arrowPrefab: {fileID: 4302748866789489704, guid: 9393f73aaa821f24ea897606da6ecfbd, type: 3}
 --- !u!1 &27231208
 GameObject:
   m_ObjectHideFlags: 0
@@ -4791,6 +4806,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unarmedAnimator: {fileID: 9100000, guid: ff6534d30d15c8849835d97f163ce1d2, type: 2}
   swordAnimator: {fileID: 9100000, guid: 083fede0ef41c1d4dafc13f4bef60674, type: 2}
+  bowAnimator: {fileID: 9100000, guid: ecc740f0ef3e1bc4abe94bd7256997e3, type: 2}
 --- !u!114 &1174225501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6480,8 +6496,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerController: {fileID: 1174225495}
   playerStats: {fileID: 1174225501}
-  consumableManager: {fileID: 19759952}
   allItemsContainer: {fileID: 19759950}
+  consumableManager: {fileID: 19759952}
+  poolManager: {fileID: 19759953}
   inventoryController: {fileID: 2106143518}
   inventoryWindow: {fileID: 16019509}
   itemStatsWindow: {fileID: 1813175458}

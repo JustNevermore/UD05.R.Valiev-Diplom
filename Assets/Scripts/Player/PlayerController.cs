@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections;
 using Cysharp.Threading.Tasks;
-using ItemBehaviours;
 using ItemBehaviours.NecklaceBehaviour;
 using ItemBehaviours.WeaponBehaviour;
-using Markers;
+using Managers_Controllers;
 using Signals;
 using UnityEngine;
 using Zenject;
@@ -20,6 +19,7 @@ namespace Player
         
         private SignalBus _signalBus;
         private PlayerStats _playerStats;
+        private PoolManager _poolManager;
 
         [Header("Variables")]
         [SerializeField] private float moveSpeed = 5f;
@@ -54,13 +54,14 @@ namespace Player
         private bool _attackCd;
         private bool _specialCd;
         private bool _defenceCd;
-        
+
 
         [Inject]
-        private void Construct(SignalBus signalBus , PlayerStats playerStats)
+        private void Construct(SignalBus signalBus , PlayerStats playerStats, PoolManager poolManager)
         {
             _signalBus = signalBus;
             _playerStats = playerStats;
+            _poolManager = poolManager;
         }
 
         private void Awake()
@@ -112,7 +113,7 @@ namespace Player
             _moveSet = signal.Behaviour;
             if (_moveSet != null)
             {
-                _moveSet.Init(_playerStats, _anim.Anim);
+                _moveSet.Init(_playerStats, _anim.Anim, _rigidbody, _poolManager);
                 _attackCooldown = _moveSet.attackCooldown;
                 _specialCooldown = _moveSet.specialCooldown;
                 _specialTimeout = _moveSet.animTimeout;
