@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Enemies;
 using Markers;
+using Player;
 using UnityEngine;
 
 namespace ItemBehaviours.NecklaceBehaviour
@@ -16,38 +17,35 @@ namespace ItemBehaviours.NecklaceBehaviour
         [SerializeField] private LayerMask effectLayer;
         
         private static readonly int BarrierTrigger = Animator.StringToHash("Barrier");
-
-        private HurtBox _hurtBox;
         
-        private GameObject _barrierView;
-        private readonly Vector3 _startScale = new Vector3(3, 3, 3);
         private readonly float _scaleFactor = 10f;
         private readonly float _scaleTime = 0.1f;
 
         private int _pushTargets;
         private Collider[] _pushColliders = new Collider[30];
 
-        public override void Init(Animator animator, Rigidbody rigidbody,GameObject barrier)
+        public override void Init(PlayerController controller, Animator animator)
         {
-            base.Init(animator, rigidbody, barrier);
+            base.Init(controller, animator);
             defenceCooldown = defenceCooldownValue;
             animTimeout = animTimeoutValue;
-            _hurtBox = rigidbody.GetComponent<HurtBox>();
-            _barrierView = barrier;
         }
 
-        public override async void Defend(Vector3 direction)
+        public override async void Defend()
         {
             Anim.SetTrigger(BarrierTrigger);
-            _hurtBox.EnableBlock();
-            _barrierView.SetActive(true);
+            Controller.DamageBox.EnableBlock();
+            
+            var barrier = Controller.BarrierView;
+            var startScale = barrier.transform.localScale;
+            barrier.SetActive(true);
 
             await UniTask.Delay(TimeSpan.FromSeconds(animTimeout));
             
-            _hurtBox.DisableBlock();
+            Controller.DamageBox.DisableBlock();
 
             _pushTargets = Physics.OverlapSphereNonAlloc(
-                _barrierView.transform.position, pushRadius, _pushColliders, effectLayer);
+                Controller.ZeroPos.transform.position, pushRadius, _pushColliders, effectLayer);
             
             
             if (_pushTargets > 0)
@@ -62,10 +60,10 @@ namespace ItemBehaviours.NecklaceBehaviour
                 }
             }
 
-            await _barrierView.transform.DOScale(_scaleFactor, _scaleTime);
+            await barrier.transform.DOScale(_scaleFactor, _scaleTime);
 
-            _barrierView.SetActive(false);
-            _barrierView.transform.localScale = _startScale;
+            barrier.SetActive(false);
+            barrier.transform.localScale = startScale;
             
             Rb.isKinematic = true;
             Rb.isKinematic = false;

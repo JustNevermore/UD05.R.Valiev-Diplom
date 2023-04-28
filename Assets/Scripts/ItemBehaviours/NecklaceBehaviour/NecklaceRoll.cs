@@ -1,5 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using Player;
 using UnityEngine;
 
 namespace ItemBehaviours.NecklaceBehaviour
@@ -13,17 +14,19 @@ namespace ItemBehaviours.NecklaceBehaviour
         
         private readonly float _jumpPower = 15f;
 
-        public override void Init(Animator animator, Rigidbody rigidbody, GameObject barrier)
+        public override void Init(PlayerController controller, Animator animator)
         {
-            base.Init(animator, rigidbody, barrier);
+            base.Init(controller, animator);
             defenceCooldown = defenceCooldownValue;
             animTimeout = animTimeoutValue;
         }
 
-        public override async void Defend(Vector3 direction)
+        public override async void Defend()
         {
+            var direction = (Controller.AttackPos.transform.position - Controller.ZeroPos.transform.position).normalized;
+            
             Anim.SetTrigger(RollTrigger);
-            Rb.AddForce(direction.normalized * _jumpPower, ForceMode.Impulse);
+            Rb.AddForce(direction * _jumpPower, ForceMode.Impulse);
             
             await UniTask.Delay(TimeSpan.FromSeconds(animTimeout));
             

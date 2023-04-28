@@ -28,41 +28,42 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
         private readonly float _recoilDelay = 0.1f;
 
 
-        public override void Init(PlayerStats stats, Animator animator, Rigidbody rigidbody, PoolManager poolManager)
+        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
         {
-            base.Init(stats, animator, rigidbody, poolManager);
+            base.Init(controller, stats, animator, poolManager);
             attackCooldown = attackCooldownValue;
             specialCooldown = specialCooldownValue;
             animTimeout = animTimeoutValue;
         }
         
-        public override async void Attack(Vector3 attackPoint)
+        public override async void Attack()
         {
             Anim.SetTrigger(AttackTrigger);
 
             await UniTask.Delay(TimeSpan.FromSeconds(ShootDelay));
 
-            var pos = new Vector3(Rb.transform.position.x, Rb.transform.position.y + 1, Rb.transform.position.z);
-            var dir = attackPoint - pos;
+            var attackPos = Controller.AttackPos.transform.position;
+            var zeroPos = Controller.ZeroPos.transform.position;
+            var dir = (attackPos - zeroPos).normalized;
             
             var arrow = PoolManager.GetArrow();
-            arrow.transform.position = attackPoint;
+            arrow.transform.position = attackPos;
             arrow.Init(dir, ProjectileSpeed, Stats.TotalAttackDamage);
             arrow.Launch();
         }
 
-        public override async void Special(Vector3 position)
+        public override async void Special()
         {
             Anim.SetTrigger(PowerShotTrigger);
             
             await UniTask.Delay(TimeSpan.FromSeconds(animTimeout));
             
-            var pos = new Vector3(Rb.transform.position.x, 
-                Rb.transform.position.y + 1, Rb.transform.position.z);
+            var attackPos = Controller.AttackPos.transform.position;
+            var zeroPos = Controller.ZeroPos.transform.position;
 
-            var dir = (position - pos).normalized;
+            var dir = (attackPos - zeroPos).normalized;
 
-            _raycastHits = Physics.SphereCastNonAlloc(position, specialRadius, dir, _hitObjects, specialDistance, effectLayer);
+            _raycastHits = Physics.SphereCastNonAlloc(attackPos, specialRadius, dir, _hitObjects, specialDistance, effectLayer);
             
             if (_raycastHits > 0)
             {

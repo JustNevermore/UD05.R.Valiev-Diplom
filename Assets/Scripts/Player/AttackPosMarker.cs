@@ -2,7 +2,7 @@
 
 namespace Player
 {
-    public class AttackPositionMarker : MonoBehaviour
+    public class AttackPosMarker : MonoBehaviour
     {
         [SerializeField] private float radius;
         [SerializeField] private Color color;

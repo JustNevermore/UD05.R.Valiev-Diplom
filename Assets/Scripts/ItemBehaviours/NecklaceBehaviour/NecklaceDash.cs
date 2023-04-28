@@ -1,6 +1,7 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 using Markers;
+using Player;
 using UnityEngine;
 
 namespace ItemBehaviours.NecklaceBehaviour
@@ -12,30 +13,29 @@ namespace ItemBehaviours.NecklaceBehaviour
         [SerializeField] private int playerLayer;
         [SerializeField] private int enemyLayer;
         private readonly float _jumpPower = 110f;
-        
-        private HurtBox _hurtBox;
-        
+
         private static readonly int DashTrigger = Animator.StringToHash("Dash");
 
-        public override void Init(Animator animator, Rigidbody rigidbody, GameObject barrier)
+        public override void Init(PlayerController controller, Animator animator)
         {
-            base.Init(animator, rigidbody, barrier);
+            base.Init(controller, animator);
             defenceCooldown = defenceCooldownValue;
             animTimeout = animTimeoutValue;
-            _hurtBox = Rb.GetComponent<HurtBox>();
         }
 
-        public override async void Defend(Vector3 direction)
+        public override async void Defend()
         {
+            var direction = (Controller.AttackPos.transform.position - Controller.ZeroPos.transform.position).normalized;
+            
             Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
             Anim.SetTrigger(DashTrigger);
-            _hurtBox.EnableBlock();
-            Rb.AddForce(direction.normalized * _jumpPower, ForceMode.Impulse);
+            Controller.DamageBox.EnableBlock();
+            Rb.AddForce(direction * _jumpPower, ForceMode.Impulse);
             
             await UniTask.Delay(TimeSpan.FromSeconds(animTimeout));
             
             Physics.IgnoreLayerCollision(playerLayer,enemyLayer, false);
-            _hurtBox.DisableBlock();
+            Controller.DamageBox.DisableBlock();
             Rb.isKinematic = true;  // гасим инерцию
             Rb.isKinematic = false;
         }

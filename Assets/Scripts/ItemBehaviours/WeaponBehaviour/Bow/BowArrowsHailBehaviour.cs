@@ -22,38 +22,39 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
         private Collider[] _colliders = new Collider[30];
         private readonly float _fallDelay = 1f;
 
-        public override void Init(PlayerStats stats, Animator animator, Rigidbody rigidbody, PoolManager poolManager)
+        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
         {
-            base.Init(stats, animator, rigidbody, poolManager);
+            base.Init(controller, stats, animator, poolManager);
             attackCooldown = attackCooldownValue;
             specialCooldown = specialCooldownValue;
             animTimeout = animTimeoutValue;
         }
         
-        public override async void Attack(Vector3 attackPoint)
+        public override async void Attack()
         {
             Anim.SetTrigger(AttackTrigger);
 
             await UniTask.Delay(TimeSpan.FromSeconds(ShootDelay));
 
-            var pos = new Vector3(Rb.transform.position.x, Rb.transform.position.y + 1, Rb.transform.position.z);
-            var dir = attackPoint - pos;
+            var attackPos = Controller.AttackPos.transform.position;
+            var zeroPos = Controller.ZeroPos.transform.position;
+            var dir = (attackPos - zeroPos).normalized;
             
             var arrow = PoolManager.GetArrow();
-            arrow.transform.position = attackPoint;
+            arrow.transform.position = attackPos;
             arrow.Init(dir, ProjectileSpeed, Stats.TotalAttackDamage);
             arrow.Launch();
         }
 
-        public override async void Special(Vector3 position)
+        public override async void Special()
         {
             Anim.SetTrigger(ArrowsHailTrigger);
             
-            var pos = position;
+            var attackPos = Controller.AttackPos.transform.position;
             
             await UniTask.Delay(TimeSpan.FromSeconds(_fallDelay));
             
-            _specialHit = Physics.OverlapSphereNonAlloc(pos, effectRadius, _colliders, effectLayer);
+            _specialHit = Physics.OverlapSphereNonAlloc(attackPos, effectRadius, _colliders, effectLayer);
 
             if (_specialHit > 0)
             {

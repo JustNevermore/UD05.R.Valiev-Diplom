@@ -1,5 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using Player;
 using UnityEngine;
 
 namespace ItemBehaviours.NecklaceBehaviour
@@ -13,37 +14,37 @@ namespace ItemBehaviours.NecklaceBehaviour
         [SerializeField] private float hitDistanceOffset;
 
         private static readonly int BlinkTrigger = Animator.StringToHash("Blink");
-        
-        private Vector3 _raycastStartPoint;
 
-        public override void Init(Animator animator, Rigidbody rigidbody, GameObject barrier)
+        public override void Init(PlayerController controller, Animator animator)
         {
-            base.Init(animator, rigidbody, barrier);
+            base.Init(controller, animator);
             defenceCooldown = defenceCooldownValue;
             animTimeout = animTimeoutValue;
         }
 
-        public override async void Defend(Vector3 direction)
+        public override async void Defend()
         {
             Anim.SetTrigger(BlinkTrigger);
             
-            await UniTask.Delay(TimeSpan.FromSeconds(animTimeout * 0.5)); // делим длительность анимации
-                                                                          //  на пополам, чтобы половина
-            var pos = Rb.transform.position;                        // проигралась до телепортации
-            _raycastStartPoint = new Vector3(pos.x, pos.y + 1, pos.z);   //  и половина после
-            Ray ray = new Ray(_raycastStartPoint, direction.normalized);
+            await UniTask.Delay(TimeSpan.FromSeconds(animTimeout * 0.5)); // делим длительность анимации на пополам, чтобы половина проигралась до телепортации и половина после
+
+            var startPos = Controller.ZeroPos.transform.position;
+            var direction = (Controller.AttackPos.transform.position - startPos).normalized;
+            
+            Ray ray = new Ray(startPos, direction);
 
             if (Physics.Raycast(ray, out RaycastHit hit, distance, wallsLayer))
             {
                 var endPos = new Vector3(hit.point.x, hit.point.y - 1, hit.point.z);
-                Rb.isKinematic = true;
-                Rb.isKinematic = false;
-                Rb.transform.position = endPos - direction.normalized * hitDistanceOffset;
+                Rb.transform.position = endPos - direction * hitDistanceOffset;
             }
             else
             {
-                Rb.transform.position += direction.normalized * distance;
+                Rb.transform.position += direction * distance;
             }
+            
+            Rb.isKinematic = true;
+            Rb.isKinematic = false;
         }
     }
 }

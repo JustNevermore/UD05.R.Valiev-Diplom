@@ -20,21 +20,25 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
 
         private int _specialHit;
         private Collider[] _colliders = new Collider[30];
+
+        private readonly float _specialDelay = 1f;
         
-        public override void Init(PlayerStats stats, Animator animator, Rigidbody rigidbody, PoolManager poolManager)
+        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
         {
-            base.Init(stats, animator, rigidbody, poolManager);
+            base.Init(controller, stats, animator, poolManager);
             attackCooldown = attackCooldownValue;
             specialCooldown = specialCooldownValue;
             animTimeout = animTimeoutValue;
         }
 
-        public override async void Attack(Vector3 attackPoint)
+        public override async void Attack()
         {
             Anim.SetTrigger(AttackTrigger);
             
             await UniTask.Delay(TimeSpan.FromSeconds(SwordDamageDelay));
 
+            var attackPoint = Controller.AttackPos.transform.position;
+            
             SwordAttackHit = Physics.OverlapSphereNonAlloc(
                 attackPoint, SwordAttackRadius, SwordAttackColliders, effectLayer);
 
@@ -51,12 +55,15 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
             }
         }
 
-        public override async void Special(Vector3 position)
+        public override async void Special()
         {
             Anim.SetTrigger(GroundTrigger);
-            await UniTask.Delay(TimeSpan.FromSeconds(animTimeout));
             
-            _specialHit = Physics.OverlapSphereNonAlloc(position, effectRadius, _colliders, effectLayer);
+            var attackPos = Controller.AttackPos.transform.position;
+            
+            await UniTask.Delay(TimeSpan.FromSeconds(_specialDelay));
+
+            _specialHit = Physics.OverlapSphereNonAlloc(attackPos, effectRadius, _colliders, effectLayer);
 
             if (_specialHit > 0)
             {

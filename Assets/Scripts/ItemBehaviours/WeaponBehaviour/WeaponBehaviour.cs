@@ -16,6 +16,7 @@ namespace ItemBehaviours.WeaponBehaviour
 
         protected static readonly int AttackTrigger = Animator.StringToHash("Attack");
         
+        protected PlayerController Controller;
         protected PlayerStats Stats;
         protected Animator Anim;
         protected Rigidbody Rb;
@@ -38,16 +39,17 @@ namespace ItemBehaviours.WeaponBehaviour
         #endregion
         
         
-        public virtual void Init(PlayerStats stats, Animator animator, Rigidbody rigidbody, PoolManager poolManager)
+        public virtual void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
         {
+            Controller = controller;
             Stats = stats;
             Anim = animator;
-            Rb = rigidbody;
+            Rb = controller.Rigbody;
             PoolManager = poolManager;
         }
 
-        public abstract void Attack(Vector3 attackPoint);
+        public abstract void Attack();
 
-        public abstract void Special(Vector3 position);
+        public abstract void Special();
     }
 }

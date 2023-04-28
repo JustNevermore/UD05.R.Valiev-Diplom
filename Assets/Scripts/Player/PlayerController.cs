@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using ItemBehaviours.NecklaceBehaviour;
 using ItemBehaviours.WeaponBehaviour;
 using Managers_Controllers;
+using Markers;
 using Signals;
 using UnityEngine;
 using Zenject;
@@ -14,8 +15,11 @@ namespace Player
     {
         private Rigidbody _rigidbody;
         private PlayerAnimationController _anim;
-        private AttackPositionMarker _attackPoint;
-        private Vector3 _attackPointPos;
+        private HurtBox _hurtBox;
+
+        private AttackPosMarker _attackPos;
+        private ZeroPosMarker _zeroPos;
+        private RightPosMarker _rightPos;
         
         private SignalBus _signalBus;
         private PlayerStats _playerStats;
@@ -24,7 +28,7 @@ namespace Player
         [Header("Variables")]
         [SerializeField] private float moveSpeed = 5f;
         [SerializeField] private float rotateSpeed = 500f;
-        [SerializeField, Range(0f, 1f)] private float turnDeadZone = 0.4f;
+        [SerializeField, Range(0f, 1f)] private float turnDeadZone = 0.5f;
         [SerializeField] private GameObject barrierViewPrefab;
 
         private GameObject _barrierView;
@@ -33,12 +37,11 @@ namespace Player
         private const string VerticalAxis = "Vertical";
 
         private Vector3 _input;
-        private Vector3 _direction;
 
         private WeaponBehaviour _moveSet;
         private NecklaceBehaviour _defenceSkill;
-
-        private float _attackTimeout = 0.1f;
+        
+        private float _attackTimeout = 0.3f;
         private float _specialTimeout;
         private float _defenceTimeout;
 
@@ -55,6 +58,13 @@ namespace Player
         private bool _specialCd;
         private bool _defenceCd;
 
+        public Rigidbody Rigbody => _rigidbody;
+        public HurtBox DamageBox => _hurtBox;
+        public AttackPosMarker AttackPos => _attackPos;
+        public ZeroPosMarker ZeroPos => _zeroPos;
+        public RightPosMarker RightPos => _rightPos;
+        public GameObject BarrierView => _barrierView;
+
 
         [Inject]
         private void Construct(SignalBus signalBus , PlayerStats playerStats, PoolManager poolManager)
@@ -68,7 +78,10 @@ namespace Player
         {
             _rigidbody = GetComponent<Rigidbody>();
             _anim = GetComponent<PlayerAnimationController>();
-            _attackPoint = GetComponentInChildren<AttackPositionMarker>();
+            _hurtBox = GetComponent<HurtBox>();
+            _attackPos = GetComponentInChildren<AttackPosMarker>();
+            _zeroPos = GetComponentInChildren<ZeroPosMarker>();
+            _rightPos = GetComponentInChildren<RightPosMarker>();
 
             _barrierView = Instantiate(barrierViewPrefab, transform);
             _barrierView.SetActive(false);
@@ -113,7 +126,7 @@ namespace Player
             _moveSet = signal.Behaviour;
             if (_moveSet != null)
             {
-                _moveSet.Init(_playerStats, _anim.Anim, _rigidbody, _poolManager);
+                _moveSet.Init(this, _playerStats, _anim.Anim, _poolManager);
                 _attackCooldown = _moveSet.attackCooldown;
                 _specialCooldown = _moveSet.specialCooldown;
                 _specialTimeout = _moveSet.animTimeout;
@@ -125,9 +138,7 @@ namespace Player
             _defenceSkill = signal.DefenceSkill;
             if (_defenceSkill != null)
             {
-                _barrierView.SetActive(true);
-                _defenceSkill.Init(_anim.Anim, _rigidbody, _barrierView);
-                _barrierView.SetActive(false);
+                _defenceSkill.Init(this, _anim.Anim);
                 _defenceCooldown = _defenceSkill.defenceCooldown;
                 _defenceTimeout = _defenceSkill.animTimeout;
             }
@@ -142,11 +153,6 @@ namespace Player
         {
             var matrix = Matrix4x4.Rotate(Quaternion.Euler(0, 45, 0));
             var isoInput = matrix.MultiplyPoint3x4(_input);
-            
-            if (isoInput.x != 0 && isoInput.z != 0)
-            {
-                _direction = isoInput;
-            }
 
             if (_input != Vector3.zero)
             {
@@ -180,8 +186,7 @@ namespace Player
 
             if (Input.GetKeyDown(KeyCode.J) && _canAttack && !_attackCd)
             {
-                _attackPointPos = _attackPoint.transform.position;
-                _moveSet.Attack(_attackPointPos);
+                _moveSet.Attack();
                 StartCoroutine(AttackCoroutine());
                 _canSpecial = false;
                 _canDefend = false;
@@ -194,8 +199,7 @@ namespace Player
             
             if (Input.GetKeyDown(KeyCode.K) && _canSpecial && !_specialCd)
             {
-                _attackPointPos = _attackPoint.transform.position;
-                _moveSet.Special(_attackPointPos);
+                _moveSet.Special();
                 StartCoroutine(SpecialCoroutine());
                 StartCoroutine(MoveTimeoutCoroutine(_specialTimeout));
                 _canAttack = false;
@@ -212,7 +216,7 @@ namespace Player
             
             if (Input.GetKeyDown(KeyCode.L) && _canDefend && !_defenceCd)
             {
-                _defenceSkill.Defend(_direction);
+                _defenceSkill.Defend();
                 StartCoroutine(DefendCoroutine());
                 StartCoroutine(MoveTimeoutCoroutine(_defenceTimeout));
                 _canAttack = false;

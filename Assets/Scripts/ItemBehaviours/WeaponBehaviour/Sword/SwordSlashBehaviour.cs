@@ -23,23 +23,22 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
         
         private readonly float _jumpPower = 110f;
         private readonly float _slashTime = 0.075f;
-        
-        private HurtBox _hurtBox;
 
-        public override void Init(PlayerStats stats, Animator animator, Rigidbody rigidbody, PoolManager poolManager)
+        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
         {
-            base.Init(stats, animator, rigidbody, poolManager);
+            base.Init(controller, stats, animator, poolManager);
             attackCooldown = attackCooldownValue;
             specialCooldown = specialCooldownValue;
             animTimeout = animTimeoutValue;
-            _hurtBox = Rb.GetComponent<HurtBox>();
         }
 
-        public override async void Attack(Vector3 attackPoint)
+        public override async void Attack()
         {
             Anim.SetTrigger(AttackTrigger);
             
             await UniTask.Delay(TimeSpan.FromSeconds(SwordDamageDelay));
+            
+            var attackPoint = Controller.AttackPos.transform.position;
 
             SwordAttackHit = Physics.OverlapSphereNonAlloc(
                 attackPoint, SwordAttackRadius, SwordAttackColliders, effectLayer);
@@ -57,18 +56,18 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
             }
         }
 
-        public override async void Special(Vector3 position)
+        public override async void Special()
         {
             Anim.SetTrigger(SlashTrigger);
-            
-            var posStart = new Vector3(Rb.transform.position.x, 
-                Rb.transform.position.y + 1, Rb.transform.position.z);
-            var dir = (position - posStart).normalized;
+
+            var attackPos = Controller.AttackPos.transform.position;
+            var startPos = Controller.ZeroPos.transform.position;
+            var dir = (attackPos - startPos).normalized;
 
             await UniTask.Delay(TimeSpan.FromSeconds(animTimeout - _slashTime));
 
             Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
-            _hurtBox.EnableBlock();
+            Controller.DamageBox.EnableBlock();
             Rb.AddForce(dir * _jumpPower, ForceMode.Impulse);
             
             await UniTask.Delay(TimeSpan.FromSeconds(_slashTime));
@@ -77,13 +76,12 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
             Rb.isKinematic = false;
 
             Physics.IgnoreLayerCollision(playerLayer, enemyLayer, false);
-            _hurtBox.DisableBlock();
+            Controller.DamageBox.DisableBlock();
+
+            var finishPos = Controller.ZeroPos.transform.position;
+            var distance = (startPos - finishPos).magnitude;
             
-            var posFinish = new Vector3(Rb.transform.position.x, 
-                Rb.transform.position.y + 1, Rb.transform.position.z);
-            var distance = (posStart - posFinish).magnitude;
-            
-            _raycastHits = Physics.SphereCastNonAlloc(posFinish, SwordAttackRadius, -dir, _hitObjects, distance, effectLayer);
+            _raycastHits = Physics.SphereCastNonAlloc(finishPos, SwordAttackRadius, -dir, _hitObjects, distance, effectLayer);
 
             if (_raycastHits > 0)
             {
