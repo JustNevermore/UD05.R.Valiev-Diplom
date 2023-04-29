@@ -29,7 +29,7 @@ MonoBehaviour:
   specialDamage: 80
   specialMpCost: 30
   moveSet: {fileID: 3390846638072575640, guid: b2d2a4eb24ccf994f8b8d4d876723925, type: 3}
-  weaponView: {fileID: 1964662823482387174, guid: 3ebf9bbf600a6674eb94cc22e68800aa, type: 3}
+  weaponView: {fileID: 0}
   defenceSkill: {fileID: 0}
   elementOfDamage: 0
   bonusDamage: 0

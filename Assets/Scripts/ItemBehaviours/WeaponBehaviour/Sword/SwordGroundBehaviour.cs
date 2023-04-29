@@ -58,9 +58,9 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
         public override async void Special()
         {
             Anim.SetTrigger(GroundTrigger);
-            
+
             var attackPos = Controller.AttackPos.transform.position;
-            
+
             await UniTask.Delay(TimeSpan.FromSeconds(_specialDelay));
 
             _specialHit = Physics.OverlapSphereNonAlloc(attackPos, effectRadius, _colliders, effectLayer);
@@ -69,10 +69,7 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
             {
                 for (int i = 0; i < _specialHit; i++)
                 {
-                    if (_colliders[i])
-                    {
-                        _colliders[i].GetComponent<HurtBox>().GetDamage(Stats.TotalSpecialDamage);
-                    }
+                    _colliders[i].GetComponent<HurtBox>().GetDamage(Stats.TotalSpecialDamage);
                 }
             }
         }

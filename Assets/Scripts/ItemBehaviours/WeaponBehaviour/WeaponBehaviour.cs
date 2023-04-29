@@ -20,7 +20,7 @@ namespace ItemBehaviours.WeaponBehaviour
         protected PlayerStats Stats;
         protected Animator Anim;
         protected Rigidbody Rb;
-        protected PoolManager PoolManager;
+        protected PoolManager Pool;
 
         #region SwordProperties
         
@@ -34,10 +34,16 @@ namespace ItemBehaviours.WeaponBehaviour
         #region BowProperties
 
         protected readonly float ShootDelay = 0.1f;
-        protected readonly float ProjectileSpeed = 1f;
+        protected readonly float ArrowSpeed = 1f;
 
         #endregion
-        
+
+        #region StaffProperties
+
+        protected readonly float CastDelay = 0.2f;
+        protected readonly float SpellSpeed = 0.5f;
+
+        #endregion
         
         public virtual void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
         {
@@ -45,7 +51,7 @@ namespace ItemBehaviours.WeaponBehaviour
             Stats = stats;
             Anim = animator;
             Rb = controller.Rigbody;
-            PoolManager = poolManager;
+            Pool = poolManager;
         }
 
         public abstract void Attack();

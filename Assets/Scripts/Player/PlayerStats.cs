@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using InventorySystem;
 using ItemBehaviours;
 using ItemBehaviours.NecklaceBehaviour;
@@ -173,7 +172,7 @@ namespace Player
             {
                 _moveSet = item.MoveSet;
                 var weapon = Instantiate(item.WeaponView, _weaponHolder.transform);
-                _signalBus.Fire(new OnWeaponBehawiourChangeSignal(_moveSet));
+                _signalBus.Fire(new OnWeaponBehaviourChangeSignal(_moveSet));
             }
 
             if (item.DefenceSkill != null)
@@ -234,7 +233,7 @@ namespace Player
                     }
                 }
                 
-                _signalBus.Fire(new OnWeaponBehawiourChangeSignal(_moveSet));
+                _signalBus.Fire(new OnWeaponBehaviourChangeSignal(_moveSet));
             }
 
             if (item.DefenceSkill != null)

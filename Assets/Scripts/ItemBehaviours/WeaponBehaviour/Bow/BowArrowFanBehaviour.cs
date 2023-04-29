@@ -34,9 +34,9 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
             var zeroPos = Controller.ZeroPos.transform.position;
             var dir = (attackPos - zeroPos).normalized;
             
-            var arrow = PoolManager.GetArrow();
+            var arrow = Pool.GetArrow();
             arrow.transform.position = attackPos;
-            arrow.Init(dir, ProjectileSpeed, Stats.TotalAttackDamage);
+            arrow.Init(dir, ArrowSpeed, Stats.TotalAttackDamage);
             arrow.Launch();
         }
 
@@ -70,9 +70,9 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
 
             foreach (var direction in _directions)
             {
-                var arrow = PoolManager.GetArrow();
+                var arrow = Pool.GetArrow();
                 arrow.transform.position = attackPos;
-                arrow.Init(direction, ProjectileSpeed, Stats.TotalAttackDamage);
+                arrow.Init(direction, ArrowSpeed, Stats.TotalAttackDamage);
                 arrow.Launch();
 
                 await UniTask.Delay(TimeSpan.FromSeconds(_fanShootDelay));

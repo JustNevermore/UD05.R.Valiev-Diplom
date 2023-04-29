@@ -94,13 +94,13 @@ namespace Player
             _canSpecial = true;
             _canDefend = true;
             
-            _signalBus.Subscribe<OnWeaponBehawiourChangeSignal>(UpdateMoveSet);
+            _signalBus.Subscribe<OnWeaponBehaviourChangeSignal>(UpdateMoveSet);
             _signalBus.Subscribe<OnDefenceSkillChangeSignal>(UpdateDefenceSkill);
         }
 
         private void OnDestroy()
         {
-            _signalBus.Unsubscribe<OnWeaponBehawiourChangeSignal>(UpdateMoveSet);
+            _signalBus.Unsubscribe<OnWeaponBehaviourChangeSignal>(UpdateMoveSet);
             _signalBus.Unsubscribe<OnDefenceSkillChangeSignal>(UpdateDefenceSkill);
         }
 
@@ -121,7 +121,7 @@ namespace Player
             Move();
         }
 
-        private void UpdateMoveSet(OnWeaponBehawiourChangeSignal signal)
+        private void UpdateMoveSet(OnWeaponBehaviourChangeSignal signal)
         {
             _moveSet = signal.Behaviour;
             if (_moveSet != null)

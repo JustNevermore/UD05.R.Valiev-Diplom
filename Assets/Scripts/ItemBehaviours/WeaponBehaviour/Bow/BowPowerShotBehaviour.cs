@@ -46,9 +46,9 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
             var zeroPos = Controller.ZeroPos.transform.position;
             var dir = (attackPos - zeroPos).normalized;
             
-            var arrow = PoolManager.GetArrow();
+            var arrow = Pool.GetArrow();
             arrow.transform.position = attackPos;
-            arrow.Init(dir, ProjectileSpeed, Stats.TotalAttackDamage);
+            arrow.Init(dir, ArrowSpeed, Stats.TotalAttackDamage);
             arrow.Launch();
         }
 
