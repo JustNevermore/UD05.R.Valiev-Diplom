@@ -1,32 +1,19 @@
 ﻿using System.Collections;
-using Managers_Controllers;
 using Markers;
+using Player;
 using UnityEngine;
-using Zenject;
 
 namespace PoolObjects
 {
-    public class Spell : MonoBehaviour
+    public class EnemySpell : MonoBehaviour
     {
-        private FxManager _fxManager;
-        
-        private readonly float _disableTime = 5;
-        private readonly float _effectRadius = 3;
+        private readonly float _disableTime = 6;
         private bool _ready;
         private Vector3 _direction;
-        private readonly float _speed = 0.5f;
+        private readonly float _speed = 0.3f;
         private float _damage;
         
-        private int _hitTargets;
-        private Collider[] _hitColliders = new Collider[30];
-        [SerializeField] private LayerMask effectLayer;
 
-        [Inject]
-        private void Construct(FxManager fxManager)
-        {
-            _fxManager = fxManager;
-        }
-        
         private void FixedUpdate()
         {
             if (!_ready)
@@ -50,17 +37,9 @@ namespace PoolObjects
 
         private void OnTriggerEnter(Collider col)
         {
-            var attackPoint = transform.position;
-
-            _hitTargets = Physics.OverlapSphereNonAlloc(
-                attackPoint, _effectRadius, _hitColliders, effectLayer);
-            
-            if (_hitTargets > 0)
+            if (col.GetComponent<PlayerController>())
             {
-                for (int i = 0; i < _hitTargets; i++)
-                {
-                    _hitColliders[i].GetComponent<HurtBox>().GetDamage(_damage);
-                }
+                col.GetComponent<HurtBox>().GetDamage(_damage);
             }
 
             _ready = false;

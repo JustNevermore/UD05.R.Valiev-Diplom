@@ -34,7 +34,7 @@ namespace ItemBehaviours.WeaponBehaviour.Staff
             
             var spell = Pool.GetSpell();
             spell.transform.position = attackPos;
-            spell.Init(dir, SpellSpeed, Stats.TotalAttackDamage);
+            spell.Init(dir, Stats.TotalAttackDamage);
             spell.Launch();
         }
 
@@ -45,7 +45,7 @@ namespace ItemBehaviours.WeaponBehaviour.Staff
 
             var turret = Pool.GetTurret();
             turret.transform.position = Controller.transform.position;
-            turret.Init(Stats.TotalSpecialDamage, SpellSpeed, attackCooldown, Pool);
+            turret.Init(Stats.TotalSpecialDamage, attackCooldown);
         }
     }
 }

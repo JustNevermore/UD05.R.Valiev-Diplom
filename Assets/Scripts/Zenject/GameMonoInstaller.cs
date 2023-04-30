@@ -17,6 +17,7 @@ public class GameMonoInstaller : MonoInstaller
     [SerializeField] private AllItemsContainer allItemsContainer;
     [SerializeField] private ConsumableManager consumableManager;
     [SerializeField] private PoolManager poolManager;
+    [SerializeField] private FxManager fxManager;
     [SerializeField] private InventoryController inventoryController;
     [SerializeField] private InventoryWindow inventoryWindow;
     [SerializeField] private ItemStatsWindow itemStatsWindow;
@@ -36,6 +37,7 @@ public class GameMonoInstaller : MonoInstaller
         Container.BindInstance(allItemsContainer).AsSingle().NonLazy();
         Container.BindInstance(consumableManager).AsSingle().NonLazy();
         Container.BindInstance(poolManager).AsSingle().NonLazy();
+        Container.BindInstance(fxManager).AsSingle().NonLazy();
         Container.BindInstance(inventoryController).AsSingle().NonLazy();
         Container.BindInstance(inventoryWindow).AsSingle().NonLazy();
         Container.BindInstance(itemStatsWindow).AsSingle().NonLazy();

@@ -2,6 +2,7 @@
 using Managers_Controllers;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using Zenject;
 
 namespace PoolObjects
 {
@@ -9,7 +10,6 @@ namespace PoolObjects
     {
         private readonly float _disableTime = 5f;
         private float _damage;
-        private float _speed;
         private float _interval;
         private bool _ready;
         [SerializeField] private float radius;
@@ -22,12 +22,16 @@ namespace PoolObjects
         private int _hitTargets;
         private Collider[] _hitColliders = new Collider[30];
 
-        public void Init(float damage, float speed, float interval, PoolManager pool)
+        [Inject]
+        private void Construct(PoolManager poolManager)
+        {
+            _pool = poolManager;
+        }
+        
+        public void Init(float damage, float interval)
         {
             _damage = damage;
-            _speed = speed;
             _interval = interval;
-            _pool = pool;
 
             _attackPoint = new Vector3(transform.position.x, transform.position.y + 2f, transform.position.z);
             
@@ -54,7 +58,7 @@ namespace PoolObjects
                         
                         var spell = _pool.GetSpell();
                         spell.transform.position = _attackPoint;
-                        spell.Init(dir, _speed, _damage);
+                        spell.Init(dir, _damage);
                         spell.Launch();
                     }
                     else
@@ -64,7 +68,7 @@ namespace PoolObjects
                         
                         var spell = _pool.GetSpell();
                         spell.transform.position = _attackPoint;
-                        spell.Init(dir, _speed, _damage);
+                        spell.Init(dir, _damage);
                         spell.Launch();
                     }
                 }

@@ -42,7 +42,7 @@ namespace ItemBehaviours.WeaponBehaviour.Staff
             
             var spell = Pool.GetSpell();
             spell.transform.position = attackPos;
-            spell.Init(dir, SpellSpeed, Stats.TotalAttackDamage);
+            spell.Init(dir, Stats.TotalAttackDamage);
             spell.Launch();
         }
 

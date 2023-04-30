@@ -57,7 +57,7 @@ namespace InventorySystem
         public void OnEndDrag(PointerEventData eventData)
         {
             _canvasGroup.blocksRaycasts = true;
-            
+
             if (!_dropItem)
             {
                 transform.position = _dragAnchor;

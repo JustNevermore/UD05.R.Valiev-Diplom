@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using InventorySystem;
 using ItemBehaviours;
 using ItemBehaviours.NecklaceBehaviour;
 using ItemBehaviours.WeaponBehaviour;
+using Markers;
 using Signals;
 using UnityEngine;
 using Zenject;
@@ -11,6 +13,8 @@ namespace Player
 {
     public class PlayerStats : MonoBehaviour
     {
+        private HurtBox _hurtBox;
+        
         private readonly float _percentMpReg = 0.02f;
         
         private SignalBus _signalBus;
@@ -129,16 +133,27 @@ namespace Player
         {
             _signalBus = signalBus;
         }
-        
+
+        private void Awake()
+        {
+            _hurtBox = GetComponent<HurtBox>();
+        }
+
         private void Start()
         {
             _weaponHolder = GetComponentInChildren<WeaponHolder>();
+            _hurtBox.OnGetDamage += DecreaseCurrentHp;
             
             //todo не забыть убрать золото
             _gold = 1000000;
             
             ApplyStats();
             StartCoroutine(MpRegCoroutine());
+        }
+
+        private void OnDestroy()
+        {
+            _hurtBox.OnGetDamage -= DecreaseCurrentHp;
         }
 
         private IEnumerator MpRegCoroutine()
@@ -302,6 +317,7 @@ namespace Player
         public void DecreaseCurrentHp(float amount)
         {
             _playerCurrentHp -= amount;
+            Debug.Log($"Player get {amount} damage");
         }
         
         public void IncreaseCurrentMp(float amount)

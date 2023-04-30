@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2339566760519031128}
   - component: {fileID: 6745122608917454706}
   - component: {fileID: 610430569085522656}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Rune
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ GameObject:
   - component: {fileID: 8284624851749418998}
   - component: {fileID: 1448791579967802624}
   - component: {fileID: 2373575670575852432}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}

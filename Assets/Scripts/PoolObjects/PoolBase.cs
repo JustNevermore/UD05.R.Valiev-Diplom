@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 using Object = UnityEngine.Object;
 
-namespace Managers_Controllers
+namespace PoolObjects
 {
     public class PoolBase<T> where T: MonoBehaviour
     {
         private T _prefab;
         private bool _autoExpand;
         private Transform _container;
+        private DiContainer _diContainer;
 
         private List<T> _pool;
 
-        public PoolBase(T prefab, int count, bool flag, Transform container)
+        public PoolBase(T prefab, int count, bool flag, Transform container, DiContainer diContainer)
         {
             _prefab = prefab;
             _autoExpand = flag;
             _container = container;
+            _diContainer = diContainer;
 
             CreatePool(count);
         }
@@ -34,10 +37,10 @@ namespace Managers_Controllers
 
         private T CreateElement()
         {
-            var newObject = Object.Instantiate(_prefab, _container);
-            newObject.gameObject.SetActive(false);
-            _pool.Add(newObject);
-            return newObject;
+            var newElement = _diContainer.InstantiatePrefabForComponent<T>(_prefab, _container);
+            newElement.gameObject.SetActive(false);
+            _pool.Add(newElement);
+            return newElement;
         }
 
         private bool GetFreeElement(out T element)

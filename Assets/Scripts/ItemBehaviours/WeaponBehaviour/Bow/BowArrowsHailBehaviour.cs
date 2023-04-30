@@ -42,7 +42,7 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
             
             var arrow = Pool.GetArrow();
             arrow.transform.position = attackPos;
-            arrow.Init(dir, ArrowSpeed, Stats.TotalAttackDamage);
+            arrow.Init(dir, Stats.TotalAttackDamage);
             arrow.Launch();
         }
 

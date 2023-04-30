@@ -34,14 +34,12 @@ namespace ItemBehaviours.WeaponBehaviour
         #region BowProperties
 
         protected readonly float ShootDelay = 0.1f;
-        protected readonly float ArrowSpeed = 1f;
 
         #endregion
 
         #region StaffProperties
 
         protected readonly float CastDelay = 0.2f;
-        protected readonly float SpellSpeed = 0.5f;
 
         #endregion
         

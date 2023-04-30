@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4946698872797106856}
   - component: {fileID: 6109051777295994268}
+  - component: {fileID: 4146289445095667224}
   - component: {fileID: 6340968032517224375}
   - component: {fileID: 3427716084892169381}
-  - component: {fileID: -8101914958197857006}
-  m_Layer: 0
-  m_Name: Spell
+  m_Layer: 15
+  m_Name: EnemySpell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1307,8 +1307,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0, g: 0.08923578, b: 1, a: 1}
-        key1: {r: 0.4198113, g: 1, b: 0.977513, a: 1}
+        key0: {r: 0.58611536, g: 0, b: 1, a: 1}
+        key1: {r: 1, g: 1, b: 1, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -4742,6 +4742,18 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!114 &4146289445095667224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7980069690714843769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb21b5e706b34fae9d54370a7d860d8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!199 &6340968032517224375
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -4825,20 +4837,5 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-8101914958197857006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7980069690714843769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1eb162daec33470396c3fdf767f9a708, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectLayer:
-    serializedVersion: 2
-    m_Bits: 4096

@@ -7,8 +7,8 @@ namespace Markers
     {
         private bool _damageBlock;
 
-        public event Action<float> IsDamaged;
-        public event Action IsSlowed;
+        public event Action<float> OnGetDamage;
+        public event Action OnGetSlow;
 
         public void EnableBlock()
         {
@@ -25,7 +25,7 @@ namespace Markers
             if (_damageBlock)
                 return;
             
-            IsDamaged?.Invoke(damage);
+            OnGetDamage?.Invoke(damage);
         }
 
         public void GetDotDamage(float damage)
@@ -41,7 +41,7 @@ namespace Markers
             if (_damageBlock)
                 return;
             
-            IsSlowed?.Invoke();
+            OnGetSlow?.Invoke();
         }
     }
 }

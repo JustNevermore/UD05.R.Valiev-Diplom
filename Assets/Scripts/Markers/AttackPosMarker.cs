@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Player
+namespace Markers
 {
     public class AttackPosMarker : MonoBehaviour
     {

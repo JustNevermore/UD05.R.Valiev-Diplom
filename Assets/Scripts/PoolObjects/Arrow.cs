@@ -10,7 +10,7 @@ namespace PoolObjects
         private readonly float _disableTime = 4;
         private bool _ready;
         private Vector3 _direction;
-        private float _speed;
+        private readonly float _speed = 1f;
         private float _damage;
         
 
@@ -22,10 +22,9 @@ namespace PoolObjects
             transform.position += _direction * _speed;
         }
 
-        public void Init(Vector3 direction, float speed, float damage)
+        public void Init(Vector3 direction, float damage)
         {
             _direction = direction;
-            _speed = speed;
             _damage = damage;
         }
 

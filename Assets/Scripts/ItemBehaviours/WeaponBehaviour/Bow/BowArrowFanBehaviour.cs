@@ -36,7 +36,7 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
             
             var arrow = Pool.GetArrow();
             arrow.transform.position = attackPos;
-            arrow.Init(dir, ArrowSpeed, Stats.TotalAttackDamage);
+            arrow.Init(dir, Stats.TotalAttackDamage);
             arrow.Launch();
         }
 
@@ -72,7 +72,7 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
             {
                 var arrow = Pool.GetArrow();
                 arrow.transform.position = attackPos;
-                arrow.Init(direction, ArrowSpeed, Stats.TotalAttackDamage);
+                arrow.Init(direction, Stats.TotalAttackDamage);
                 arrow.Launch();
 
                 await UniTask.Delay(TimeSpan.FromSeconds(_fanShootDelay));
