@@ -22,6 +22,7 @@ namespace Enemies
         protected AttackPosMarker AttackPos;
 
         private readonly float _movingRotateSpeed = 200f;
+        protected readonly float AimingRotateSpeed = 200f;
         [SerializeField] private float moveSpeed;
         [SerializeField] private bool canEscape;
         [SerializeField] private float moveUpdateTime;
@@ -170,7 +171,7 @@ namespace Enemies
             var x = Random.Range(pos.x - _rndOffset, pos.x + _rndOffset);
             var z = Random.Range(pos.z - _rndOffset, pos.z + _rndOffset);
 
-            var target = new Vector3(x, 0, z);
+            var target = new Vector3(x, pos.y, z);
 
             _direction = (target - pos).normalized;
         }

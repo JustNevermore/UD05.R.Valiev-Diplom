@@ -1,4 +1,6 @@
-﻿using Markers;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using Markers;
 using UnityEngine;
 
 namespace Enemies
@@ -15,8 +17,10 @@ namespace Enemies
             
         }
 
-        protected override void Attack()
+        protected override async void Attack()
         {
+            await UniTask.Delay(TimeSpan.FromSeconds(attackDelay));
+            
             var attackPoint = AttackPos.transform.position;
 
             _attackHit = Physics.OverlapSphereNonAlloc(attackPoint, attackRadius, _colliders, playerLayer);

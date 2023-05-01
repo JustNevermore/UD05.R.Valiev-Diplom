@@ -73,7 +73,7 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
                     if (_colliders[i].GetComponent<EnemyBase>())
                     {
                         var rb = _colliders[i].GetComponent<Rigidbody>();
-                        rb.AddExplosionForce(pushForce, Rb.transform.position, effectRadius);
+                        rb.AddExplosionForce(pushForce, attackPos, effectRadius);
                     }
                 }
             }

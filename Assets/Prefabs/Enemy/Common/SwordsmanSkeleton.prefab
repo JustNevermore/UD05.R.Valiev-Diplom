@@ -28,8 +28,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4302403781224211835}
-  m_LocalRotation: {x: -0, y: 0.99953765, z: -0, w: -0.030406067}
-  m_LocalPosition: {x: -12.961813, y: 0, z: 18.63349}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -37,7 +37,7 @@ Transform:
   - {fileID: 2020484299525161121}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 183.485, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &4302403781224211815
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -80,12 +80,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75694edd3e4848a0b9478e79798fe20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 0}
   moveSpeed: 4
   canEscape: 0
   moveUpdateTime: 1
-  attackCooldown: 0.5
-  attackDelay: 0.5
+  attackDamage: 5
+  attackCooldown: 1
+  attackDelay: 1
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  attackRadius: 2
 --- !u!114 &4302403781224211809
 MonoBehaviour:
   m_ObjectHideFlags: 0
