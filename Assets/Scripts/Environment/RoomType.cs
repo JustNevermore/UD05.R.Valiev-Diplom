@@ -2,8 +2,7 @@
 {
     public enum RoomType
     {
-        Start,
-        Fight,
+        Common,
         Boss
     }
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using InventorySystem;
-using ItemBehaviours;
+﻿using ItemBehaviours;
 using Signals;
-using UnityEditor.Animations;
 using UnityEngine;
 using Zenject;
 
@@ -14,10 +11,10 @@ namespace Player
 
         private Animator _animator;
 
-        [SerializeField] private AnimatorController unarmedAnimator;
-        [SerializeField] private AnimatorController swordAnimator;
-        [SerializeField] private AnimatorController bowAnimator;
-        [SerializeField] private AnimatorController staffAnimator;
+        [SerializeField] private RuntimeAnimatorController unarmedAnimator;
+        [SerializeField] private RuntimeAnimatorController swordAnimator;
+        [SerializeField] private RuntimeAnimatorController bowAnimator;
+        [SerializeField] private RuntimeAnimatorController staffAnimator;
         
         private static readonly int MoveBool = Animator.StringToHash("Move");
 

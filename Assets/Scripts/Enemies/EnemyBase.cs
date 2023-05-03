@@ -99,6 +99,9 @@ namespace Enemies
             _actionCor = StartCoroutine(ActionUpdateCoroutine());
             
             CanMove = true;
+            CanAttack = false;
+            _attackCd = false;
+            _tryEscape = false;
         }
 
         private void OnDisable()

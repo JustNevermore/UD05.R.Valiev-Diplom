@@ -15,7 +15,7 @@ MonoBehaviour:
   itemType: 1
   isStackable: 0
   itemName: Bow test 2
-  itemIcon: {fileID: 21300000, guid: 65f0e363b74cf5845ab8c3fbc14f39ac, type: 3}
+  itemIcon: {fileID: 21300000, guid: 1e2458b0a9a0e6d4fab5c137e9603285, type: 3}
   itemCost: 3000
   rarity: 55
   description: sfsgebgtb

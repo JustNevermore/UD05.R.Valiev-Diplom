@@ -107,7 +107,7 @@ namespace Ui
         
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.M))
+            if (Input.GetKeyDown(KeyCode.M) || SimpleInput.GetButtonDown("Shop"))
             {
                 ToggleStorage();
             }

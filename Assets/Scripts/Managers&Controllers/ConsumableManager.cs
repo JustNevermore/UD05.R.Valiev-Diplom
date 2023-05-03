@@ -1,9 +1,10 @@
 ﻿using System.Collections;
+using InventorySystem;
 using Player;
 using UnityEngine;
 using Zenject;
 
-namespace InventorySystem
+namespace Managers_Controllers
 {
     public class ConsumableManager : MonoBehaviour
     {
@@ -50,7 +51,6 @@ namespace InventorySystem
             }
         }
         
-        // Не могу использовать ref в итераторе, поэтому пришлось разбить логику на две разные корутины
         private IEnumerator HpCoroutine(float time, float value)
         {
             var useTime = 0f;

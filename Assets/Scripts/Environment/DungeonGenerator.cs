@@ -55,7 +55,7 @@ namespace Environment
             {
                 if (room)
                 {
-                    room.Init(_matrixSize, _spawnedRooms);
+                    room.Init(_spawnedRooms);
                 }
             }
         }
@@ -64,7 +64,6 @@ namespace Environment
         {
             _commonRoomLimit = roomSpawnCount - bossRoomSpawnMinCount;
             var startBossCount = bossRoomSpawnMinCount;
-            _spawnedRooms = null;
             _spawnedRooms = new Room[_matrixSize, _matrixSize];
             _spawnedRooms[_centerCoord, _centerCoord] = _diContainer.InstantiatePrefabForComponent<Room>(startRoom);
 

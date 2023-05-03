@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -6,26 +7,35 @@ namespace Environment
 {
     public class Room : MonoBehaviour
     {
+        [SerializeField] private RoomType type;
         [SerializeField] private RoomMaster roomMaster;
         
         private Room[,] _allRooms;
-        private int _capacity;
-        
+
         public GameObject doorU;
         public GameObject doorD;
         public GameObject doorR;
         public GameObject doorL;
 
-        public void Init(int cap, Room[,] rooms)
+        private List<GameObject> _interactableDoors;
+
+        public RoomType Type => type;
+
+        public void Init(Room[,] rooms)
         {
-            _capacity = cap;
-            _allRooms = new Room[_capacity, _capacity];
             _allRooms = rooms;
 
-            if (roomMaster) roomMaster.gameObject.SetActive(true);
+            _interactableDoors = new List<GameObject>();
+
+            if (doorU && !doorU.activeInHierarchy) _interactableDoors.Add(doorU);
+            if (doorD && !doorD.activeInHierarchy) _interactableDoors.Add(doorD);
+            if (doorR && !doorR.activeInHierarchy) _interactableDoors.Add(doorR);
+            if (doorL && !doorL.activeInHierarchy) _interactableDoors.Add(doorL);
+
+                if (roomMaster) roomMaster.gameObject.SetActive(true);
         }
 
-        public void DeactivateOther()
+        public void SetActiveOtherRooms(bool flag)
         {
             foreach (var room in _allRooms)
             {
@@ -33,18 +43,18 @@ namespace Environment
                 {
                     if (room != this)
                     {
-                        room.gameObject.SetActive(false);
+                        room.gameObject.SetActive(flag);
                     }
                 }
             }
         }
 
-        public void CloseDoors()
+        public void CloseDoors(bool flag)
         {
-            if (doorU) doorU.SetActive(true);
-            if (doorD) doorD.SetActive(true);
-            if (doorR) doorR.SetActive(true);
-            if (doorL) doorL.SetActive(true);
+            foreach (var door in _interactableDoors)
+            {
+                door.SetActive(flag);
+            }
         }
     }
 }

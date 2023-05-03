@@ -35,6 +35,9 @@ namespace Player
 
         private const string HorizontalAxis = "Horizontal";
         private const string VerticalAxis = "Vertical";
+        private const string AttackButton = "Attack";
+        private const string SpecialButton = "Special";
+        private const string DefenceButton = "Defence";
 
         private Vector3 _input;
 
@@ -184,48 +187,57 @@ namespace Player
             if (!_moveSet)
                 return;
 
-            if (Input.GetKeyDown(KeyCode.J) && _canAttack && !_attackCd)
+            if (Input.GetKeyDown(KeyCode.J) || SimpleInput.GetButtonDown(AttackButton))
             {
-                _moveSet.Attack();
-                StartCoroutine(AttackCoroutine());
-                _canSpecial = false;
-                _canDefend = false;
+                if (_canAttack && !_attackCd)
+                {
+                    _moveSet.Attack();
+                    StartCoroutine(AttackCoroutine());
+                    _canSpecial = false;
+                    _canDefend = false;
                 
-                await UniTask.Delay(TimeSpan.FromSeconds(_attackTimeout));
+                    await UniTask.Delay(TimeSpan.FromSeconds(_attackTimeout));
                 
-                _canSpecial = true;
-                _canDefend = true;
+                    _canSpecial = true;
+                    _canDefend = true;
+                }
             }
             
-            if (Input.GetKeyDown(KeyCode.K) && _canSpecial && !_specialCd)
+            if (Input.GetKeyDown(KeyCode.K) || SimpleInput.GetButtonDown(SpecialButton))
             {
-                _moveSet.Special();
-                StartCoroutine(SpecialCoroutine());
-                StartCoroutine(MoveTimeoutCoroutine(_specialTimeout));
-                _canAttack = false;
-                _canDefend = false;
+                if (_canSpecial && !_specialCd)
+                {
+                    _moveSet.Special();
+                    StartCoroutine(SpecialCoroutine());
+                    StartCoroutine(MoveTimeoutCoroutine(_specialTimeout));
+                    _canAttack = false;
+                    _canDefend = false;
 
-                await UniTask.Delay(TimeSpan.FromSeconds(_specialTimeout));
+                    await UniTask.Delay(TimeSpan.FromSeconds(_specialTimeout));
                 
-                _canAttack = true;
-                _canDefend = true;
+                    _canAttack = true;
+                    _canDefend = true;
+                }
             }
 
             if (!_defenceSkill)
                 return;
             
-            if (Input.GetKeyDown(KeyCode.L) && _canDefend && !_defenceCd)
+            if (Input.GetKeyDown(KeyCode.L) || SimpleInput.GetButtonDown(DefenceButton))
             {
-                _defenceSkill.Defend();
-                StartCoroutine(DefendCoroutine());
-                StartCoroutine(MoveTimeoutCoroutine(_defenceTimeout));
-                _canAttack = false;
-                _canSpecial = false;
+                if (_canDefend && !_defenceCd)
+                {
+                    _defenceSkill.Defend();
+                    StartCoroutine(DefendCoroutine());
+                    StartCoroutine(MoveTimeoutCoroutine(_defenceTimeout));
+                    _canAttack = false;
+                    _canSpecial = false;
 
-                await UniTask.Delay(TimeSpan.FromSeconds(_defenceTimeout));
+                    await UniTask.Delay(TimeSpan.FromSeconds(_defenceTimeout));
                 
-                _canAttack = true;
-                _canSpecial = true;
+                    _canAttack = true;
+                    _canSpecial = true;
+                }
             }
         }
 

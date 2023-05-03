@@ -14,10 +14,10 @@ namespace Enemies
         protected override async void Attack()
         {
             var dir = (Player.transform.position - transform.position).normalized;
-
+            
             var rotation = Quaternion.LookRotation(dir, Vector3.up);
             transform.rotation = rotation;
-
+            
             await UniTask.Delay(TimeSpan.FromSeconds(attackDelay));
             
             dir = (Player.transform.position - transform.position).normalized;

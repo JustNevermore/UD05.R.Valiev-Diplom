@@ -1,4 +1,5 @@
-﻿using Markers;
+﻿using Enemies;
+using Markers;
 using PoolObjects;
 using UnityEngine;
 using Zenject;
@@ -38,6 +39,21 @@ namespace Managers_Controllers
         [SerializeField] private int enSpellPoolCapacity;
         [SerializeField] private bool enSpellPoolExpand;
         [SerializeField] private EnemySpell enSpellPrefab;
+        
+        [Header("SwordsmanSkeleton")]
+        [SerializeField] private int swordSkelPoolCapacity;
+        [SerializeField] private bool swordSkelPoolExpand;
+        [SerializeField] private SwordsmanSkeleton swordSkelPrefab;
+        
+        [Header("MarksmanSkeleton")]
+        [SerializeField] private int bowSkelPoolCapacity;
+        [SerializeField] private bool bowSkelPoolExpand;
+        [SerializeField] private MarksmanSkeleton bowSkelPrefab;
+        
+        [Header("CasterSkeleton")]
+        [SerializeField] private int staffSkelPoolCapacity;
+        [SerializeField] private bool staffSkelPoolExpand;
+        [SerializeField] private CasterSkeleton staffSkelPrefab;
 
         private PoolBase<Arrow> _arrowPool;
         private PoolBase<Spell> _spellPool;
@@ -46,6 +62,10 @@ namespace Managers_Controllers
         
         private PoolBase<EnemyArrow> _enArrowPool;
         private PoolBase<EnemySpell> _enSpellPool;
+
+        private PoolBase<SwordsmanSkeleton> _swordSkelPool;
+        private PoolBase<MarksmanSkeleton> _bowSkelPool;
+        private PoolBase<CasterSkeleton> _staffSkelPool;
 
         [Inject]
         private void Construct(DiContainer diContainer)
@@ -62,6 +82,13 @@ namespace Managers_Controllers
             
             _enArrowPool = new PoolBase<EnemyArrow>(enArPrefab, enArPoolCapacity, enArPoolExpand, transform, _diContainer);
             _enSpellPool = new PoolBase<EnemySpell>(enSpellPrefab, enSpellPoolCapacity, enSpellPoolExpand, transform, _diContainer);
+
+            _swordSkelPool = new PoolBase<SwordsmanSkeleton>(swordSkelPrefab, swordSkelPoolCapacity,
+                swordSkelPoolExpand, transform, _diContainer);
+            _bowSkelPool = new PoolBase<MarksmanSkeleton>(bowSkelPrefab, bowSkelPoolCapacity,
+                bowSkelPoolExpand, transform, _diContainer);
+            _staffSkelPool = new PoolBase<CasterSkeleton>(staffSkelPrefab, staffSkelPoolCapacity,
+                staffSkelPoolExpand, transform, _diContainer);
         }
 
         public Arrow GetArrow()
@@ -98,6 +125,24 @@ namespace Managers_Controllers
         {
             var spell = _enSpellPool.GetPoolElement();
             return spell;
+        }
+
+        public SwordsmanSkeleton GetSwordSkel()
+        {
+            var enemy = _swordSkelPool.GetPoolElement();
+            return enemy;
+        }
+        
+        public MarksmanSkeleton GetBowSkel()
+        {
+            var enemy = _bowSkelPool.GetPoolElement();
+            return enemy;
+        }
+        
+        public CasterSkeleton GetStaffSkel()
+        {
+            var enemy = _staffSkelPool.GetPoolElement();
+            return enemy;
         }
     }
 }

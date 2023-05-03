@@ -15,7 +15,7 @@ MonoBehaviour:
   itemType: 1
   isStackable: 0
   itemName: Staff RuneCast
-  itemIcon: {fileID: 21300000, guid: 8325d4ef0a6eb3d43952aff8a06d9f45, type: 3}
+  itemIcon: {fileID: 21300000, guid: f8b0a3f7bdda74f45bc3d9034d1151c6, type: 3}
   itemCost: 456
   rarity: 60
   description: sdfergtheve

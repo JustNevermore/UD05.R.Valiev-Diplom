@@ -22,7 +22,7 @@ namespace Enemies
             await UniTask.Delay(TimeSpan.FromSeconds(attackDelay));
             
             var attackPoint = AttackPos.transform.position;
-
+            
             _attackHit = Physics.OverlapSphereNonAlloc(attackPoint, attackRadius, _colliders, playerLayer);
             
             if (_attackHit > 0)
