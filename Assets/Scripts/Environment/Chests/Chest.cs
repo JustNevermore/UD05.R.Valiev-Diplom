@@ -8,19 +8,20 @@ using Zenject;
 
 namespace Environment.Chests
 {
-    public class BaseChest : MonoBehaviour
+    public class Chest : MonoBehaviour
     {
-        private DiContainer _diContainer;
         private LootDropManager _lootManager;
+        private ChestWindow _chestWindow;
         
         private bool _firstOpen;
         private List<ItemData> _itemsInChest;
+        
 
         [Inject]
-        private void Construct(DiContainer diContainer, LootDropManager lootDropManager)
+        private void Construct(LootDropManager lootDropManager, ChestWindow chestWindow)
         {
-            _diContainer = diContainer;
             _lootManager = lootDropManager;
+            _chestWindow = chestWindow;
         }
 
         private void OnEnable()
@@ -37,21 +38,31 @@ namespace Environment.Chests
                 {
                     GenerateLoot();
                     _firstOpen = false;
-                    // подсоединить к окну сундука и отобразить предметы
+                    _chestWindow.OpenChestWindow(this, _itemsInChest);
                 }
                 else
                 {
-                    // подсоединить к окну сундука и отобразить предметы
+                    _chestWindow.OpenChestWindow(this, _itemsInChest);
                 }
             }
         }
 
+        private void OnTriggerExit(Collider col)
+        {
+            _chestWindow.CloseChestWindow();
+        }
+
         private void GenerateLoot()
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 5; i++)
             {
-                _itemsInChest. Add(_lootManager.GetRandomItem());
+                _itemsInChest.Add(_lootManager.GetRandomItem());
             }
+        }
+
+        public void UpdateChestLoot(List<ItemData> items)
+        {
+            _itemsInChest = items;
         }
     }
 }

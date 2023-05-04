@@ -10,6 +10,7 @@ namespace InventorySystem
         private AllItemsContainer _allItemsContainer;
         private InventoryWindow _inventoryWindow;
         private PlayerStats _playerStats;
+        private ChestWindow _chestWindow;
         
         [SerializeField] private EquipmentSlot slotType;
         [SerializeField] private ItemType itemType;
@@ -22,11 +23,12 @@ namespace InventorySystem
 
 
         [Inject]
-        private void Construct(AllItemsContainer allItemsContainer, InventoryWindow inventoryWindow, PlayerStats playerStats)
+        private void Construct(AllItemsContainer allItemsContainer, InventoryWindow inventoryWindow, PlayerStats playerStats, ChestWindow chestWindow)
         {
             _allItemsContainer = allItemsContainer;
             _inventoryWindow = inventoryWindow;
             _playerStats = playerStats;
+            _chestWindow = chestWindow;
         }
 
         public void OnDrop(PointerEventData eventData)
@@ -41,7 +43,7 @@ namespace InventorySystem
                 var item = obj.GetComponent<Item>().Data;
                 var itemConfig = _allItemsContainer.GetConfigById(item.ItemId);
             
-                if (item.BelongToPlayer) // принадлежит нам
+                if (item.BelongToPlayer && !item.InStash) // принадлежит нам
                 {
                     if (item.Type == itemType) // подходит ли тип предмета для ячейки
                     {
@@ -75,6 +77,126 @@ namespace InventorySystem
                                 item.InSlot = slotType;
                                 _containItem = item;
                                 _playerStats.IncreaseStats(itemConfig);
+                            }
+                        }
+                        
+                        _inventoryWindow.RedrawInventory();
+                    }
+                    else
+                    {
+                        obj.transform.position = anchor;
+                    }
+                }
+                else if (item.InStash) // из сундука
+                {
+                    if (item.Type == itemType) // подходит ли тип предмета для ячейки
+                    {
+                        if (_containItem == null) // есть ли в текущий момент предмет в ячейке
+                        {
+                            if (item.IsStackable) // предмет стакается
+                            {
+                                var flag = false;
+                            
+                                foreach (var invItem in _inventoryWindow.InventoryItems) // ищем стакаемый предмет
+                                {
+                                    if (item.ItemId == invItem.ItemId)
+                                    {
+                                        flag = true;
+                                        invItem.ItemAmount += item.ItemAmount;
+                                        _chestWindow.RemoveFromChest(item);
+                                    }
+                                }
+
+                                if (!flag)
+                                {
+                                    if (item.Type == ItemType.Consumable)
+                                    {
+                                        _chestWindow.RemoveFromChest(item);
+                                        item.InStash = false;
+                                        _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                    }
+                                    else
+                                    {
+                                        _chestWindow.RemoveFromChest(item);
+                                        item.InStash = false;
+                                        _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                        _playerStats.IncreaseStats(itemConfig);
+                                    }
+                                }
+                            }
+                            else // предмет не стакается
+                            {
+                                if (item.Type == ItemType.Consumable)
+                                {
+                                    _chestWindow.RemoveFromChest(item);
+                                    item.InStash = false;
+                                    _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                }
+                                else
+                                {
+                                    _chestWindow.RemoveFromChest(item);
+                                    item.InStash = false;
+                                    _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                    _playerStats.IncreaseStats(itemConfig);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (item.IsStackable) // предмет стакается
+                            {
+                                var flag = false;
+                            
+                                foreach (var invItem in _inventoryWindow.InventoryItems) // ищем стакаемый предмет
+                                {
+                                    if (item.ItemId == invItem.ItemId)
+                                    {
+                                        flag = true;
+                                        invItem.ItemAmount += item.ItemAmount;
+                                        _chestWindow.RemoveFromChest(item);
+                                    }
+                                }
+
+                                if (!flag)
+                                {
+                                    if (item.Type == ItemType.Consumable)
+                                    {
+                                        _chestWindow.RemoveFromChest(item);
+                                        item.InStash = false;
+                                        _containItem.InSlot = EquipmentSlot.None;
+                                        _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                    }
+                                    else
+                                    {
+                                        var config = _allItemsContainer.GetConfigById(_containItem.ItemId);
+                                        _playerStats.DecreaseStats(config);
+                                        _chestWindow.RemoveFromChest(item);
+                                        item.InStash = false;
+                                        _containItem.InSlot = EquipmentSlot.None;
+                                        _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                        _playerStats.IncreaseStats(itemConfig);
+                                    }
+                                }
+                            }
+                            else // предмет не стакается
+                            {
+                                if (item.Type == ItemType.Consumable)
+                                {
+                                    _chestWindow.RemoveFromChest(item);
+                                    item.InStash = false;
+                                    _containItem.InSlot = EquipmentSlot.None;
+                                    _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                }
+                                else
+                                {
+                                    var config = _allItemsContainer.GetConfigById(_containItem.ItemId);
+                                    _playerStats.DecreaseStats(config);
+                                    _chestWindow.RemoveFromChest(item);
+                                    item.InStash = false;
+                                    _containItem.InSlot = EquipmentSlot.None;
+                                    _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                    _playerStats.IncreaseStats(itemConfig);
+                                }
                             }
                         }
                         

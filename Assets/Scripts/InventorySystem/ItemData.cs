@@ -13,6 +13,7 @@ namespace InventorySystem
         private int _itemAmount;
         public EquipmentSlot InSlot;
         public bool BelongToPlayer;
+        public bool InStash;
 
         public int ItemAmount
         {

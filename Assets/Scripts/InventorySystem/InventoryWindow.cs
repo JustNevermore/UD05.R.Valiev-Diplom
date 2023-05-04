@@ -13,6 +13,7 @@ namespace InventorySystem
         private DiContainer _diContainer;
         private AllItemsContainer _allItemsContainer;
         private PlayerStats _playerStats;
+        private ChestWindow _chestWindow;
         
         [SerializeField] private GameObject contentWindow;
         [Space]
@@ -29,13 +30,25 @@ namespace InventorySystem
         private List<ItemData> _inventoryItems;
 
         public List<ItemData> InventoryItems => _inventoryItems;
+        
+        
+        public InventorySlot WeaponSlot => weaponSlot;
+        public InventorySlot NecklaceSlot => necklaceSlot;
+        public InventorySlot RingSlot => ringSlot;
+        public InventorySlot ArmorSlot => armorSlot;
+        public InventorySlot ConSlot1 => conSlot1;
+        public InventorySlot ConSlot2 => conSlot2;
+        public InventorySlot ConSlot3 => conSlot3;
+        public InventorySlot ConSlot4 => conSlot4;
+        
 
         [Inject]
-        private void Construct(DiContainer diContainer, AllItemsContainer allItemsContainer, PlayerStats playerStats)
+        private void Construct(DiContainer diContainer, AllItemsContainer allItemsContainer, PlayerStats playerStats, ChestWindow chestWindow)
         {
             _diContainer = diContainer;
             _allItemsContainer = allItemsContainer;
             _playerStats = playerStats;
+            _chestWindow = chestWindow;
         }
 
         private void Start()
@@ -197,12 +210,76 @@ namespace InventorySystem
                         obj.transform.position = anchor;
                     }
                 }
+                else if (item.InStash) // перемещаем из сундука
+                {
+                    if (item.IsStackable) // предмет стакается
+                    {
+                        var flag = false;
+
+                        foreach (var invItem in _inventoryItems) // ищем стакаемый предмет
+                        {
+                            if (item.ItemId == invItem.ItemId)
+                            {
+                                flag = true;
+                                invItem.ItemAmount += item.ItemAmount;
+                                _chestWindow.RemoveFromChest(item);
+                            }
+                        }
+
+                        if (!flag)
+                        {
+                            if (item.Type == ItemType.Consumable)
+                            {
+                                _chestWindow.RemoveFromChest(item);
+                                var newItem = AddItemToInventory(item, EquipmentSlot.None);
+                                newItem.InStash = false;
+                            }
+                            else
+                            {
+                                _chestWindow.RemoveFromChest(item);
+                                var newItem = AddItemToInventory(item, EquipmentSlot.None);
+                                newItem.InStash = false;
+                            }
+                        }
+                    }
+                    else // предмет не стакается
+                    {
+                        if (item.Type == ItemType.Consumable)
+                        {
+                            _chestWindow.RemoveFromChest(item);
+                            var newItem = AddItemToInventory(item, EquipmentSlot.None);
+                            newItem.InStash = false;
+                        }
+                        else
+                        {
+                            _chestWindow.RemoveFromChest(item);
+                            var newItem = AddItemToInventory(item, EquipmentSlot.None);
+                            newItem.InStash = false;
+                        }
+                    }
+                }
                 else // перемещаем из слота
                 {
                     if (item.InSlot != EquipmentSlot.None)
                     {
                         if (item.Type == ItemType.Consumable) // проверка на понижение статов для экипировки
                         {
+                            switch (item.InSlot)
+                            {
+                                case EquipmentSlot.Cons1:
+                                    conSlot1.RemoveItemFromSlot();
+                                    break;
+                                case EquipmentSlot.Cons2:
+                                    conSlot2.RemoveItemFromSlot();
+                                    break;
+                                case EquipmentSlot.Cons3:
+                                    conSlot3.RemoveItemFromSlot();
+                                    break;
+                                case EquipmentSlot.Cons4:
+                                    conSlot4.RemoveItemFromSlot();
+                                    break;
+                            }
+                            
                             item.InSlot = EquipmentSlot.None;
                         }
                         else

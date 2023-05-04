@@ -1,5 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using InventorySystem;
 using Ui.MoveHandlers;
 using UnityEngine;
 using Zenject;
@@ -8,6 +9,8 @@ namespace Ui
 {
     public class UiAnimationManager : MonoBehaviour
     {
+        private MerchantWindow _merchantWindow;
+        private ChestWindow _chestWindow;
         private InventoryMoveHandler _inventoryMoveHandler;
         private StorageMoveHandler _storageMoveHandler;
         
@@ -18,9 +21,12 @@ namespace Ui
         private bool _inventoryOpen;
         private bool _storageOpen;
 
+
         [Inject]
-        private void Construct(InventoryMoveHandler inventoryMoveHandler, StorageMoveHandler storageMoveHandler)
+        private void Construct(MerchantWindow merchantWindow, ChestWindow chestWindow, InventoryMoveHandler inventoryMoveHandler, StorageMoveHandler storageMoveHandler)
         {
+            _merchantWindow = merchantWindow;
+            _chestWindow = chestWindow;
             _inventoryMoveHandler = inventoryMoveHandler;
             _storageMoveHandler = storageMoveHandler;
         }
