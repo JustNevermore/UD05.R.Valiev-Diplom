@@ -11,6 +11,12 @@ namespace InventorySystem
 {
     public class Item : MonoBehaviour
     {
+        private PlayerStats _playerStats;
+        private ConsumableManager _consumableManager;
+        private AllItemsContainer _allItemsContainer;
+        private ItemStatsWindow _itemStatsWindow;
+        private InventoryWindow _inventoryWindow;
+        
         private ItemData _itemData;
         private ItemConfig _itemConfig;
         private readonly Vector2 _textAnchorMin = new Vector2(0.95f, 0.05f);
@@ -22,20 +28,16 @@ namespace InventorySystem
 
         public ItemData Data => _itemData;
 
-        private PlayerStats _playerStats;
-        private ConsumableManager _consumableManager;
-        private AllItemsContainer _allItemsContainer;
-        private ItemStatsWindow _itemStatsWindow;
-
         private TextMeshProUGUI _amountText;
 
         [Inject]
-        private void Construct(PlayerStats playerStats, ConsumableManager consumableManager, AllItemsContainer allItemsContainer, ItemStatsWindow itemStatsWindow)
+        private void Construct(PlayerStats playerStats, ConsumableManager consumableManager, AllItemsContainer allItemsContainer, ItemStatsWindow itemStatsWindow, InventoryWindow inventoryWindow)
         {
             _playerStats = playerStats;
             _consumableManager = consumableManager;
             _allItemsContainer = allItemsContainer;
             _itemStatsWindow = itemStatsWindow;
+            _inventoryWindow = inventoryWindow;
         }
 
         public void Init(ItemData data)
@@ -102,6 +104,7 @@ namespace InventorySystem
 
             if (_itemData.ItemAmount == 0)
             {
+                _inventoryWindow.RemoveItem(_itemData);
                 Destroy(gameObject);
             }
         }

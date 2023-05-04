@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Environment.Rooms;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -213,7 +214,10 @@ namespace Environment
         {
             foreach (var room in _spawnedRooms)
             {
-                Destroy(room.gameObject);
+                if (room != null)
+                {
+                    Destroy(room.gameObject);
+                }
             }
         }
     }

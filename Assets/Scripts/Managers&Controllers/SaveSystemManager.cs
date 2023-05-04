@@ -8,13 +8,13 @@ namespace Managers_Controllers
 {
     public class SaveSystemManager: IInitializable, IDisposable, ITickable
     {
+        private readonly InventoryWindow _inventoryWindow;
         private SaveSystemJson _saveSystem;
-        private InventoryController _inventoryController;
 
-        public SaveSystemManager(SaveSystemJson saveSystem, InventoryController inventoryController)
+        public SaveSystemManager(InventoryWindow inventoryWindow, SaveSystemJson saveSystem)
         {
+            _inventoryWindow = inventoryWindow;
             _saveSystem = saveSystem;
-            _inventoryController = inventoryController;
         }
         
         public void Initialize()
@@ -43,7 +43,7 @@ namespace Managers_Controllers
         private void SaveData()
         {
             Debug.Log("Save data");
-            var inventoryData = _inventoryController.GetInventoryData();
+            var inventoryData = _inventoryWindow.GetInventoryData();
             var gameData = new GameSaveData(inventoryData.Length);
             gameData.SaveItemDatas = inventoryData;
             _saveSystem.SaveData(gameData);
@@ -53,7 +53,7 @@ namespace Managers_Controllers
         {
             Debug.Log("Load data");
             _saveSystem.LoadData();
-            _inventoryController.SetInventoryData(_saveSystem.GameData.SaveItemDatas);
+            _inventoryWindow.SetInventoryData(_saveSystem.GameData.SaveItemDatas);
         }
     }
 }

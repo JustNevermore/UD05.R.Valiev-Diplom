@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace InventorySystem
 {
@@ -27,6 +26,12 @@ namespace InventorySystem
             {
                 item.SetId(x++);
             }
+
+            var orderedByRarity = from item in allItemsList
+                orderby item.Rarity
+                select item;
+
+            allItemsList = orderedByRarity.ToList();
 
             foreach (var item in allItemsList)
             {

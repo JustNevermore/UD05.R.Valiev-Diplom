@@ -11,6 +11,8 @@ namespace InventorySystem
         private bool _isStackable;
         private ItemType _itemType;
         private int _itemAmount;
+        public EquipmentSlot InSlot;
+        public bool BelongToPlayer;
 
         public int ItemAmount
         {
@@ -25,13 +27,11 @@ namespace InventorySystem
         public int ItemId => _itemId;
         public bool IsStackable => _isStackable;
         public ItemType Type => _itemType;
-        public bool BelongToPlayer;
 
         public ItemData()
         {
             _itemId = 0;
             _itemAmount = 1;
-            BelongToPlayer = false;
         }
         
         public ItemData(int id, AllItemsContainer container)
@@ -41,7 +41,6 @@ namespace InventorySystem
             _isStackable = config.IsStackable;
             _itemType = config.Type;
             _itemAmount = 1;
-            BelongToPlayer = false;
         }
 
         public void CopyData(ItemData refItem)

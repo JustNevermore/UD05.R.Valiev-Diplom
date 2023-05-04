@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Environment;
+using Environment.Rooms;
 using UnityEngine;
 
 namespace Managers_Controllers

@@ -7,22 +7,23 @@ namespace InventorySystem
 {
     public class InventorySlot : MonoBehaviour, IDropHandler
     {
-        [SerializeField] private EquipmentSlot slotType;
-        [SerializeField] private ItemType itemType;
-        
-        private InventoryController _inventoryController;
         private AllItemsContainer _allItemsContainer;
         private InventoryWindow _inventoryWindow;
         private PlayerStats _playerStats;
+        
+        [SerializeField] private EquipmentSlot slotType;
+        [SerializeField] private ItemType itemType;
+        
+        private ItemData _containItem;
 
         public EquipmentSlot SlotType => slotType;
         public ItemType Type => itemType;
+        public ItemData ContainItem => _containItem;
 
-        
+
         [Inject]
-        private void Construct(InventoryController inventoryController, AllItemsContainer allItemsContainer, InventoryWindow inventoryWindow, PlayerStats playerStats)
+        private void Construct(AllItemsContainer allItemsContainer, InventoryWindow inventoryWindow, PlayerStats playerStats)
         {
-            _inventoryController = inventoryController;
             _allItemsContainer = allItemsContainer;
             _inventoryWindow = inventoryWindow;
             _playerStats = playerStats;
@@ -34,66 +35,178 @@ namespace InventorySystem
             if (obj == null)
                 return;
 
-            var anchor = obj.GetComponent<DragDrop>().DragAnchor;
-            var item = obj.GetComponent<Item>().Data;
-            
-            if (item.BelongToPlayer) // принадлежит нам
+            if (obj.GetComponent<Item>())
             {
-                if (item.Type == itemType) // подходит ли тип предмета для ячейки
+                var anchor = obj.GetComponent<DragDrop>().DragAnchor;
+                var item = obj.GetComponent<Item>().Data;
+                var itemConfig = _allItemsContainer.GetConfigById(item.ItemId);
+            
+                if (item.BelongToPlayer) // принадлежит нам
                 {
-                    if (transform.childCount == 0) // есть ли в текущий момент предмет в ячейке
+                    if (item.Type == itemType) // подходит ли тип предмета для ячейки
                     {
-                        if (item.Type == ItemType.Consumable)
+                        if (_containItem == null) // есть ли в текущий момент предмет в ячейке
                         {
-                            _inventoryController.RemoveFromInventory(item);
-                            _inventoryController.AddToSlot(slotType, item);
-                            obj.transform.SetParent(transform);
+                            if (item.Type == ItemType.Consumable)
+                            {
+                                item.InSlot = slotType;
+                                _containItem = item;
+                            }
+                            else
+                            {
+                                item.InSlot = slotType;
+                                _containItem = item;
+                                _playerStats.IncreaseStats(itemConfig);
+                            }
                         }
                         else
                         {
-                            _inventoryController.RemoveFromInventory(item);
-                            _inventoryController.AddToSlot(slotType, item);
-                            obj.transform.SetParent(transform);
-                            _playerStats.IncreaseStats(_allItemsContainer.GetConfigById(item.ItemId));
+                            if (item.Type == ItemType.Consumable)
+                            {
+                                _containItem.InSlot = EquipmentSlot.None;
+                                item.InSlot = slotType;
+                                _containItem = item;
+                            }
+                            else
+                            {
+                                var config = _allItemsContainer.GetConfigById(_containItem.ItemId);
+                                _playerStats.DecreaseStats(config);
+                                _containItem.InSlot = EquipmentSlot.None;
+                                item.InSlot = slotType;
+                                _containItem = item;
+                                _playerStats.IncreaseStats(itemConfig);
+                            }
                         }
+                        
+                        _inventoryWindow.RedrawInventory();
                     }
                     else
                     {
-                        if (item.Type == ItemType.Consumable)
+                        obj.transform.position = anchor;
+                    }
+                }
+                else // покупка сразу в слот
+                {
+                    if (item.Type == itemType) // подходит ли тип предмета для ячейки
+                    {
+                        if (_containItem == null) // есть ли в текущий момент предмет в ячейке
                         {
-                            _inventoryController.RemoveFromSlot(slotType);
-                            _inventoryController.AddToInventory(transform.GetComponentInChildren<Item>().Data);
-                            transform.GetComponentInChildren<Item>().transform
-                                .SetParent(_inventoryWindow.transform);
+                            if (item.IsStackable) // предмет стакается
+                            {
+                                var flag = false;
                             
-                            _inventoryController.RemoveFromInventory(item);
-                            _inventoryController.AddToSlot(slotType, item);
-                            obj.transform.SetParent(transform);
+                                foreach (var invItem in _inventoryWindow.InventoryItems) // ищем стакаемый предмет
+                                {
+                                    if (item.ItemId == invItem.ItemId)
+                                    {
+                                        flag = true;
+                                        invItem.ItemAmount += item.ItemAmount;
+                                    }
+                                }
+
+                                if (!flag)
+                                {
+                                    if (item.Type == ItemType.Consumable)
+                                    {
+                                        _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                    }
+                                    else
+                                    {
+                                        _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                        _playerStats.IncreaseStats(itemConfig);
+                                    }
+                                }
+                                
+                                obj.transform.position = anchor;
+                            }
+                            else // предмет не стакается
+                            {
+                                if (item.Type == ItemType.Consumable)
+                                {
+                                    _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                }
+                                else
+                                {
+                                    _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                    _playerStats.IncreaseStats(itemConfig);
+                                }
+
+                                obj.transform.position = anchor;
+                            }
                         }
                         else
                         {
-                            _playerStats.DecreaseStats(_allItemsContainer.GetConfigById(transform.
-                                GetComponentInChildren<Item>().Data.ItemId));
-                            _inventoryController.RemoveFromSlot(slotType);
-                            _inventoryController.AddToInventory(transform.GetComponentInChildren<Item>().Data);
-                            transform.GetComponentInChildren<Item>().transform.SetParent(_inventoryWindow.transform);
+                            if (item.IsStackable) // предмет стакается
+                            {
+                                var flag = false;
                             
-                            _inventoryController.RemoveFromInventory(item);
-                            _inventoryController.AddToSlot(slotType, item);
-                            obj.transform.SetParent(transform);
-                            _playerStats.IncreaseStats(_allItemsContainer.GetConfigById(item.ItemId));
+                                foreach (var invItem in _inventoryWindow.InventoryItems) // ищем стакаемый предмет
+                                {
+                                    if (item.ItemId == invItem.ItemId)
+                                    {
+                                        flag = true;
+                                        invItem.ItemAmount += item.ItemAmount;
+                                    }
+                                }
+
+                                if (!flag)
+                                {
+                                    if (item.Type == ItemType.Consumable)
+                                    {
+                                        _containItem.InSlot = EquipmentSlot.None;
+                                        _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                    }
+                                    else
+                                    {
+                                        var config = _allItemsContainer.GetConfigById(_containItem.ItemId);
+                                        _playerStats.DecreaseStats(config);
+                                        _containItem.InSlot = EquipmentSlot.None;
+                                        _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                        _playerStats.IncreaseStats(itemConfig);
+                                    }
+                                }
+                                
+                                obj.transform.position = anchor;
+                            }
+                            else // предмет не стакается
+                            {
+                                if (item.Type == ItemType.Consumable)
+                                {
+                                    _containItem.InSlot = EquipmentSlot.None;
+                                    _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                }
+                                else
+                                {
+                                    var config = _allItemsContainer.GetConfigById(_containItem.ItemId);
+                                    _playerStats.DecreaseStats(config);
+                                    _containItem.InSlot = EquipmentSlot.None;
+                                    _containItem = _inventoryWindow.AddItemToInventory(item, slotType);
+                                    _playerStats.IncreaseStats(itemConfig);
+                                }
+
+                                obj.transform.position = anchor;
+                            }
                         }
+                        
+                        _inventoryWindow.RedrawInventory();
+                        _playerStats.DecreaseGold(itemConfig.ItemCost * item.ItemAmount);
+                    }
+                    else
+                    {
+                        obj.transform.position = anchor;
                     }
                 }
-                else
-                {
-                    obj.transform.position = anchor;
-                }
             }
-            else // перетаскивание из магазина сразу в ячейку блокировано
-            {
-                obj.transform.position = anchor;
-            }
+        }
+
+        public void AddItemToSlot(ItemData item)
+        {
+            _containItem = item;
+        }
+
+        public void RemoveItemFromSlot()
+        {
+            _containItem = null;
         }
     }
 }
