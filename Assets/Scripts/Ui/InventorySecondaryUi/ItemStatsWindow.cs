@@ -1,10 +1,11 @@
 ﻿using InventorySystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Ui.InventorySecondaryUi
 {
-    public class ItemStatsWindow : MonoBehaviour
+    public class ItemStatsWindow : MonoBehaviour, IPointerClickHandler
     {
         private readonly string fireElement = "Огонь";
         private readonly string iceElement = "Лёд";
@@ -133,6 +134,11 @@ namespace Ui.InventorySecondaryUi
                 field.gameObject.SetActive(true);
                 field.text = $"{target}";
             }
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            gameObject.SetActive(false);
         }
     }
 }

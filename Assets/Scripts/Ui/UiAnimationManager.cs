@@ -1,6 +1,8 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 using InventorySystem;
+using Signals;
+using Ui.InventorySecondaryUi;
 using Ui.MoveHandlers;
 using UnityEngine;
 using Zenject;
@@ -9,13 +11,23 @@ namespace Ui
 {
     public class UiAnimationManager : MonoBehaviour
     {
+        private SignalBus _signalBus;
         private MerchantWindow _merchantWindow;
         private ChestWindow _chestWindow;
-        private InventoryMoveHandler _inventoryMoveHandler;
-        private StorageMoveHandler _storageMoveHandler;
+        private ItemStatsWindow _itemStatsWindow;
         
+        [SerializeField] private InventoryMoveHandler inventoryMoveHandler;
+        [SerializeField] private StorageMoveHandler storageMoveHandler;
+        [Space]
         [SerializeField] private float animDuration;
+        
         private float _storagePanelWidth;
+
+        private float _iconOffset = 75f;
+        private float _canvasHeight;
+        private float _canvasWidth;
+        private float _statsHeightOffset;
+        private float _statsWidthOffset;
 
         private bool _animBlock;
         private bool _inventoryOpen;
@@ -23,17 +35,40 @@ namespace Ui
 
 
         [Inject]
-        private void Construct(MerchantWindow merchantWindow, ChestWindow chestWindow, InventoryMoveHandler inventoryMoveHandler, StorageMoveHandler storageMoveHandler)
+        private void Construct(SignalBus signalBus, MerchantWindow merchantWindow, ChestWindow chestWindow, ItemStatsWindow itemStatsWindow)
         {
+            _signalBus = signalBus;
             _merchantWindow = merchantWindow;
             _chestWindow = chestWindow;
-            _inventoryMoveHandler = inventoryMoveHandler;
-            _storageMoveHandler = storageMoveHandler;
+            _itemStatsWindow = itemStatsWindow;
         }
 
         private void Start()
         {
-            _storagePanelWidth = _storageMoveHandler.gameObject.GetComponent<RectTransform>().sizeDelta.x;
+            _canvasHeight = GetComponent<RectTransform>().sizeDelta.y;
+            _canvasWidth = GetComponent<RectTransform>().sizeDelta.x;
+            _statsHeightOffset = _itemStatsWindow.GetComponent<RectTransform>().sizeDelta.y * 0.5f;
+            _statsWidthOffset = _itemStatsWindow.GetComponent<RectTransform>().sizeDelta.x * 0.5f;
+            
+            _signalBus.Subscribe<OnItemClickForStatsSignal>(ShowItemStatsWindow);
+            _signalBus.Subscribe<OpenMerchantSignal>(OpenMerchant);
+            _signalBus.Subscribe<CloseMerchantSignal>(CloseMerchant);
+            _signalBus.Subscribe<OpenChestSignal>(OpenChest);
+            _signalBus.Subscribe<CloseChestSignal>(CloseChest);
+
+            _itemStatsWindow.gameObject.SetActive(false);
+            _merchantWindow.gameObject.SetActive(false);
+            _chestWindow.gameObject.SetActive(false);
+            _storagePanelWidth = storageMoveHandler.GetComponent<RectTransform>().sizeDelta.x;
+        }
+
+        private void OnDestroy()
+        {
+            _signalBus.Unsubscribe<OnItemClickForStatsSignal>(ShowItemStatsWindow);
+            _signalBus.Unsubscribe<OpenMerchantSignal>(OpenMerchant);
+            _signalBus.Unsubscribe<CloseMerchantSignal>(CloseMerchant);
+            _signalBus.Unsubscribe<OpenChestSignal>(OpenChest);
+            _signalBus.Unsubscribe<CloseChestSignal>(CloseChest);
         }
 
         public void ToggleInventory()
@@ -47,60 +82,60 @@ namespace Ui
             
             if (!_inventoryOpen)
             {
-                _inventoryMoveHandler.gameObject.SetActive(true);
-                _inventoryMoveHandler.OpenInventory(animDuration);
+                inventoryMoveHandler.gameObject.SetActive(true);
+                inventoryMoveHandler.OpenInventory(animDuration);
                 _inventoryOpen = true;
             }
             else
             {
-                _inventoryMoveHandler.CloseInventory(animDuration);
+                inventoryMoveHandler.CloseInventory(animDuration);
                 _inventoryOpen = false;
 
                 if (_storageOpen)
                 {
-                    _storageMoveHandler.CloseStorage(animDuration);
+                    storageMoveHandler.CloseStorage(animDuration);
                     _storageOpen = false;
                 }
             }
         }
 
-        public void ToggleStorage()
+        private void OpenStorage()
         {
-            if (_animBlock)
-            {
-                return;
-            }
-            
-            BlockAnimation();
-            
             if (!_inventoryOpen)
             {
                 if (!_storageOpen)
                 {
-                    _inventoryMoveHandler.gameObject.SetActive(true);
-                    _inventoryMoveHandler.OpenInventory(animDuration, _storagePanelWidth);
+                    BlockAnimation();
+                    
+                    inventoryMoveHandler.gameObject.SetActive(true);
+                    inventoryMoveHandler.OpenInventory(animDuration, _storagePanelWidth);
                     _inventoryOpen = true;
-                    _storageMoveHandler.gameObject.SetActive(true);
-                    _storageMoveHandler.OpenStorage(animDuration);
+                    storageMoveHandler.gameObject.SetActive(true);
+                    storageMoveHandler.OpenStorage(animDuration);
                     _storageOpen = true;
                 }
             }
             else
             {
-                if (!_storageOpen)
-                {
-                    _inventoryMoveHandler.PushInventory(_storagePanelWidth, animDuration);
-                    _storageMoveHandler.gameObject.SetActive(true);
-                    _storageMoveHandler.OpenStorage(animDuration);
-                    _storageOpen = true;
-                }
-                else
-                {
-                    _inventoryMoveHandler.CloseInventory(animDuration, _storagePanelWidth);
-                    _inventoryOpen = false;
-                    _storageMoveHandler.CloseStorage(animDuration);
-                    _storageOpen = false;
-                }
+                BlockAnimation();
+                
+                inventoryMoveHandler.PushInventory(_storagePanelWidth, animDuration);
+                storageMoveHandler.gameObject.SetActive(true);
+                storageMoveHandler.OpenStorage(animDuration);
+                _storageOpen = true;
+            }
+        }
+
+        private void CloseStorage()
+        {
+            if (_storageOpen)
+            {
+                BlockAnimation();
+            
+                inventoryMoveHandler.CloseInventory(animDuration, _storagePanelWidth);
+                _inventoryOpen = false;
+                storageMoveHandler.CloseStorage(animDuration);
+                _storageOpen = false;
             }
         }
 
@@ -110,13 +145,59 @@ namespace Ui
             await UniTask.Delay(TimeSpan.FromSeconds(animDuration));
             _animBlock = false;
         }
-        
-        private void Update()
+
+        private void OpenMerchant()
         {
-            if (Input.GetKeyDown(KeyCode.M) || SimpleInput.GetButtonDown("Shop"))
+            _merchantWindow.gameObject.SetActive(true);
+            OpenStorage();
+        }
+
+        private void CloseMerchant()
+        {
+            _merchantWindow.gameObject.SetActive(false);
+            CloseStorage();
+        }
+
+        private void OpenChest()
+        {
+            _chestWindow.gameObject.SetActive(true);
+            OpenStorage();
+        }
+        
+        private void CloseChest()
+        {
+            _chestWindow.gameObject.SetActive(false);
+            CloseStorage();
+        }
+        
+        private void ShowItemStatsWindow(OnItemClickForStatsSignal signal)
+        {
+            _itemStatsWindow.gameObject.SetActive(true);
+            
+            float xOffset;
+            float yOffset;
+            
+            if (signal.Coord.x > _canvasWidth * 0.5f)
             {
-                ToggleStorage();
+                xOffset = signal.Coord.x - _statsWidthOffset - _iconOffset;
             }
+            else
+            {
+                xOffset = signal.Coord.x + _statsWidthOffset + _iconOffset;
+            }
+            
+            if (signal.Coord.y > _canvasHeight * 0.5f)
+            {
+                yOffset = signal.Coord.y - _statsHeightOffset + _iconOffset;
+            }
+            else
+            {
+                yOffset = signal.Coord.y + _statsHeightOffset - _iconOffset;
+            }
+            
+            var coord = new Vector3(xOffset, yOffset, 0);
+            
+            _itemStatsWindow.transform.position = coord;
         }
     }
 }

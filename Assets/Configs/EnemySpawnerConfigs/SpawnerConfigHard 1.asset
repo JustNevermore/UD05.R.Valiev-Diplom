@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e632d5f4869404987e4e00720bd7554, type: 3}
   m_Name: SpawnerConfigHard 1
   m_EditorClassIdentifier: 
-  swordSkelSpawn: 1
-  swordSkelMin: 15
-  swordSkelMax: 20
-  bowSkelSpawn: 1
-  bowSkelMin: 15
-  bowSkelMax: 20
+  swordSkelSpawn: 0
+  swordSkelMin: 0
+  swordSkelMax: 0
+  bowSkelSpawn: 0
+  bowSkelMin: 0
+  bowSkelMax: 0
   staffSkelSpawn: 1
-  staffSkelMin: 15
-  staffSkelMax: 20
+  staffSkelMin: 3
+  staffSkelMax: 5

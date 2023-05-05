@@ -13,6 +13,8 @@ namespace InventorySystem
 
         private bool _dropItem;
 
+        public Vector3 canvasScale;
+
         public Vector3 DragAnchor => _dragAnchor;
 
         //Инициализация вызывается на Start для решения проблемы с гонкой Awake
@@ -51,7 +53,7 @@ namespace InventorySystem
         
         public void OnDrag(PointerEventData eventData)
         {
-            _rectTransform.anchoredPosition += eventData.delta;
+            _rectTransform.anchoredPosition += eventData.delta / canvasScale;
         }
 
         public void OnEndDrag(PointerEventData eventData)

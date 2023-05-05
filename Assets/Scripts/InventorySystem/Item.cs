@@ -1,7 +1,9 @@
 using System;
 using Managers_Controllers;
 using Player;
+using Signals;
 using TMPro;
+using Ui;
 using Ui.InventorySecondaryUi;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,11 +13,12 @@ namespace InventorySystem
 {
     public class Item : MonoBehaviour
     {
-        private PlayerStats _playerStats;
+        private SignalBus _signalBus;
         private ConsumableManager _consumableManager;
         private AllItemsContainer _allItemsContainer;
         private ItemStatsWindow _itemStatsWindow;
         private InventoryWindow _inventoryWindow;
+        private UiAnimationManager _uiAnimationManager;
         
         private ItemData _itemData;
         private ItemConfig _itemConfig;
@@ -31,13 +34,14 @@ namespace InventorySystem
         private TextMeshProUGUI _amountText;
 
         [Inject]
-        private void Construct(PlayerStats playerStats, ConsumableManager consumableManager, AllItemsContainer allItemsContainer, ItemStatsWindow itemStatsWindow, InventoryWindow inventoryWindow)
+        private void Construct(SignalBus signalBus, ConsumableManager consumableManager, AllItemsContainer allItemsContainer, ItemStatsWindow itemStatsWindow, InventoryWindow inventoryWindow, UiAnimationManager uiAnimationManager)
         {
-            _playerStats = playerStats;
+            _signalBus = signalBus;
             _consumableManager = consumableManager;
             _allItemsContainer = allItemsContainer;
             _itemStatsWindow = itemStatsWindow;
             _inventoryWindow = inventoryWindow;
+            _uiAnimationManager = uiAnimationManager;
         }
 
         public void Init(ItemData data)
@@ -56,7 +60,7 @@ namespace InventorySystem
 
             if (!GetComponent<DragDrop>())
             {
-                gameObject.AddComponent<DragDrop>();
+                gameObject.AddComponent<DragDrop>().canvasScale = _uiAnimationManager.transform.localScale;
             }
 
             if (!GetComponent<CanvasGroup>())
@@ -116,6 +120,11 @@ namespace InventorySystem
 
         public void ShowStats()
         {
+            if (_itemData.InSlot is EquipmentSlot.Cons1 or EquipmentSlot.Cons2 or EquipmentSlot.Cons3 or EquipmentSlot.Cons4)
+                return;
+            
+            var coord = new Vector2(transform.position.x, transform.position.y);
+            _signalBus.Fire(new OnItemClickForStatsSignal(coord));
             _itemStatsWindow.DisplayItemStats(_itemConfig);
         }
 

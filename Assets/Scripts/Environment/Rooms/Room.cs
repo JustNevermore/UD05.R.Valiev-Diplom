@@ -7,9 +7,13 @@ namespace Environment.Rooms
     {
         [SerializeField] private RoomType type;
         [SerializeField] private RoomMaster roomMaster;
+        [SerializeField] private Chest chest;
+        
+        private const int _chestSpawnChance = 5;
         
         private Room[,] _allRooms;
 
+        [Space]
         public GameObject doorU;
         public GameObject doorD;
         public GameObject doorR;
@@ -30,7 +34,8 @@ namespace Environment.Rooms
             if (doorR && !doorR.activeInHierarchy) _interactableDoors.Add(doorR);
             if (doorL && !doorL.activeInHierarchy) _interactableDoors.Add(doorL);
 
-                if (roomMaster) roomMaster.gameObject.SetActive(true);
+            if (roomMaster) roomMaster.gameObject.SetActive(true);
+            if (chest) chest.gameObject.SetActive(false);
         }
 
         public void SetActiveOtherRooms(bool flag)
@@ -52,6 +57,24 @@ namespace Environment.Rooms
             foreach (var door in _interactableDoors)
             {
                 door.SetActive(flag);
+            }
+        }
+
+        public void TrySpawnChest()
+        {
+            var rnd = Random.Range(0, _chestSpawnChance);
+
+            if (rnd == 0)
+            {
+                chest.gameObject.SetActive(true);
+            }
+        }
+
+        public void UnlockChest()
+        {
+            if (chest != null && chest.gameObject.activeInHierarchy)
+            {
+                chest.ActivateChest();
             }
         }
     }

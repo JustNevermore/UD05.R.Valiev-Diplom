@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Enemies
 {
-    public class StatsSystem : MonoBehaviour
+    public class EnemyStats : MonoBehaviour
     {
         private SignalBus _signalBus;
         private HurtBox _hurtBox;

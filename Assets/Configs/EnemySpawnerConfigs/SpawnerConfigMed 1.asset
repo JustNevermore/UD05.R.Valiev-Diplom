@@ -15,9 +15,9 @@ MonoBehaviour:
   swordSkelSpawn: 0
   swordSkelMin: 0
   swordSkelMax: 0
-  bowSkelSpawn: 0
-  bowSkelMin: 0
-  bowSkelMax: 0
-  staffSkelSpawn: 1
-  staffSkelMin: 5
-  staffSkelMax: 10
+  bowSkelSpawn: 1
+  bowSkelMin: 3
+  bowSkelMax: 5
+  staffSkelSpawn: 0
+  staffSkelMin: 0
+  staffSkelMax: 0

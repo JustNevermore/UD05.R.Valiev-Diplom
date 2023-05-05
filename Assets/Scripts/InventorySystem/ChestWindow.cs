@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
-using Environment.Chests;
+﻿using System;
+using System.Collections.Generic;
+using Environment;
 using Player;
+using Signals;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
@@ -10,6 +12,7 @@ namespace InventorySystem
     public class ChestWindow : MonoBehaviour, IDropHandler
     {
         private DiContainer _diContainer;
+        private SignalBus _signalBus;
         private AllItemsContainer _allItemsContainer;
         private PlayerStats _playerStats;
         private InventoryWindow _inventoryWindow;
@@ -19,14 +22,25 @@ namespace InventorySystem
         private Chest _currentChest;
 
         [Inject]
-        private void Construct(DiContainer diContainer, AllItemsContainer allItemsContainer, PlayerStats playerStats, InventoryWindow inventoryWindow)
+        private void Construct(DiContainer diContainer, SignalBus signalBus, AllItemsContainer allItemsContainer, PlayerStats playerStats, InventoryWindow inventoryWindow)
         {
             _diContainer = diContainer;
+            _signalBus = signalBus;
             _allItemsContainer = allItemsContainer;
             _playerStats = playerStats;
             _inventoryWindow = inventoryWindow;
         }
-        
+
+        private void Awake()
+        {
+            _signalBus.Subscribe<CloseChestSignal>(CloseChestWindow);
+        }
+
+        private void OnDestroy()
+        {
+            _signalBus.Unsubscribe<CloseChestSignal>(CloseChestWindow);
+        }
+
         public void OpenChestWindow(Chest chest, List<ItemData> items)
         {
             _currentChest = chest;
@@ -35,7 +49,7 @@ namespace InventorySystem
             RedrawWindow();
         }
 
-        public void CloseChestWindow()
+        private void CloseChestWindow()
         {
             _currentChest.UpdateChestLoot(_currentChestItems);
         }

@@ -6,6 +6,7 @@ namespace InventorySystem
 {
     public class AllItemsContainer : MonoBehaviour
     {
+        [SerializeField] private GameObject itemPrefab;
         [SerializeField] private Sprite borderImage;
         [SerializeField] private float fontSize = 50;
         [SerializeField] private Color textColor = Color.red;
@@ -18,6 +19,7 @@ namespace InventorySystem
         public Sprite BorderImage => borderImage;
         public float FontSize => fontSize;
         public Color TextColor => textColor;
+        public GameObject ItemPrefab => itemPrefab;
 
         private void Awake()
         {

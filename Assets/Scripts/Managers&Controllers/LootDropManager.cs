@@ -10,9 +10,13 @@ namespace Managers_Controllers
     {
         private AllItemsContainer _allItemsContainer;
 
-        private int _totalWeight;
-        private int _artifactWeight;
+        [SerializeField] private int chestSpawnItemsCount;
 
+        private int _totalWeight;
+
+        public int ChestSpawnItemsCount => chestSpawnItemsCount;
+
+        
         [Inject]
         private void Construct(AllItemsContainer allItemsContainer)
         {
@@ -26,16 +30,6 @@ namespace Managers_Controllers
             foreach (var item in _allItemsContainer.AllItemsList)
             {
                 _totalWeight += item.Rarity;
-            }
-
-            _artifactWeight = 0;
-
-            foreach (var item in _allItemsContainer.AllItemsList)
-            {
-                if (item.Type != ItemType.Consumable)
-                {
-                    _artifactWeight += item.Rarity;
-                }
             }
         }
 

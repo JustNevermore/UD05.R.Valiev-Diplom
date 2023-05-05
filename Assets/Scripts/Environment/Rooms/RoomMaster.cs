@@ -52,10 +52,14 @@ namespace Environment.Rooms
         {
             SetDifficulty();
             SetupRoom();
+        }
+
+        private void OnEnable()
+        {
             _signalBus.Subscribe<OnEnemyDeathSignal>(DeathRegister);
         }
 
-        private void OnDestroy()
+        private void OnDisable()
         {
             _signalBus.Unsubscribe<OnEnemyDeathSignal>(DeathRegister);
         }
@@ -75,6 +79,11 @@ namespace Environment.Rooms
             else
             {
                 _difficulty = RoomDifficulty.Hard;
+            }
+
+            if (_difficulty == RoomDifficulty.Hard)
+            {
+                _myRoom.TrySpawnChest();
             }
         }
         
@@ -193,6 +202,7 @@ namespace Environment.Rooms
             
             _myRoom.SetActiveOtherRooms(true);
             _myRoom.CloseDoors(false);
+            _myRoom.UnlockChest();
             light.color = _greenLight;
             gameObject.SetActive(false);
         }

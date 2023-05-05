@@ -18,6 +18,6 @@ MonoBehaviour:
   bowSkelSpawn: 1
   bowSkelMin: 2
   bowSkelMax: 5
-  staffSkelSpawn: 1
-  staffSkelMin: 1
-  staffSkelMax: 3
+  staffSkelSpawn: 0
+  staffSkelMin: 0
+  staffSkelMax: 0

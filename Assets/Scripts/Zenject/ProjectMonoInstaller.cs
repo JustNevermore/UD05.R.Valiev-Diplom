@@ -1,11 +1,13 @@
 using SystemSettings;
-using Zenject;
 
-public class ProjectMonoInstaller : MonoInstaller
+namespace Zenject
 {
-    public override void InstallBindings()
+    public class ProjectMonoInstaller : MonoInstaller
     {
-        SignalBusInstaller.Install(Container);
-        Container.BindInterfacesAndSelfTo<ProjectSetup>().AsSingle().NonLazy();
+        public override void InstallBindings()
+        {
+            SignalBusInstaller.Install(Container);
+            Container.BindInterfacesAndSelfTo<ProjectSetup>().AsSingle().NonLazy();
+        }
     }
 }
