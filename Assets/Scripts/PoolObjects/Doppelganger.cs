@@ -8,7 +8,6 @@ namespace PoolObjects
     public class Doppelganger : MonoBehaviour
     {
         private readonly float _disableTime = 5f;
-        private float _damage;
         private float _interval;
         private bool _ready;
         [SerializeField] private float radius;
@@ -27,9 +26,8 @@ namespace PoolObjects
             _pool = poolManager;
         }
         
-        public void Init(float damage, float interval)
+        public void Init(float interval)
         {
-            _damage = damage;
             _interval = interval;
 
             _attackPoint = new Vector3(transform.position.x, transform.position.y + 2f, transform.position.z);
@@ -57,7 +55,7 @@ namespace PoolObjects
                         
                         var spell = _pool.GetSpell();
                         spell.transform.position = _attackPoint;
-                        spell.Init(dir, _damage);
+                        spell.Init(dir);
                         spell.Launch();
                     }
                     else
@@ -67,7 +65,7 @@ namespace PoolObjects
                         
                         var spell = _pool.GetSpell();
                         spell.transform.position = _attackPoint;
-                        spell.Init(dir, _damage);
+                        spell.Init(dir);
                         spell.Launch();
                     }
                 }

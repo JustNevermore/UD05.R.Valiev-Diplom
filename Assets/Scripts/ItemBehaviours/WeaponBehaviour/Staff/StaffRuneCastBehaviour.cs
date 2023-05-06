@@ -34,7 +34,7 @@ namespace ItemBehaviours.WeaponBehaviour.Staff
             
             var spell = Pool.GetSpell();
             spell.transform.position = attackPos;
-            spell.Init(dir, Stats.TotalAttackDamage);
+            spell.Init(dir);
             spell.Launch();
         }
 
@@ -45,7 +45,7 @@ namespace ItemBehaviours.WeaponBehaviour.Staff
 
             var rune = Pool.GetRune();
             rune.transform.position = Controller.transform.position;
-            rune.Init(Stats.TotalSpecialDamage);
+            rune.Init();
         }
     }
 }

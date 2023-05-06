@@ -49,7 +49,11 @@ MonoBehaviour:
   defenceCooldownValue: 4
   animTimeoutValue: 0.5
   pushRadius: 10
-  pushForce: 2000
+  jumpForce: 3
+  hitDistanceOffset: 1
   effectLayer:
     serializedVersion: 2
     m_Bits: 4096
+  wallsLayer:
+    serializedVersion: 2
+    m_Bits: 8192

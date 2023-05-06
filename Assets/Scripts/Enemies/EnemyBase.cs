@@ -15,14 +15,14 @@ namespace Enemies
         protected PlayerController Player;
         protected Rigidbody Rb;
         protected PoolManager Pool;
-        
+
+        private EnemyStats _stats;
         private HurtBox _hurtBox;
         private AttackTrigger _attackTrigger;
         private EscapeTrigger _escapeTrigger;
         protected AttackPosMarker AttackPos;
 
         private readonly float _movingRotateSpeed = 200f;
-        protected readonly float AimingRotateSpeed = 200f;
         [SerializeField] private float moveSpeed;
         [SerializeField] private bool canEscape;
         [SerializeField] private float moveUpdateTime;
@@ -31,6 +31,7 @@ namespace Enemies
         [SerializeField] protected float attackDelay;
         [SerializeField] protected LayerMask playerLayer;
         
+        
         private readonly float _targetUpdateTime = 0.5f;
 
         private readonly float _rndOffset = 10f;
@@ -38,6 +39,7 @@ namespace Enemies
         private Vector3 _direction;
 
         private Coroutine _actionCor;
+        private Coroutine _slowCor;
 
         protected bool CanMove;
         protected bool CanAttack;
@@ -55,6 +57,7 @@ namespace Enemies
         private void Awake()
         {
             Rb = GetComponent<Rigidbody>();
+            _stats = GetComponent<EnemyStats>();
             _hurtBox = GetComponent<HurtBox>();
             
             _attackTrigger = GetComponentInChildren<AttackTrigger>();
@@ -82,7 +85,7 @@ namespace Enemies
 
         private void OnDestroy()
         {
-            _hurtBox.OnGetSlow += GetSlow;
+            _hurtBox.OnGetSlow -= GetSlow;
             
             _attackTrigger.OnEnterAttackRange -= StartAttack;
             _attackTrigger.OnExitAttackRange -= StopAttack;
@@ -239,16 +242,30 @@ namespace Enemies
         
         private void GetSlow()
         {
-            StartCoroutine(SlowCoroutine());
+            if (gameObject.activeInHierarchy)
+            {
+                if (_slowCor == null)
+                {
+                    _slowCor = StartCoroutine(SlowCoroutine());
+                }
+                else
+                {
+                    StopCoroutine(_slowCor);
+                    moveSpeed *= SlowValue;
+                    _slowCor = StartCoroutine(SlowCoroutine());
+                }
+            }
         }
 
         private IEnumerator SlowCoroutine()
         {
-            moveSpeed *= SlowValue;
+            moveSpeed /= SlowValue;
             
             yield return new WaitForSeconds(SlowDuration);
 
-            moveSpeed *= 2f;
+            moveSpeed *= SlowValue;
+
+            _slowCor = null;
         }
     }
 }

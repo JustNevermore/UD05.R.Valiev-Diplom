@@ -44,14 +44,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6a995e3bbb34f409fe0a212b4ef7089, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackCooldown: 0
-  specialCooldown: 0
-  animTimeout: 0
+  attackCooldown: 0.5
+  specialCooldown: 3
+  animTimeout: 0.3
   attackCooldownValue: 0.5
   specialCooldownValue: 3
   animTimeoutValue: 0.3
-  effectRadius: 5
-  pushForce: 2000
+  effectRadius: 7
+  jumpForce: 2
   effectLayer:
     serializedVersion: 2
     m_Bits: 4096
+  wallsLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  hitDistanceOffset: 1

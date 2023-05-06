@@ -55,5 +55,10 @@ MonoBehaviour:
   effectLayer:
     serializedVersion: 2
     m_Bits: 4096
-  recoilValue: 1500
-  pushForce: 2000
+  recoilDistance: 3
+  jumpForce: 1
+  pushDistance: 5
+  wallsLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  hitDistanceOffset: 1

@@ -13,8 +13,10 @@ namespace ItemBehaviours.NecklaceBehaviour
         [SerializeField] private float defenceCooldownValue;
         [SerializeField] private float animTimeoutValue;
         [SerializeField] private float pushRadius;
-        [SerializeField] private float pushForce;
+        [SerializeField] private float jumpForce;
+        [SerializeField] private float hitDistanceOffset;
         [SerializeField] private LayerMask effectLayer;
+        [SerializeField] private LayerMask wallsLayer;
         
         private static readonly int BarrierTrigger = Animator.StringToHash("Barrier");
         
@@ -54,8 +56,20 @@ namespace ItemBehaviours.NecklaceBehaviour
                 {
                     if (_pushColliders[i].GetComponent<EnemyBase>())
                     {
-                        var rb = _pushColliders[i].GetComponent<Rigidbody>();
-                        rb.AddExplosionForce(pushForce, Rb.transform.position, pushRadius);
+                        var dir = (_pushColliders[i].transform.position - Rb.transform.position).normalized;
+                        var pos = Rb.transform.position + dir * pushRadius;
+                        
+                        var startPos = Controller.ZeroPos.transform.position;
+
+                        Ray ray = new Ray(startPos, dir);
+
+                        if (Physics.Raycast(ray, out RaycastHit hit, pushRadius, wallsLayer))
+                        {
+                            var endPos = new Vector3(hit.point.x, hit.point.y - 1, hit.point.z);
+                            pos = endPos - dir * hitDistanceOffset;
+                        }
+
+                        _pushColliders[i].transform.DOJump(pos, jumpForce, 1, _scaleTime);
                     }
                 }
             }
@@ -67,18 +81,6 @@ namespace ItemBehaviours.NecklaceBehaviour
             
             Rb.isKinematic = true;
             Rb.isKinematic = false;
-
-            await UniTask.Delay(TimeSpan.FromSeconds(_scaleTime));
-
-            if (_pushTargets > 0)
-            {
-                for (int i = 0; i < _pushTargets; i++)
-                {
-                    var rb = _pushColliders[i].GetComponent<Rigidbody>();
-                    rb.isKinematic = true; // гасим инерцию
-                    rb.isKinematic = false;
-                }
-            }
         }
     }
 }

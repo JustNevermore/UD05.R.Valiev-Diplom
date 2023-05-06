@@ -1,5 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Enemies;
 using Managers_Controllers;
 using Markers;
@@ -14,8 +15,10 @@ namespace ItemBehaviours.WeaponBehaviour.Staff
         [SerializeField] private float specialCooldownValue;
         [SerializeField] private float animTimeoutValue;
         [SerializeField] private float effectRadius;
-        [SerializeField] private float pushForce;
+        [SerializeField] private float jumpForce;
         [SerializeField] private LayerMask effectLayer;
+        [SerializeField] private LayerMask wallsLayer;
+        [SerializeField] private float hitDistanceOffset;
         
         private int _specialHit;
         private Collider[] _colliders = new Collider[30];
@@ -42,7 +45,7 @@ namespace ItemBehaviours.WeaponBehaviour.Staff
             
             var spell = Pool.GetSpell();
             spell.transform.position = attackPos;
-            spell.Init(dir, Stats.TotalAttackDamage);
+            spell.Init(dir);
             spell.Launch();
         }
 
@@ -59,27 +62,27 @@ namespace ItemBehaviours.WeaponBehaviour.Staff
             {
                 for (int i = 0; i < _specialHit; i++)
                 {
-                    _colliders[i].GetComponent<HurtBox>().GetDamage(Stats.TotalSpecialDamage);
+                    var target = _colliders[i].GetComponent<HurtBox>();
+                    target.GetDamage(Stats.TotalSpecialDamage);
+                    if (Stats.HasDot) target.GetDotDamage(Stats.TotalDotDamage);
+                    if (Stats.HasSlow) target.GetSlow();
 
                     if (_colliders[i].GetComponent<EnemyBase>())
                     {
-                        var rb = _colliders[i].GetComponent<Rigidbody>();
-                        rb.AddExplosionForce(pushForce, Rb.transform.position, effectRadius);
-                    }
-                }
-            }
-            
-            await UniTask.Delay(TimeSpan.FromSeconds(_pushTime));
+                        var dir = (_colliders[i].transform.position - Rb.transform.position).normalized;
+                        var pos = Rb.transform.position + dir * effectRadius;
+                        
+                        var startPos = Controller.ZeroPos.transform.position;
 
-            if (_specialHit > 0)
-            {
-                for (int i = 0; i < _specialHit; i++)
-                {
-                    if (_colliders[i].GetComponent<EnemyBase>())
-                    {
-                        var rb = _colliders[i].GetComponent<Rigidbody>();
-                        rb.isKinematic = true; // гасим инерцию
-                        rb.isKinematic = false;
+                        Ray ray = new Ray(startPos, dir);
+
+                        if (Physics.Raycast(ray, out RaycastHit hit, effectRadius, wallsLayer))
+                        {
+                            var endPos = new Vector3(hit.point.x, hit.point.y - 1, hit.point.z);
+                            pos = endPos - dir * hitDistanceOffset;
+                        }
+
+                        _colliders[i].transform.DOJump(pos, jumpForce, 1, _pushTime);
                     }
                 }
             }

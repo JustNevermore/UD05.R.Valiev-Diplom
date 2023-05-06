@@ -184,59 +184,59 @@ namespace Player
 
         private async void GetActionInput()
         {
-            if (!_moveSet)
-                return;
-
-            if (Input.GetKeyDown(KeyCode.J) || SimpleInput.GetButtonDown(AttackButton))
+            if (_moveSet)
             {
-                if (_canAttack && !_attackCd)
+                if (Input.GetKeyDown(KeyCode.J) || SimpleInput.GetButtonDown(AttackButton))
                 {
-                    _moveSet.Attack();
-                    StartCoroutine(AttackCoroutine());
-                    _canSpecial = false;
-                    _canDefend = false;
-                
-                    await UniTask.Delay(TimeSpan.FromSeconds(_attackTimeout));
-                
-                    _canSpecial = true;
-                    _canDefend = true;
+                    if (_canAttack && !_attackCd)
+                    {
+                        _moveSet.Attack();
+                        StartCoroutine(AttackCoroutine());
+                        _canSpecial = false;
+                        _canDefend = false;
+
+                        await UniTask.Delay(TimeSpan.FromSeconds(_attackTimeout));
+
+                        _canSpecial = true;
+                        _canDefend = true;
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.K) || SimpleInput.GetButtonDown(SpecialButton))
+                {
+                    if (_canSpecial && !_specialCd)
+                    {
+                        _moveSet.Special();
+                        StartCoroutine(SpecialCoroutine());
+                        StartCoroutine(MoveTimeoutCoroutine(_specialTimeout));
+                        _canAttack = false;
+                        _canDefend = false;
+
+                        await UniTask.Delay(TimeSpan.FromSeconds(_specialTimeout));
+
+                        _canAttack = true;
+                        _canDefend = true;
+                    }
                 }
             }
-            
-            if (Input.GetKeyDown(KeyCode.K) || SimpleInput.GetButtonDown(SpecialButton))
+
+            if (_defenceSkill)
             {
-                if (_canSpecial && !_specialCd)
+                if (Input.GetKeyDown(KeyCode.L) || SimpleInput.GetButtonDown(DefenceButton))
                 {
-                    _moveSet.Special();
-                    StartCoroutine(SpecialCoroutine());
-                    StartCoroutine(MoveTimeoutCoroutine(_specialTimeout));
-                    _canAttack = false;
-                    _canDefend = false;
+                    if (_canDefend && !_defenceCd)
+                    {
+                        _defenceSkill.Defend();
+                        StartCoroutine(DefendCoroutine());
+                        StartCoroutine(MoveTimeoutCoroutine(_defenceTimeout));
+                        _canAttack = false;
+                        _canSpecial = false;
 
-                    await UniTask.Delay(TimeSpan.FromSeconds(_specialTimeout));
-                
-                    _canAttack = true;
-                    _canDefend = true;
-                }
-            }
+                        await UniTask.Delay(TimeSpan.FromSeconds(_defenceTimeout));
 
-            if (!_defenceSkill)
-                return;
-            
-            if (Input.GetKeyDown(KeyCode.L) || SimpleInput.GetButtonDown(DefenceButton))
-            {
-                if (_canDefend && !_defenceCd)
-                {
-                    _defenceSkill.Defend();
-                    StartCoroutine(DefendCoroutine());
-                    StartCoroutine(MoveTimeoutCoroutine(_defenceTimeout));
-                    _canAttack = false;
-                    _canSpecial = false;
-
-                    await UniTask.Delay(TimeSpan.FromSeconds(_defenceTimeout));
-                
-                    _canAttack = true;
-                    _canSpecial = true;
+                        _canAttack = true;
+                        _canSpecial = true;
+                    }
                 }
             }
         }

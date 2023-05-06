@@ -5,11 +5,12 @@ using Signals;
 using Ui.InventorySecondaryUi;
 using Ui.MoveHandlers;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Ui
 {
-    public class UiAnimationManager : MonoBehaviour
+    public class UiController : MonoBehaviour
     {
         private SignalBus _signalBus;
         private MerchantWindow _merchantWindow;

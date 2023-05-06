@@ -32,7 +32,7 @@ MonoBehaviour:
   weaponView: {fileID: 0}
   defenceSkill: {fileID: 0}
   elementOfDamage: 3
-  bonusDamage: 50
+  bonusDamage: 10
   hasDot: 1
   dotDamage: 10
   hasSlow: 1

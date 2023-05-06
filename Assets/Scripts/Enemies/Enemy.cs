@@ -4,7 +4,7 @@ namespace Enemies
 {
     public abstract class Enemy : MonoBehaviour
     {
-        protected readonly float SlowDuration = 1f;
-        protected readonly float SlowValue = 0.5f;
+        protected readonly float SlowDuration = 2f;
+        protected readonly float SlowValue = 2f;
     }
 }

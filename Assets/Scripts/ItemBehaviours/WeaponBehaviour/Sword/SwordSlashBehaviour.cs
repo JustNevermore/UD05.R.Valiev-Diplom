@@ -49,8 +49,10 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
                 {
                     if (SwordAttackColliders[i])
                     {
-                        SwordAttackColliders[i].GetComponent<HurtBox>().GetDamage(Stats.TotalAttackDamage);
-                        SwordAttackColliders[i] = null;
+                        var target = SwordAttackColliders[i].GetComponent<HurtBox>();
+                        target.GetDamage(Stats.TotalAttackDamage);
+                        if(Stats.HasDot) target.GetDotDamage(Stats.TotalDotDamage);
+                        if (Stats.HasSlow) target.GetSlow();
                     }
                 }
             }
@@ -87,7 +89,10 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
             {
                 for (int i = 0; i < _raycastHits; i++)
                 {
-                    _hitObjects[i].collider.GetComponent<HurtBox>().GetDamage(Stats.TotalSpecialDamage);
+                    var target = _hitObjects[i].collider.GetComponent<HurtBox>();
+                    target.GetDamage(Stats.TotalSpecialDamage);
+                    if (Stats.HasDot) target.GetDotDamage(Stats.TotalDotDamage);
+                    if (Stats.HasSlow) target.GetSlow();
                 }
             }
         }

@@ -42,7 +42,7 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
             
             var arrow = Pool.GetArrow();
             arrow.transform.position = attackPos;
-            arrow.Init(dir, Stats.TotalAttackDamage);
+            arrow.Init(dir);
             arrow.Launch();
         }
 
@@ -62,7 +62,10 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
                 {
                     if (_colliders[i])
                     {
-                        _colliders[i].GetComponent<HurtBox>().GetDamage(Stats.TotalSpecialDamage);
+                        var target = _colliders[i].GetComponent<HurtBox>();
+                        target.GetDamage(Stats.TotalSpecialDamage);
+                        if (Stats.HasDot) target.GetDotDamage(Stats.TotalDotDamage);
+                        if (Stats.HasSlow) target.GetSlow();
                     }
                 }
             }

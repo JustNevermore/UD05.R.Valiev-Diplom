@@ -18,7 +18,7 @@ namespace InventorySystem
         private AllItemsContainer _allItemsContainer;
         private ItemStatsWindow _itemStatsWindow;
         private InventoryWindow _inventoryWindow;
-        private UiAnimationManager _uiAnimationManager;
+        private UiController _uiController;
         
         private ItemData _itemData;
         private ItemConfig _itemConfig;
@@ -34,14 +34,14 @@ namespace InventorySystem
         private TextMeshProUGUI _amountText;
 
         [Inject]
-        private void Construct(SignalBus signalBus, ConsumableManager consumableManager, AllItemsContainer allItemsContainer, ItemStatsWindow itemStatsWindow, InventoryWindow inventoryWindow, UiAnimationManager uiAnimationManager)
+        private void Construct(SignalBus signalBus, ConsumableManager consumableManager, AllItemsContainer allItemsContainer, ItemStatsWindow itemStatsWindow, InventoryWindow inventoryWindow, UiController uiController)
         {
             _signalBus = signalBus;
             _consumableManager = consumableManager;
             _allItemsContainer = allItemsContainer;
             _itemStatsWindow = itemStatsWindow;
             _inventoryWindow = inventoryWindow;
-            _uiAnimationManager = uiAnimationManager;
+            _uiController = uiController;
         }
 
         public void Init(ItemData data)
@@ -60,7 +60,7 @@ namespace InventorySystem
 
             if (!GetComponent<DragDrop>())
             {
-                gameObject.AddComponent<DragDrop>().canvasScale = _uiAnimationManager.transform.localScale;
+                gameObject.AddComponent<DragDrop>().canvasScale = _uiController.transform.localScale;
             }
 
             if (!GetComponent<CanvasGroup>())
@@ -82,7 +82,7 @@ namespace InventorySystem
                 //todo добавить изменение цвета рамки в соответствии с редкостью предмета
                 // добавить бэкграунд ячейки, зависящий от типа предмета
             }
-            
+
             if (_itemConfig.IsStackable)
             {
                 if (transform.GetComponentsInChildren<TextMeshProUGUI>().Length == 0)

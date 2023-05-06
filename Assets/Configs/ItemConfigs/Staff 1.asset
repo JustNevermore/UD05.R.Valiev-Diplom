@@ -26,7 +26,7 @@ MonoBehaviour:
   weaponType: 2
   attackDamage: 50
   attackMpCost: 10
-  specialDamage: 100
+  specialDamage: 30
   specialMpCost: 30
   moveSet: {fileID: 2741184195853229329, guid: ae077ff868b73c74d9219e6cb1c6a740, type: 3}
   weaponView: {fileID: 4311920194295836683, guid: b59e274351be7234faeed633c0264c2b, type: 3}

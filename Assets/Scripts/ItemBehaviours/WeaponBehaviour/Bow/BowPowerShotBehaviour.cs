@@ -1,5 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Enemies;
 using Managers_Controllers;
 using Markers;
@@ -17,15 +18,18 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
         [SerializeField] private float specialRadius;
         [SerializeField] private float specialDistance;
         [SerializeField] private LayerMask effectLayer;
-        [SerializeField] private float recoilValue;
-        [SerializeField] private float pushForce;
-        
+        [SerializeField] private float recoilDistance;
+        [SerializeField] private float jumpForce;
+        [SerializeField] private float pushDistance;
+        [SerializeField] private LayerMask wallsLayer;
+        [SerializeField] private float hitDistanceOffset;
+
         private static readonly int PowerShotTrigger = Animator.StringToHash("PowerShot");
         
         private int _raycastHits;
         private RaycastHit[] _hitObjects = new RaycastHit[30];
-
-        private readonly float _recoilDelay = 0.1f;
+        
+        private readonly float _pushTime = 0.1f;
 
 
         public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
@@ -48,7 +52,7 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
             
             var arrow = Pool.GetArrow();
             arrow.transform.position = attackPos;
-            arrow.Init(dir, Stats.TotalAttackDamage);
+            arrow.Init(dir);
             arrow.Launch();
         }
 
@@ -69,31 +73,48 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
             {
                 for (int i = 0; i < _raycastHits; i++)
                 {
-                    _hitObjects[i].collider.GetComponent<HurtBox>().GetDamage(Stats.TotalSpecialDamage);
+                    var target = _hitObjects[i].collider.GetComponent<HurtBox>();
+                    target.GetDamage(Stats.TotalSpecialDamage);
+                    if (Stats.HasDot) target.GetDotDamage(Stats.TotalDotDamage);
+                    if (Stats.HasSlow) target.GetSlow();
+                    
                     if (_hitObjects[i].collider.GetComponent<EnemyBase>())
                     {
-                        var rb = _hitObjects[i].collider.GetComponent<Rigidbody>();
-                        rb.AddForce(dir * pushForce);
+                        var currentPos = _hitObjects[i].transform.position;
+                        var targetPos = currentPos + dir * pushDistance;
+                        var startPos = new Vector3(currentPos.x, currentPos.y + 1, currentPos.z);
+
+                        Ray ray = new Ray(startPos, dir);
+
+                        if (Physics.Raycast(ray, out RaycastHit hit, pushDistance, wallsLayer))
+                        {
+                            var endPos = new Vector3(hit.point.x, hit.point.y - 1, hit.point.z);
+                            targetPos = endPos - dir * hitDistanceOffset;
+                        }
+
+                        _hitObjects[i].transform.DOJump(targetPos, jumpForce, 1, _pushTime);
                     }
                 }
             }
             
-            Rb.AddForce(-dir * recoilValue);
+            var playerPos = Controller.ZeroPos.transform.position;
             
-            await UniTask.Delay(TimeSpan.FromSeconds(_recoilDelay));
+            var recoiledPos = Rb.transform.position + -dir * recoilDistance;
+
+            Ray recoilRay = new Ray(playerPos, -dir);
+            
+            if (Physics.Raycast(recoilRay, out RaycastHit recoilHit, recoilDistance, wallsLayer))
+            {
+                var endPos = new Vector3(recoilHit.point.x, recoilHit.point.y - 1, recoilHit.point.z);
+                recoiledPos = endPos - -dir * hitDistanceOffset;
+            }
+            
+            Controller.transform.DOJump(recoiledPos, jumpForce, 1, _pushTime);
+
+            await UniTask.Delay(TimeSpan.FromSeconds(_pushTime));
 
             Rb.isKinematic = true;
             Rb.isKinematic = false;
-            
-            for (int i = 0; i < _raycastHits; i++)
-            {
-                if (_hitObjects[i].collider.GetComponent<EnemyBase>())
-                {
-                    var rb = _hitObjects[i].collider.GetComponent<Rigidbody>();
-                    rb.isKinematic = true;
-                    rb.isKinematic = false;
-                }
-            }
         }
     }
 }

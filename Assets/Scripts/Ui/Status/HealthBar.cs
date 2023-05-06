@@ -7,17 +7,17 @@ namespace Ui.Status
 {
     public class HealthBar : MonoBehaviour, IPointerClickHandler
     {
-        private UiAnimationManager _uiAnimationManager;
+        private UiController _uiController;
 
         [Inject]
-        private void Construct(UiAnimationManager uiAnimationManager)
+        private void Construct(UiController uiController)
         {
-            _uiAnimationManager = uiAnimationManager;
+            _uiController = uiController;
         }
         
         public void OnPointerClick(PointerEventData eventData)
         {
-            _uiAnimationManager.ToggleInventory();
+            _uiController.ToggleInventory();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Zenject
         [SerializeField] private MerchantWindow merchantWindow;
         [SerializeField] private ChestWindow chestWindow;
         [SerializeField] private ItemStatsWindow itemStatsWindow;
-        [SerializeField] private UiAnimationManager uiAnimationManager;
+        [SerializeField] private UiController uiController;
 
         public override void InstallBindings()
         {
@@ -43,7 +43,7 @@ namespace Zenject
             Container.BindInstance(merchantWindow).AsSingle().NonLazy();
             Container.BindInstance(chestWindow).AsSingle().NonLazy();
             Container.BindInstance(itemStatsWindow).AsSingle().NonLazy();
-            Container.BindInstance(uiAnimationManager).AsSingle().NonLazy();
+            Container.BindInstance(uiController).AsSingle().NonLazy();
         }
     }
 }
