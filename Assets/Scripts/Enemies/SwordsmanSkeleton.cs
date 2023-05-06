@@ -29,7 +29,7 @@ namespace Enemies
             {
                 for (int i = 0; i < _attackHit; i++)
                 {
-                    _colliders[i].GetComponent<HurtBox>().GetDamage(attackDamage);
+                    _colliders[i].GetComponent<HurtBox>().GetDamage(Stats.AttackDamage);
                 }
             }
         }

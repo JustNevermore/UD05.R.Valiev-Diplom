@@ -24,7 +24,7 @@ namespace Enemies
             
             var arrow = Pool.GetEnemyArrow();
             arrow.transform.position = AttackPos.transform.position;
-            arrow.Init(dir, attackDamage);
+            arrow.Init(dir, Stats.AttackDamage);
             arrow.Launch();
         }
 

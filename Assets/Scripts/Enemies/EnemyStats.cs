@@ -11,8 +11,13 @@ namespace Enemies
         private SignalBus _signalBus;
         private HurtBox _hurtBox;
 
+        public event Action OnEnterRageMode; 
+
+        [SerializeField] private EnemyType type;
         [SerializeField] private float maxHp;
         [SerializeField] private float attackDamage;
+        [SerializeField] private float specialDamage;
+        [SerializeField] private float healthLimit;
 
         private float _currentHp;
 
@@ -23,17 +28,32 @@ namespace Enemies
             set
             {
                 _currentHp = value;
+
+                if (type == EnemyType.Boss && _currentHp <= maxHp * healthLimit)
+                {
+                    OnEnterRageMode?.Invoke();
+                }
+                
                 if (_currentHp <= 0)
                 {
-                    _signalBus.Fire<OnEnemyDeathSignal>();
+                    if (type == EnemyType.Common)
+                    {
+                        _signalBus.Fire<OnEnemyDeathSignal>();
+                    }
+                    else
+                    {
+                        
+                    }
+                    
                     gameObject.SetActive(false);
                 }
             }
         }
 
         public float AttackDamage => attackDamage;
+        public float SpecialDamage => specialDamage;
 
-        
+
         [Inject]
         private void Construct(SignalBus signalBus)
         {

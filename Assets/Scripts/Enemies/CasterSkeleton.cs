@@ -24,7 +24,7 @@ namespace Enemies
             
             var spell = Pool.GetEnemySpell();
             spell.transform.position = AttackPos.transform.position;
-            spell.Init(dir, attackDamage);
+            spell.Init(dir, Stats.AttackDamage);
             spell.Launch();
         }
 

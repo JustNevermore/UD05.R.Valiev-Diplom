@@ -317,7 +317,7 @@ namespace Player
         public void DecreaseCurrentHp(float amount)
         {
             _playerCurrentHp -= amount;
-            // Debug.Log($"Player get {amount} damage");
+            Debug.Log($"Player get {amount} damage");
         }
         
         public void IncreaseCurrentMp(float amount)

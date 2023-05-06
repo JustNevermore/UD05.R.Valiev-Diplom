@@ -12,26 +12,16 @@ namespace Enemies
 {
     public abstract class EnemyBase : Enemy
     {
-        protected PlayerController Player;
-        protected Rigidbody Rb;
-        protected PoolManager Pool;
-
-        private EnemyStats _stats;
-        private HurtBox _hurtBox;
         private AttackTrigger _attackTrigger;
         private EscapeTrigger _escapeTrigger;
         protected AttackPosMarker AttackPos;
 
-        private readonly float _movingRotateSpeed = 200f;
-        [SerializeField] private float moveSpeed;
+        protected readonly float RotateSpeed = 200f;
         [SerializeField] private bool canEscape;
         [SerializeField] private float moveUpdateTime;
-        [SerializeField] protected float attackDamage;
         [SerializeField] private float attackCooldown;
         [SerializeField] protected float attackDelay;
-        [SerializeField] protected LayerMask playerLayer;
-        
-        
+
         private readonly float _targetUpdateTime = 0.5f;
 
         private readonly float _rndOffset = 10f;
@@ -57,8 +47,8 @@ namespace Enemies
         private void Awake()
         {
             Rb = GetComponent<Rigidbody>();
-            _stats = GetComponent<EnemyStats>();
-            _hurtBox = GetComponent<HurtBox>();
+            Stats = GetComponent<EnemyStats>();
+            DamageBox = GetComponent<HurtBox>();
             
             _attackTrigger = GetComponentInChildren<AttackTrigger>();
             _escapeTrigger = GetComponentInChildren<EscapeTrigger>();
@@ -71,7 +61,7 @@ namespace Enemies
 
         private void Start()
         {
-            _hurtBox.OnGetSlow += GetSlow;
+            DamageBox.OnGetSlow += GetSlow;
             
             _attackTrigger.OnEnterAttackRange += StartAttack;
             _attackTrigger.OnExitAttackRange += StopAttack;
@@ -85,7 +75,7 @@ namespace Enemies
 
         private void OnDestroy()
         {
-            _hurtBox.OnGetSlow -= GetSlow;
+            DamageBox.OnGetSlow -= GetSlow;
             
             _attackTrigger.OnEnterAttackRange -= StartAttack;
             _attackTrigger.OnExitAttackRange -= StopAttack;
@@ -230,7 +220,7 @@ namespace Enemies
             var rotation = Quaternion.LookRotation(_direction, Vector3.up);
             
             transform.rotation = Quaternion.RotateTowards(
-                transform.rotation, rotation, _movingRotateSpeed * Time.deltaTime);
+                transform.rotation, rotation, RotateSpeed * Time.deltaTime);
         }
         
         protected abstract void Special();

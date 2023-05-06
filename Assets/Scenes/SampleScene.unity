@@ -321,6 +321,12 @@ MonoBehaviour:
   enSpellPoolCapacity: 20
   enSpellPoolExpand: 1
   enSpellPrefab: {fileID: 4146289445095667224, guid: f232d934b3da7174481b859b8926ee55, type: 3}
+  bossSpellPoolCapacity: 10
+  bossSpellPoolExpand: 1
+  bossSpellPrefab: {fileID: 2173461483400631515, guid: d61935cb9b39e074ca46471910702d10, type: 3}
+  bossRunePoolCapacity: 20
+  bossRunePoolExpand: 1
+  bossRunePrefab: {fileID: 6989167381966539745, guid: 4240d3dd4b6ef3b4a9729edd78c48222, type: 3}
   swordSkelPoolCapacity: 20
   swordSkelPoolExpand: 1
   swordSkelPrefab: {fileID: 4302403781224211810, guid: 4a4a024a11c4e9242a5b43217cad428f, type: 3}
@@ -3028,8 +3034,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96d9775709ea4163bd48c9eca7583ebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 5
-  color: {r: 0.8352941, g: 0.118948035, b: 0.118948035, a: 0}
+  radius: 3
+  color: {r: 0.9339623, g: 0.2511125, b: 0.2511125, a: 0}
 --- !u!1 &537697216
 GameObject:
   m_ObjectHideFlags: 0
