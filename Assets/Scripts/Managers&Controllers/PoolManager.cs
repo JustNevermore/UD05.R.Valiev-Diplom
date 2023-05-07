@@ -10,6 +10,16 @@ namespace Managers_Controllers
     {
         private DiContainer _diContainer;
         
+        [Header("CoinPouch")]
+        [SerializeField] private int pouchPoolCapacity;
+        [SerializeField] private bool pouchPoolExpand;
+        [SerializeField] private CoinPouch pouchPrefab;
+        
+        [Header("ReviveShard")]
+        [SerializeField] private int shardPoolCapacity;
+        [SerializeField] private bool shardPoolExpand;
+        [SerializeField] private ReviveShard shardPrefab;
+        
         [Header("Arrow")]
         [SerializeField] private int arrowPoolCapacity;
         [SerializeField] private bool arrowPoolExpand;
@@ -64,7 +74,15 @@ namespace Managers_Controllers
         [SerializeField] private int staffSkelPoolCapacity;
         [SerializeField] private bool staffSkelPoolExpand;
         [SerializeField] private CasterSkeleton staffSkelPrefab;
+        
+        [Header("BossLich")]
+        [SerializeField] private int lichPoolCapacity;
+        [SerializeField] private bool lichPoolExpand;
+        [SerializeField] private BossLich lichPrefab;
 
+        private PoolBase<CoinPouch> _pouchPool;
+        private PoolBase<ReviveShard> _shardPool;
+        
         private PoolBase<Arrow> _arrowPool;
         private PoolBase<Spell> _spellPool;
         private PoolBase<Rune> _runePool;
@@ -78,6 +96,8 @@ namespace Managers_Controllers
         private PoolBase<SwordsmanSkeleton> _swordSkelPool;
         private PoolBase<MarksmanSkeleton> _bowSkelPool;
         private PoolBase<CasterSkeleton> _staffSkelPool;
+        
+        private PoolBase<BossLich> _lichPool;
 
         [Inject]
         private void Construct(DiContainer diContainer)
@@ -87,6 +107,9 @@ namespace Managers_Controllers
         
         private void Start()
         {
+            _pouchPool = new PoolBase<CoinPouch>(pouchPrefab, pouchPoolCapacity, pouchPoolExpand, transform, _diContainer);
+            _shardPool = new PoolBase<ReviveShard>(shardPrefab, shardPoolCapacity, shardPoolExpand, transform, _diContainer);
+            
             _arrowPool = new PoolBase<Arrow>(arrowPrefab, arrowPoolCapacity, arrowPoolExpand, transform, _diContainer);
             _spellPool = new PoolBase<Spell>(spellPrefab, spellPoolCapacity,spellPoolExpand, transform, _diContainer);
             _runePool = new PoolBase<Rune>(runePrefab, runePoolCapacity,runePoolExpand, transform, _diContainer);
@@ -100,8 +123,22 @@ namespace Managers_Controllers
             _swordSkelPool = new PoolBase<SwordsmanSkeleton>(swordSkelPrefab, swordSkelPoolCapacity, swordSkelPoolExpand, transform, _diContainer);
             _bowSkelPool = new PoolBase<MarksmanSkeleton>(bowSkelPrefab, bowSkelPoolCapacity, bowSkelPoolExpand, transform, _diContainer);
             _staffSkelPool = new PoolBase<CasterSkeleton>(staffSkelPrefab, staffSkelPoolCapacity, staffSkelPoolExpand, transform, _diContainer);
+            
+            _lichPool = new PoolBase<BossLich>(lichPrefab, lichPoolCapacity, lichPoolExpand, transform, _diContainer);
+        }
+        
+        public CoinPouch GetCoinPouch()
+        {
+            var pouch = _pouchPool.GetPoolElement();
+            return pouch;
         }
 
+        public ReviveShard GetReviveShard()
+        {
+            var shard = _shardPool.GetPoolElement();
+            return shard;
+        }
+        
         public Arrow GetArrow()
         {
             var arrow = _arrowPool.GetPoolElement();
@@ -166,6 +203,12 @@ namespace Managers_Controllers
         {
             var enemy = _staffSkelPool.GetPoolElement();
             return enemy;
+        }
+        
+        public BossLich GetBossLich()
+        {
+            var boss = _lichPool.GetPoolElement();
+            return boss;
         }
     }
 }

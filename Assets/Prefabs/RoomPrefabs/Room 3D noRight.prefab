@@ -988,7 +988,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   roomMaster: {fileID: 1844447202961813826}
-  chest: {fileID: 7503464970725160695}
+  chest: {fileID: 2401564947548247053}
   doorU: {fileID: 3105961450451491478}
   doorD: {fileID: 3105961451103155291}
   doorR: {fileID: 0}
@@ -5561,21 +5561,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest
       objectReference: {fileID: 0}
+    - target: {fileID: 7494971138135076798, guid: fce47d0ff3f93c348a50cfc94ff0fa6a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fce47d0ff3f93c348a50cfc94ff0fa6a, type: 3}
---- !u!4 &4761460816525078125 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5993295736405589470, guid: fce47d0ff3f93c348a50cfc94ff0fa6a, type: 3}
-  m_PrefabInstance: {fileID: 1240862460256867251}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7503464970725160695 stripped
+--- !u!114 &2401564947548247053 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8726221770703676740, guid: fce47d0ff3f93c348a50cfc94ff0fa6a, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3489303783435847614, guid: fce47d0ff3f93c348a50cfc94ff0fa6a, type: 3}
   m_PrefabInstance: {fileID: 1240862460256867251}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a784531f6d41438db782a48d9f7e5d5d, type: 3}
+  m_Script: {fileID: 11500000, guid: 88d763e15d9942b58b23a3be1932aed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &4761460816525078125 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5993295736405589470, guid: fce47d0ff3f93c348a50cfc94ff0fa6a, type: 3}
+  m_PrefabInstance: {fileID: 1240862460256867251}
+  m_PrefabAsset: {fileID: 0}

@@ -1,6 +1,9 @@
 ﻿using System;
+using Managers_Controllers;
 using Markers;
 using Signals;
+using Ui;
+using Ui.Status;
 using UnityEngine;
 using Zenject;
 
@@ -9,9 +12,11 @@ namespace Enemies
     public class EnemyStats : MonoBehaviour
     {
         private SignalBus _signalBus;
+        private LootDropManager _dropManager;
         private HurtBox _hurtBox;
 
-        public event Action OnEnterRageMode; 
+        public event Action OnEnterRageMode;
+        public event Action<float> OnChangeHpAmount;
 
         [SerializeField] private EnemyType type;
         [SerializeField] private float maxHp;
@@ -29,6 +34,9 @@ namespace Enemies
             {
                 _currentHp = value;
 
+                var amount = _currentHp / maxHp;
+                OnChangeHpAmount?.Invoke(amount);
+
                 if (type == EnemyType.Boss && _currentHp <= maxHp * healthLimit)
                 {
                     OnEnterRageMode?.Invoke();
@@ -36,16 +44,7 @@ namespace Enemies
                 
                 if (_currentHp <= 0)
                 {
-                    if (type == EnemyType.Common)
-                    {
-                        _signalBus.Fire<OnEnemyDeathSignal>();
-                    }
-                    else
-                    {
-                        
-                    }
-                    
-                    gameObject.SetActive(false);
+                    Death();
                 }
             }
         }
@@ -55,9 +54,10 @@ namespace Enemies
 
 
         [Inject]
-        private void Construct(SignalBus signalBus)
+        private void Construct(SignalBus signalBus, LootDropManager dropManager)
         {
             _signalBus = signalBus;
+            _dropManager = dropManager;
         }
         
         private void Awake()
@@ -72,7 +72,8 @@ namespace Enemies
         
         private void OnEnable()
         {
-            _currentHp = maxHp;
+            hp = maxHp;
+            OnChangeHpAmount?.Invoke(hp);
         }
 
         private void OnDestroy()
@@ -82,8 +83,22 @@ namespace Enemies
         
         private void IncomingDamage(float damage)
         {
-            // Debug.Log($"Enemy get {damage} damage");
             hp -= damage;
+        }
+        
+        private void Death()
+        {
+            if (type == EnemyType.Common)
+            {
+                _signalBus.Fire<OnEnemyDeathSignal>();
+            }
+            else
+            {
+                _signalBus.Fire<OnBossDeathSignal>();
+            }
+                    
+            _dropManager.DropReward(type, transform.position);
+            gameObject.SetActive(false);
         }
     }
 }

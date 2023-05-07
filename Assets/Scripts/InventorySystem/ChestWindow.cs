@@ -20,6 +20,7 @@ namespace InventorySystem
         [SerializeField] private GameObject contentWindow;
         private List<ItemData> _currentChestItems;
         private Chest _currentChest;
+        private bool _chestOpened;
 
         [Inject]
         private void Construct(DiContainer diContainer, SignalBus signalBus, AllItemsContainer allItemsContainer, PlayerStats playerStats, InventoryWindow inventoryWindow)
@@ -45,13 +46,17 @@ namespace InventorySystem
         {
             _currentChest = chest;
             _currentChestItems = items;
-            
+            _chestOpened = true;
             RedrawWindow();
         }
 
         private void CloseChestWindow()
         {
-            _currentChest.UpdateChestLoot(_currentChestItems);
+            if (_chestOpened)
+            {
+                _currentChest.UpdateChestLoot(_currentChestItems);
+                _chestOpened = false;
+            }
         }
 
         public void RemoveFromChest(ItemData item)

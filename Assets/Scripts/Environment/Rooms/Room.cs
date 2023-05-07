@@ -35,7 +35,15 @@ namespace Environment.Rooms
             if (doorL && !doorL.activeInHierarchy) _interactableDoors.Add(doorL);
 
             if (roomMaster) roomMaster.gameObject.SetActive(true);
-            if (chest) chest.gameObject.SetActive(false);
+
+            if (type == RoomType.Common)
+            {
+                if (chest) chest.gameObject.SetActive(false);
+            }
+            else
+            {
+                if (chest) chest.gameObject.SetActive(true);
+            }
         }
 
         public void SetActiveOtherRooms(bool flag)

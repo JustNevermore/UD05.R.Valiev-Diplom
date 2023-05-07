@@ -24,9 +24,9 @@ MonoBehaviour:
   percentBonusDamage: 0
   percentProtection: 0
   weaponType: 1
-  attackDamage: 50
+  attackDamage: 100
   attackMpCost: 0
-  specialDamage: 100
+  specialDamage: 300
   specialMpCost: 30
   moveSet: {fileID: 2208022946210129631, guid: 635f806f31bc72b4f9d2461cc6b87f93, type: 3}
   weaponView: {fileID: 835455971977622867, guid: 79c49f73e08edc346ae397141c47173a, type: 3}

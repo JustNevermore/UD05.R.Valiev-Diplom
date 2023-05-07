@@ -50,11 +50,9 @@ namespace InventorySystem
             _chestWindow = chestWindow;
         }
 
-        private void Start()
+        private void Awake()
         {
             _inventoryItems = new List<ItemData>();
-            
-            // todo подгрузить инвентарь из сейва
         }
 
         public ItemData AddItemToInventory(ItemData item, EquipmentSlot inSlot)

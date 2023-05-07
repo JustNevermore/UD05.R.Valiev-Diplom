@@ -1,5 +1,7 @@
 ﻿using System;
+using Environment;
 using InventorySystem;
+using Player;
 using SaveSystem;
 using UnityEngine;
 using Zenject;
@@ -8,13 +10,17 @@ namespace Managers_Controllers
 {
     public class SaveSystemManager: IInitializable, IDisposable, ITickable
     {
-        private readonly InventoryWindow _inventoryWindow;
+        private  InventoryWindow _inventoryWindow;
         private SaveSystemJson _saveSystem;
+        private  Stash _stash;
+        private PlayerStats _playerStats;
 
-        public SaveSystemManager(InventoryWindow inventoryWindow, SaveSystemJson saveSystem)
+        public SaveSystemManager(InventoryWindow inventoryWindow, SaveSystemJson saveSystem, Stash stash, PlayerStats playerStats)
         {
             _inventoryWindow = inventoryWindow;
             _saveSystem = saveSystem;
+            _stash = stash;
+            _playerStats = playerStats;
         }
         
         public void Initialize()
@@ -44,16 +50,20 @@ namespace Managers_Controllers
         {
             Debug.Log("Save data");
             var inventoryData = _inventoryWindow.GetInventoryData();
-            var gameData = new GameSaveData(inventoryData.Length);
-            gameData.SaveItemDatas = inventoryData;
+            var stashData = _stash.GetStashData();
+            var gameData = new GameSaveData(_playerStats.CurrentGold, _playerStats.ReviveShards, inventoryData.Length, stashData.Length);
+            gameData.InvItemDatas = inventoryData;
+            gameData.StashItemDatas = stashData;
             _saveSystem.SaveData(gameData);
         }
 
         private void LoadData()
         {
             Debug.Log("Load data");
-            _saveSystem.LoadData();
-            _inventoryWindow.SetInventoryData(_saveSystem.GameData.SaveItemDatas);
+            var data = _saveSystem.LoadData();
+            _playerStats.SetData(data.Gold, data.Shards);
+            _inventoryWindow.SetInventoryData(data.InvItemDatas);
+            _stash.SetStashData(data.StashItemDatas);
         }
     }
 }

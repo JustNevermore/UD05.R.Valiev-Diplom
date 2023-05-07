@@ -9,84 +9,29 @@ using Zenject;
 
 namespace Environment
 {
-    public class Chest : MonoBehaviour
+    public abstract class Chest : MonoBehaviour
     {
-        private SignalBus _signalBus;
-        private LootDropManager _lootManager;
-        private ChestWindow _chestWindow;
+        protected SignalBus SignalBus;
+        protected AllItemsContainer Container;
+        protected LootDropManager LootManager;
+        protected ChestWindow ChestWindow;
         
-        private List<ItemData> _itemsInChest;
-
-        private int _spawnItemsCount = 3;
-
-        private bool _isActive;
-        private bool _firstOpen;
-
-
+        protected List<ItemData> ItemsInChest;
+        
+        
         [Inject]
-        private void Construct(SignalBus signalBus, LootDropManager lootDropManager, ChestWindow chestWindow)
+        private void Construct(SignalBus signalBus, AllItemsContainer allItemsContainer, LootDropManager lootDropManager, ChestWindow chestWindow)
         {
-            _signalBus = signalBus;
-            _lootManager = lootDropManager;
-            _chestWindow = chestWindow;
-
-            _spawnItemsCount = _lootManager.ChestSpawnItemsCount;
+            SignalBus = signalBus;
+            Container = allItemsContainer;
+            LootManager = lootDropManager;
+            ChestWindow = chestWindow;
+        }
+        
+        public virtual void ActivateChest()
+        {
         }
 
-        private void Start()
-        {
-            _isActive = false;
-            _firstOpen = true;
-            _itemsInChest = new List<ItemData>();
-        }
-
-        public void ActivateChest()
-        {
-            //todo добавить эффект вокруг сундука
-
-            _isActive = true;
-        }
-
-        private void OnTriggerEnter(Collider col)
-        {
-            if (!_isActive)
-                return;
-            
-            if (col.GetComponent<PlayerController>())
-            {
-                if (_firstOpen)
-                {
-                    GenerateLoot();
-                    _firstOpen = false;
-                }
-                
-                _chestWindow.OpenChestWindow(this, _itemsInChest);
-                _signalBus.Fire<OpenChestSignal>();
-            }
-        }
-
-        private void OnTriggerExit(Collider col)
-        {
-            if (!_isActive)
-                return;
-            
-            if (col.GetComponent<PlayerController>())
-            {
-                _signalBus.Fire<CloseChestSignal>();
-            }
-        }
-
-        private void GenerateLoot()
-        {
-            for (int i = 0; i < _spawnItemsCount; i++)
-            {
-                _itemsInChest.Add(_lootManager.GetRandomItem());
-            }
-        }
-
-        public void UpdateChestLoot(List<ItemData> items)
-        {
-            _itemsInChest = items;
-        }
+        public abstract void UpdateChestLoot(List<ItemData> items);
     }
 }

@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 5993295736405589470}
   - component: {fileID: 1067873632187086681}
   - component: {fileID: 8542686251051456066}
-  - component: {fileID: 8726221770703676740}
   - component: {fileID: 4015846482456593369}
+  - component: {fileID: 3489303783435847614}
   m_Layer: 0
   m_Name: Chest
   m_TagString: Untagged
@@ -85,18 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &8726221770703676740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7494971138135076798}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a784531f6d41438db782a48d9f7e5d5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!135 &4015846482456593369
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -110,3 +98,15 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 1.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3489303783435847614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7494971138135076798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d763e15d9942b58b23a3be1932aed7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

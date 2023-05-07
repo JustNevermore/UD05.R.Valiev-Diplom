@@ -15,6 +15,7 @@ namespace Managers_Controllers
         [SerializeField] private List<RoomSpawnerConfig> easySetups;
         [SerializeField] private List<RoomSpawnerConfig> medSetups;
         [SerializeField] private List<RoomSpawnerConfig> hardSetups;
+        [SerializeField] private List<RoomSpawnerConfig> bossSetups;
         public float MedDistLimit => medDistLimit;
         public float HardDistLimit => hardDistLimit;
 
@@ -39,6 +40,13 @@ namespace Managers_Controllers
                     break;
             }
 
+            return config;
+        }
+
+        public RoomSpawnerConfig GetBossConfig()
+        {
+            var rnd = Random.Range(0, bossSetups.Count);
+            var config = bossSetups[rnd];
             return config;
         }
     }

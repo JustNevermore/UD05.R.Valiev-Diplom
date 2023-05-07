@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Environment.Rooms;
+using Managers_Controllers;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -10,14 +12,11 @@ namespace Environment
 {
     public class DungeonGenerator : MonoBehaviour
     {
-        private DiContainer _diContainer;
+        private RoomPoolManager _pool;
         
         [SerializeField] private int roomSpawnCount;
         [SerializeField] private int bossRoomSpawnMinCount;
-        [SerializeField] private Room startRoom;
-        [SerializeField] private Room[] roomPrefabs;
-        [SerializeField] private Room[] bossPrefabs;
-        
+
         private readonly int _matrixSize = 21;
         private int _centerCoord;
         private readonly float _prefabSideValue = 60f;
@@ -25,32 +24,28 @@ namespace Environment
         private readonly int _connectRoomLimit = 500;
         private readonly int _connectBossLimit = 100;
         private int _bossLimit;
+        private int _bossCount;
+        private bool _switcher;
 
         private Room[,] _spawnedRooms;
 
         [Inject]
-        private void Construct(DiContainer diContainer)
+        private void Construct(RoomPoolManager poolManager)
         {
-            _diContainer = diContainer;
-        }
-        
-        private void Start()
-        {
-            GenerateDungeon();
+            _pool = poolManager;
         }
 
-        private void GenerateDungeon()
+        public void GenerateDungeon()
         {
             _centerCoord = Convert.ToInt32((_matrixSize - 1) * 0.5f);
-            _bossLimit = _connectBossLimit;
 
-            bool switcher = false;
-
+            _switcher = false;
+            
             do
             {
-                switcher = TryGenerateDungeon();
-            } while (!switcher);
-
+                TryGenerateDungeon();
+            } while (!_switcher);
+            
             
             foreach (var room in _spawnedRooms)
             {
@@ -61,39 +56,42 @@ namespace Environment
             }
         }
 
-        private bool TryGenerateDungeon()
+        private void TryGenerateDungeon()
         {
+            _bossLimit = _connectBossLimit;
             _commonRoomLimit = roomSpawnCount - bossRoomSpawnMinCount;
-            var startBossCount = bossRoomSpawnMinCount;
+            _bossCount = bossRoomSpawnMinCount;
+            
             _spawnedRooms = new Room[_matrixSize, _matrixSize];
-            _spawnedRooms[_centerCoord, _centerCoord] = _diContainer.InstantiatePrefabForComponent<Room>(startRoom);
+            _spawnedRooms[_centerCoord, _centerCoord] = _pool.GetStartRoom();
+            _spawnedRooms[_centerCoord, _centerCoord].transform.position = Vector3.zero;
 
             for (int i = 0; i < roomSpawnCount; i++)
             {
                 PlaceRoom(i);
             }
 
-            while (bossRoomSpawnMinCount > 0)
+            while (_bossCount > 0)
             {
                 for (int i = _commonRoomLimit; i < roomSpawnCount; i++)
                 {
                     PlaceRoom(i);
                 }
-
+            
                 _bossLimit--;
                 if (_bossLimit == 0)
                 {
                     break;
                 }
             }
-
-            if (bossRoomSpawnMinCount == startBossCount)
+            
+            if (_bossCount == bossRoomSpawnMinCount)
             {
                 DestroyDungeon();
-                return false;
+                _switcher = false;
             }
             
-            return true;
+            _switcher = true;
         }
 
         private void PlaceRoom(int selector)
@@ -138,25 +136,25 @@ namespace Environment
                     _spawnedRooms[position.x, position.y] = newRoom;
                     if (selector >= _commonRoomLimit)
                     {
-                        bossRoomSpawnMinCount--;
+                        _bossCount--;
                     }
                     return;
                 }
             }
             
-            Destroy(newRoom.gameObject);
+            newRoom.gameObject.SetActive(false);
         }
 
         private Room SelectRoomPrefab(int selector)
         {
             if (selector < _commonRoomLimit)
             {
-                Room newRoom = _diContainer.InstantiatePrefabForComponent<Room>(roomPrefabs[Random.Range(0, roomPrefabs.Length)]);
+                Room newRoom = _pool.GetCommonRoom();
                 return newRoom;
             }
             else
             {
-                Room newRoom = _diContainer.InstantiatePrefabForComponent<Room>(bossPrefabs[Random.Range(0, bossPrefabs.Length)]);
+                Room newRoom = _pool.GetBossRoom();
                 return newRoom;
             }
         }
@@ -216,7 +214,7 @@ namespace Environment
             {
                 if (room != null)
                 {
-                    Destroy(room.gameObject);
+                    room.gameObject.SetActive(false);
                 }
             }
         }

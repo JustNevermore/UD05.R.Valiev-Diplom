@@ -199,9 +199,12 @@ namespace Enemies
 
         private void StopActions()
         {
-            StopCoroutine(_actionCor);
-            StopCoroutine(_attackCor);
-            StopCoroutine(_specialCor);
+            if (gameObject.activeInHierarchy)
+            {
+                if(_actionCor != null) StopCoroutine(_actionCor);
+                if(_attackCor != null) StopCoroutine(_attackCor);
+                if(_specialCor != null) StopCoroutine(_specialCor);
+            }
         }
         
         private void ActivateRageMode()

@@ -24,6 +24,7 @@ namespace Environment.Rooms
         private RoomSpawnerConfig _config;
 
         private int _enemyAlive;
+        private int _bossAlive;
         private const float _roomClearDelay = 3f;
 
         private Collider[] _colliders = new Collider[50];
@@ -50,18 +51,26 @@ namespace Environment.Rooms
 
         private void Start()
         {
-            SetDifficulty();
-            SetupRoom();
+            if (_type == RoomType.Common)
+            {
+                SetDifficulty();
+            }
+            else
+            {
+                _config = _spawnManager.GetBossConfig();
+            }
         }
 
         private void OnEnable()
         {
             _signalBus.Subscribe<OnEnemyDeathSignal>(DeathRegister);
+            _signalBus.Subscribe<OnBossDeathSignal>(BossDeathRegister);
         }
 
         private void OnDisable()
         {
             _signalBus.Unsubscribe<OnEnemyDeathSignal>(DeathRegister);
+            _signalBus.Unsubscribe<OnBossDeathSignal>(BossDeathRegister);
         }
 
         private void SetDifficulty()
@@ -85,10 +94,7 @@ namespace Environment.Rooms
             {
                 _myRoom.TrySpawnChest();
             }
-        }
-        
-        private void SetupRoom()
-        {
+            
             _config = _spawnManager.GetSpawnerConfig(_difficulty);
         }
 
@@ -109,6 +115,10 @@ namespace Environment.Rooms
             if (_type == RoomType.Common)
             {
                 SpawnEnemies();
+            }
+            else
+            {
+                SpawnBoss();
             }
         }
 
@@ -186,11 +196,33 @@ namespace Environment.Rooms
             }
         }
 
+        private void SpawnBoss()
+        {
+            _bossAlive = 0;
+
+            if (_config.BossLichSpawn)
+            {
+                var boss = _poolManager.GetBossLich();
+                boss.transform.position = transform.position;
+                _bossAlive++;
+            }
+        }
+
         private void DeathRegister()
         {
             _enemyAlive--;
 
             if (_enemyAlive == 0)
+            {
+                RoomClear();
+            }
+        }
+        
+        private void BossDeathRegister()
+        {
+            _bossAlive--;
+
+            if (_bossAlive == 0)
             {
                 RoomClear();
             }

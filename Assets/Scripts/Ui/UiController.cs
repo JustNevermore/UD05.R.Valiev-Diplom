@@ -4,8 +4,8 @@ using InventorySystem;
 using Signals;
 using Ui.InventorySecondaryUi;
 using Ui.MoveHandlers;
+using Ui.Status;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 namespace Ui
@@ -33,7 +33,7 @@ namespace Ui
         private bool _animBlock;
         private bool _inventoryOpen;
         private bool _storageOpen;
-
+        
 
         [Inject]
         private void Construct(SignalBus signalBus, MerchantWindow merchantWindow, ChestWindow chestWindow, ItemStatsWindow itemStatsWindow)

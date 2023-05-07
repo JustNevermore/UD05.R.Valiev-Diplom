@@ -10,6 +10,7 @@ namespace Zenject
             Container.DeclareSignal<OnWeaponBehaviourChangeSignal>();
             Container.DeclareSignal<OnDefenceSkillChangeSignal>();
             Container.DeclareSignal<OnEnemyDeathSignal>();
+            Container.DeclareSignal<OnBossDeathSignal>();
             Container.DeclareSignal<OpenMerchantSignal>();
             Container.DeclareSignal<CloseMerchantSignal>();
             Container.DeclareSignal<OpenChestSignal>();

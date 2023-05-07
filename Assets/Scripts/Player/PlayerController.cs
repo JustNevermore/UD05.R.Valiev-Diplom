@@ -190,15 +190,19 @@ namespace Player
                 {
                     if (_canAttack && !_attackCd)
                     {
-                        _moveSet.Attack();
-                        StartCoroutine(AttackCoroutine());
-                        _canSpecial = false;
-                        _canDefend = false;
+                        if (_playerStats.PlayerMp > _playerStats.AttackMpCost)
+                        {
+                            _moveSet.Attack();
+                            _playerStats.DecreaseCurrentMp(_playerStats.AttackMpCost);
+                            StartCoroutine(AttackCoroutine());
+                            _canSpecial = false;
+                            _canDefend = false;
 
-                        await UniTask.Delay(TimeSpan.FromSeconds(_attackTimeout));
+                            await UniTask.Delay(TimeSpan.FromSeconds(_attackTimeout));
 
-                        _canSpecial = true;
-                        _canDefend = true;
+                            _canSpecial = true;
+                            _canDefend = true;
+                        }
                     }
                 }
 
@@ -206,16 +210,20 @@ namespace Player
                 {
                     if (_canSpecial && !_specialCd)
                     {
-                        _moveSet.Special();
-                        StartCoroutine(SpecialCoroutine());
-                        StartCoroutine(MoveTimeoutCoroutine(_specialTimeout));
-                        _canAttack = false;
-                        _canDefend = false;
+                        if (_playerStats.PlayerMp > _playerStats.SpecialMpCost)
+                        {
+                            _moveSet.Special();
+                            _playerStats.DecreaseCurrentMp(_playerStats.SpecialMpCost);
+                            StartCoroutine(SpecialCoroutine());
+                            StartCoroutine(MoveTimeoutCoroutine(_specialTimeout));
+                            _canAttack = false;
+                            _canDefend = false;
 
-                        await UniTask.Delay(TimeSpan.FromSeconds(_specialTimeout));
+                            await UniTask.Delay(TimeSpan.FromSeconds(_specialTimeout));
 
-                        _canAttack = true;
-                        _canDefend = true;
+                            _canAttack = true;
+                            _canDefend = true;
+                        }
                     }
                 }
             }

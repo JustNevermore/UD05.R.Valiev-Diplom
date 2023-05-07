@@ -19,6 +19,10 @@ namespace Environment.Rooms
         [SerializeField] private bool staffSkelSpawn;
         [SerializeField] private int staffSkelMin;
         [SerializeField] private int staffSkelMax;
+        [Space]
+        [Header("Boss")]
+        [Header("BossLich")]
+        [SerializeField] private bool bossLichSpawn;
 
         public bool SwordSkelSpawn => swordSkelSpawn;
         public int SwordSkelMin => swordSkelMin;
@@ -29,5 +33,7 @@ namespace Environment.Rooms
         public bool StaffSkelSpawn => staffSkelSpawn;
         public int StaffSkelMin => staffSkelMin;
         public int StaffSkelMax => staffSkelMax;
+
+        public bool BossLichSpawn => bossLichSpawn;
     }
 }

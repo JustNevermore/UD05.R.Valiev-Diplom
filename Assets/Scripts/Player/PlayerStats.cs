@@ -14,11 +14,15 @@ namespace Player
     public class PlayerStats : MonoBehaviour
     {
         private HurtBox _hurtBox;
-        
-        private readonly float _percentMpReg = 0.02f;
-        
         private SignalBus _signalBus;
         private WeaponHolder _weaponHolder;
+        
+        private readonly float _percentMpReg = 0.02f;
+
+        public event Action<float> OnHpValueChange;
+        public event Action<float> OnMpValueChange;
+        public event Action<int> OnGoldAmountChange;
+        public event Action<int> OnShardAmountChange;
 
         private int _currentGold;
 
@@ -28,6 +32,8 @@ namespace Player
             set
             {
                 _currentGold = value;
+                OnGoldAmountChange?.Invoke(_currentGold);
+                
                 if (_currentGold < 0)
                 {
                     _currentGold = 0;
@@ -43,6 +49,8 @@ namespace Player
             set
             {
                 _currentReviveShards = value;
+                OnShardAmountChange?.Invoke(_currentReviveShards);
+                
                 if (_currentReviveShards < 0)
                 {
                     _currentReviveShards = 0;
@@ -59,6 +67,9 @@ namespace Player
             set
             {
                 _currentHp = value;
+                var amount = _currentHp / _playerMaxHp;
+                OnHpValueChange?.Invoke(amount);
+                
                 if (_currentHp > _playerMaxHp)
                 {
                     _currentHp = _playerMaxHp;
@@ -75,6 +86,9 @@ namespace Player
             set
             {
                 _currentMp = value;
+                var amount = _currentMp / _playerMaxMp;
+                OnMpValueChange?.Invoke(amount);
+                
                 if (value > _playerMaxMp)
                 {
                     _currentMp = _playerMaxMp;
@@ -90,7 +104,6 @@ namespace Player
         private WeaponType _weaponType;
         private float _attackDamage;
         private float _attackMpCost;
-        private int _spellChargeCount;
         private float _specialDamage;
         private float _specialMpCost;
         private WeaponBehaviour _moveSet;
@@ -107,8 +120,8 @@ namespace Player
         private float _totalSpecialDamage;
         private float _totalDotDamage;
         
-        public float CurrentGold => _currentGold;
-        public float ReviveShards => _currentReviveShards;
+        public int CurrentGold => _currentGold;
+        public int ReviveShards => _currentReviveShards;
 
         public float PlayerHp => _currentHp;
         public float PlayerMaxHp => _playerMaxHp;
@@ -118,7 +131,6 @@ namespace Player
         
         public float TotalAttackDamage => _totalAttackDamage;
         public float AttackMpCost => _attackMpCost;
-        public int SpellChargeCount => _spellChargeCount;
         public float TotalSpecialDamage => _totalSpecialDamage;
         public float SpecialMpCost => _specialMpCost;
 
@@ -137,17 +149,18 @@ namespace Player
         private void Awake()
         {
             _hurtBox = GetComponent<HurtBox>();
+            _weaponHolder = GetComponentInChildren<WeaponHolder>();
         }
 
         private void Start()
         {
-            _weaponHolder = GetComponentInChildren<WeaponHolder>();
             _hurtBox.OnGetDamage += DecreaseCurrentHp;
-            
+
             //todo не забыть убрать золото
             _gold = 1000000;
             
-            ApplyStats();
+            ResetPlayer();
+            
             StartCoroutine(MpRegCoroutine());
         }
 
@@ -156,6 +169,19 @@ namespace Player
             _hurtBox.OnGetDamage -= DecreaseCurrentHp;
         }
 
+        public void ResetPlayer()
+        {
+            ApplyStats();
+            
+            _playerCurrentHp = _playerMaxHp;
+            _playerCurrentMp = _playerMaxMp;
+            
+            OnHpValueChange?.Invoke(_currentHp);
+            OnMpValueChange?.Invoke(_currentMp);
+            OnGoldAmountChange?.Invoke(_currentGold);
+            OnShardAmountChange?.Invoke(_currentReviveShards);
+        }
+        
         private IEnumerator MpRegCoroutine()
         {
             while (true)
@@ -289,14 +315,20 @@ namespace Player
             _gold -= amount;
         }
 
-        private void AddReviveShards(int amount)
+        public void AddReviveShards(int amount)
         {
             _reviveShards += amount;
         }
 
-        private void RemoveReviveShards(int amount)
+        public void RemoveReviveShards(int amount)
         {
             _reviveShards -= amount;
+        }
+        
+        public void SetData(int gold, int shards)
+        {
+            _gold = gold;
+            _reviveShards = shards;
         }
 
         private void ApplyStats()
@@ -317,7 +349,6 @@ namespace Player
         public void DecreaseCurrentHp(float amount)
         {
             _playerCurrentHp -= amount;
-            Debug.Log($"Player get {amount} damage");
         }
         
         public void IncreaseCurrentMp(float amount)

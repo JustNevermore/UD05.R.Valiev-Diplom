@@ -1,3 +1,4 @@
+using Environment;
 using InventorySystem;
 using Managers_Controllers;
 using Player;
@@ -10,6 +11,8 @@ namespace Zenject
 {
     public class GameMonoInstaller : MonoInstaller
     {
+        [SerializeField] private GameManager gameManager;
+        [SerializeField] private DungeonGenerator dungeonGenerator;
         [SerializeField] private PlayerController playerController;
         [SerializeField] private PlayerStats playerStats;
         [SerializeField] private AllItemsContainer allItemsContainer;
@@ -17,10 +20,12 @@ namespace Zenject
         [SerializeField] private ConsumableManager consumableManager;
         [SerializeField] private EnemySpawnManager enemySpawnManager;
         [SerializeField] private PoolManager poolManager;
+        [SerializeField] private RoomPoolManager roomPoolManager;
         [SerializeField] private FxManager fxManager;
         [SerializeField] private InventoryWindow inventoryWindow;
         [SerializeField] private MerchantWindow merchantWindow;
         [SerializeField] private ChestWindow chestWindow;
+        [SerializeField] private Stash stash;
         [SerializeField] private ItemStatsWindow itemStatsWindow;
         [SerializeField] private UiController uiController;
 
@@ -31,6 +36,8 @@ namespace Zenject
             Container.Bind<SaveSystemJson>().AsSingle().NonLazy();
 
         
+            Container.BindInstance(gameManager).AsSingle().NonLazy();
+            Container.BindInstance(dungeonGenerator).AsSingle().NonLazy();
             Container.BindInstance(playerController).AsSingle().NonLazy();
             Container.BindInstance(playerStats).AsSingle().NonLazy();
             Container.BindInstance(allItemsContainer).AsSingle().NonLazy();
@@ -38,10 +45,12 @@ namespace Zenject
             Container.BindInstance(consumableManager).AsSingle().NonLazy();
             Container.BindInstance(enemySpawnManager).AsSingle().NonLazy();
             Container.BindInstance(poolManager).AsSingle().NonLazy();
+            Container.BindInstance(roomPoolManager).AsSingle().NonLazy();
             Container.BindInstance(fxManager).AsSingle().NonLazy();
             Container.BindInstance(inventoryWindow).AsSingle().NonLazy();
             Container.BindInstance(merchantWindow).AsSingle().NonLazy();
             Container.BindInstance(chestWindow).AsSingle().NonLazy();
+            Container.BindInstance(stash).AsSingle().NonLazy();
             Container.BindInstance(itemStatsWindow).AsSingle().NonLazy();
             Container.BindInstance(uiController).AsSingle().NonLazy();
         }
