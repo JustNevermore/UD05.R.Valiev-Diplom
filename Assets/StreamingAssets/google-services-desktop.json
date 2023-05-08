@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "505022186298",
+    "firebase_url": "https://dungeonsurvivorrouglike-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "dungeonsurvivorrouglike",
+    "storage_bucket": "dungeonsurvivorrouglike.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:505022186298:android:95301b2d9407e79e1f8603",
+        "android_client_info": {
+          "package_name": "com.RebellionSparkGames.DungeonSurvivorRougLike"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "505022186298-8cnrh0t6g378pt35g5v4afoslc273a2n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASIoH35-V4P8h1FnS-7Pq7fwQw-8tNDiI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "505022186298-8cnrh0t6g378pt35g5v4afoslc273a2n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -171,7 +171,7 @@ namespace InventorySystem
                 // покупаем
                 if (!item.BelongToPlayer)
                 {
-                    if (_playerStats.CurrentGold > itemConfig.ItemCost) // хватает ли золота
+                    if (_playerStats.CurrentGold >= itemConfig.ItemCost) // хватает ли золота
                     {
                         if (item.IsStackable) // предмет стакается
                         {

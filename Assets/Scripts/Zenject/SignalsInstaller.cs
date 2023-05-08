@@ -21,8 +21,8 @@ namespace Zenject
             Container.DeclareSignal<ReturnToSpawnSignal>();
             Container.DeclareSignal<GoToDungeonSignal>();
             Container.DeclareSignal<SurrendButtonSignal>();
-            Container.DeclareSignal<AdReviveButtonSignal>();
             Container.DeclareSignal<ShardReviveButtonSignal>();
+            Container.DeclareSignal<DisableAllPoolObjectsSignal>();
         }
     }
 }

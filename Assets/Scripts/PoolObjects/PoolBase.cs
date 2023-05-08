@@ -75,5 +75,13 @@ namespace PoolObjects
 
             throw new Exception("Object pool doesnt have free elements");
         }
+
+        public void DisablePoolElements()
+        {
+            foreach (var element in _pool)
+            {
+                if (element.gameObject.activeInHierarchy) element.gameObject.SetActive(false);
+            }
+        }
     }
 }

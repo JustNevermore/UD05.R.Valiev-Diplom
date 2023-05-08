@@ -1,6 +1,8 @@
-﻿using Enemies;
+﻿using System;
+using Enemies;
 using Markers;
 using PoolObjects;
+using Signals;
 using UnityEngine;
 using Zenject;
 
@@ -9,6 +11,7 @@ namespace Managers_Controllers
     public class PoolManager : MonoBehaviour
     {
         private DiContainer _diContainer;
+        private SignalBus _signalBus;
         
         [Header("CoinPouch")]
         [SerializeField] private int pouchPoolCapacity;
@@ -100,13 +103,16 @@ namespace Managers_Controllers
         private PoolBase<BossLich> _lichPool;
 
         [Inject]
-        private void Construct(DiContainer diContainer)
+        private void Construct(DiContainer diContainer, SignalBus signalBus)
         {
             _diContainer = diContainer;
+            _signalBus = signalBus;
         }
         
         private void Start()
         {
+            _signalBus.Subscribe<DisableAllPoolObjectsSignal>(DisableAllPoolObjects);
+            
             _pouchPool = new PoolBase<CoinPouch>(pouchPrefab, pouchPoolCapacity, pouchPoolExpand, transform, _diContainer);
             _shardPool = new PoolBase<ReviveShard>(shardPrefab, shardPoolCapacity, shardPoolExpand, transform, _diContainer);
             
@@ -126,7 +132,12 @@ namespace Managers_Controllers
             
             _lichPool = new PoolBase<BossLich>(lichPrefab, lichPoolCapacity, lichPoolExpand, transform, _diContainer);
         }
-        
+
+        private void OnDestroy()
+        {
+            _signalBus.Unsubscribe<DisableAllPoolObjectsSignal>(DisableAllPoolObjects);
+        }
+
         public CoinPouch GetCoinPouch()
         {
             var pouch = _pouchPool.GetPoolElement();
@@ -209,6 +220,24 @@ namespace Managers_Controllers
         {
             var boss = _lichPool.GetPoolElement();
             return boss;
+        }
+        
+        private void DisableAllPoolObjects()
+        {
+            _pouchPool.DisablePoolElements();
+            _shardPool.DisablePoolElements();
+            _arrowPool.DisablePoolElements();
+            _spellPool.DisablePoolElements();
+            _runePool.DisablePoolElements();
+            _turretPool.DisablePoolElements();
+            _enArrowPool.DisablePoolElements();
+            _enSpellPool.DisablePoolElements();
+            _bossSpellPool.DisablePoolElements();
+            _bossRunePool.DisablePoolElements();
+            _swordSkelPool.DisablePoolElements();
+            _bowSkelPool.DisablePoolElements();
+            _staffSkelPool.DisablePoolElements();
+            _lichPool.DisablePoolElements();
         }
     }
 }

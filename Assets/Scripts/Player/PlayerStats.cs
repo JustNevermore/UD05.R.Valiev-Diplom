@@ -350,7 +350,8 @@ namespace Player
         
         public void DecreaseCurrentHp(float amount)
         {
-            _playerCurrentHp -= amount;
+            var value = amount - amount * 0.01f * _percentProtection;
+            _playerCurrentHp -= value;
         }
         
         public void IncreaseCurrentMp(float amount)

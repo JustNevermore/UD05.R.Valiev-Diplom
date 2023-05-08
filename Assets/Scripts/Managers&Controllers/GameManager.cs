@@ -1,4 +1,5 @@
 ﻿using System;
+using Ads;
 using Cysharp.Threading.Tasks;
 using Environment;
 using InventorySystem;
@@ -20,6 +21,7 @@ namespace Managers_Controllers
         private InventoryWindow _inventory;
         private SaveSystemManager _saveSystem;
         private PlayerDeathPopup _deathPopup;
+        private RewardedAdsButton _rewardedButton;
 
         private SpawnPointMarker _spawnPoint;
 
@@ -45,6 +47,7 @@ namespace Managers_Controllers
         private void Awake()
         {
             _spawnPoint = FindObjectOfType<SpawnPointMarker>();
+            _rewardedButton = GetComponent<RewardedAdsButton>();
         }
 
         private void Start()
@@ -54,12 +57,14 @@ namespace Managers_Controllers
             _signalBus.Subscribe<GoToDungeonSignal>(GoToDungeon);
             _signalBus.Subscribe<ReturnToSpawnSignal>(ReturnToSpawn);
             _signalBus.Subscribe<SurrendButtonSignal>(PlayerSurrend);
-            _signalBus.Subscribe<AdReviveButtonSignal>(PlayerAdRevive);
             _signalBus.Subscribe<ShardReviveButtonSignal>(PlayerRevive);
+            _rewardedButton.OnShowAdComplete += PlayerAdRevive;
 
             _player.transform.position = _spawnPoint.transform.position;
             _saveSystem.LoadData();
-            _stats.AddReviveShards(1);
+            
+            //todo не забыть убрать
+            _stats.SetData(50000, 5);
         }
 
         private void OnDestroy()
@@ -68,6 +73,9 @@ namespace Managers_Controllers
             _signalBus.Unsubscribe<CloseStashSignal>(CloseStash);
             _signalBus.Unsubscribe<GoToDungeonSignal>(GoToDungeon);
             _signalBus.Unsubscribe<ReturnToSpawnSignal>(ReturnToSpawn);
+            _signalBus.Unsubscribe<SurrendButtonSignal>(PlayerSurrend);
+            _signalBus.Unsubscribe<ShardReviveButtonSignal>(PlayerRevive);
+            _rewardedButton.OnShowAdComplete -= PlayerAdRevive;
         }
 
         private void PlayerDeath()
@@ -79,16 +87,29 @@ namespace Managers_Controllers
         private void PlayerSurrend()
         {
             Time.timeScale = 1;
+            _signalBus.Fire<DisableAllPoolObjectsSignal>();
+            _inDungeon = false;
+            _useAdRevive = false;
             _deathPopup.gameObject.SetActive(false);
             _player.transform.position = _spawnPoint.transform.position;
             _inventory.ResetInventory();
             _stats.ResetPlayer();
         }
         
-        private void PlayerAdRevive()
+        private async void PlayerAdRevive()
         {
             Time.timeScale = 1;
             _deathPopup.gameObject.SetActive(false);
+            _useAdRevive = true;
+            _stats.ResetPlayer();
+            _player.PushEnemies();
+            _player.DamageBox.EnableBlock();
+            _player.BarrierView.SetActive(true);
+
+            await UniTask.Delay(TimeSpan.FromSeconds(_reviveDamageBlockTime));
+            
+            _player.DamageBox.DisableBlock();
+            _player.BarrierView.SetActive(false);
         }
 
         private async void PlayerRevive()
@@ -123,6 +144,7 @@ namespace Managers_Controllers
             _saveSystem.SaveData();
             _dungeonGenerator.DestroyDungeon();
             _inDungeon = false;
+            _useAdRevive = false;
         }
 
         private void OnApplicationQuit()

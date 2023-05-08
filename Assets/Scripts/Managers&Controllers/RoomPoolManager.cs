@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Environment.Rooms;
 using PoolObjects;
+using Signals;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -11,6 +12,7 @@ namespace Managers_Controllers
     public class RoomPoolManager : MonoBehaviour
     {
         private DiContainer _diContainer;
+        private SignalBus _signalBus;
 
         [SerializeField] private int poolCapacity;
         [SerializeField] private bool poolExpand;
@@ -40,13 +42,15 @@ namespace Managers_Controllers
 
 
         [Inject]
-        private void Construct(DiContainer diContainer)
+        private void Construct(DiContainer diContainer, SignalBus signalBus)
         {
             _diContainer = diContainer;
+            _signalBus = signalBus;
         }
 
         private void Start()
         {
+            _signalBus.Subscribe<DisableAllPoolObjectsSignal>(DisableAllPoolObjects);
             _commonRooms = new List<PoolBase<Room>>();
             _bossRooms = new List<PoolBase<Room>>();
             
@@ -70,6 +74,11 @@ namespace Managers_Controllers
             _bossRooms.Add(_boss4 = new PoolBase<Room>(bossRoomPrefab[3], poolCapacity, poolExpand, transform, _diContainer));
         }
 
+        private void OnDestroy()
+        {
+            _signalBus.Unsubscribe<DisableAllPoolObjectsSignal>(DisableAllPoolObjects);
+        }
+
         public Room GetStartRoom()
         {
             var room = _startRoom.GetPoolElement();
@@ -88,6 +97,21 @@ namespace Managers_Controllers
             var rnd = Random.Range(0, _bossRooms.Count);
             var room = _bossRooms[rnd].GetPoolElement();
             return room;
+        }
+
+        private void DisableAllPoolObjects()
+        {
+            _startRoom.DisablePoolElements();
+            
+            foreach (var pool in _commonRooms)
+            {
+                pool.DisablePoolElements();
+            }
+
+            foreach (var pool in _bossRooms)
+            {
+                pool.DisablePoolElements();
+            }
         }
     }
 }
