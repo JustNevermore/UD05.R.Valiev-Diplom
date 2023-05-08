@@ -28,6 +28,7 @@ namespace Zenject
         [SerializeField] private Stash stash;
         [SerializeField] private ItemStatsWindow itemStatsWindow;
         [SerializeField] private UiController uiController;
+        [SerializeField] private PlayerDeathPopup playerDeathPopup;
 
         public override void InstallBindings()
         {
@@ -53,6 +54,7 @@ namespace Zenject
             Container.BindInstance(stash).AsSingle().NonLazy();
             Container.BindInstance(itemStatsWindow).AsSingle().NonLazy();
             Container.BindInstance(uiController).AsSingle().NonLazy();
+            Container.BindInstance(playerDeathPopup).AsSingle().NonLazy();
         }
     }
 }

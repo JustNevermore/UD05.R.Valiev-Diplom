@@ -8,6 +8,7 @@ namespace Environment.Rooms
         [SerializeField] private RoomType type;
         [SerializeField] private RoomMaster roomMaster;
         [SerializeField] private Chest chest;
+        [SerializeField] private PortalGate portal;
         
         private const int _chestSpawnChance = 5;
         
@@ -34,7 +35,13 @@ namespace Environment.Rooms
             if (doorR && !doorR.activeInHierarchy) _interactableDoors.Add(doorR);
             if (doorL && !doorL.activeInHierarchy) _interactableDoors.Add(doorL);
 
-            if (roomMaster) roomMaster.gameObject.SetActive(true);
+            if (roomMaster)
+            {
+                roomMaster.gameObject.SetActive(true);
+                roomMaster.Init();
+            }
+
+            if (portal) portal.gameObject.SetActive(false);
 
             if (type == RoomType.Common)
             {
@@ -84,6 +91,19 @@ namespace Environment.Rooms
             {
                 chest.ActivateChest();
             }
+        }
+
+        public void LockChest()
+        {
+            if (chest != null && chest.gameObject.activeInHierarchy)
+            {
+                chest.DeactivateChest();
+            }
+        }
+
+        public void ActivatePortal()
+        {
+            if (portal) portal.gameObject.SetActive(true);
         }
     }
 }

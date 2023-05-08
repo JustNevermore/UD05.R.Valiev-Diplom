@@ -69,6 +69,11 @@ namespace Player
                 _currentHp = value;
                 var amount = _currentHp / _playerMaxHp;
                 OnHpValueChange?.Invoke(amount);
+
+                if (_currentHp <= 0)
+                {
+                    _signalBus.Fire<OnPlayerDeathSignal>();
+                }
                 
                 if (_currentHp > _playerMaxHp)
                 {
@@ -156,9 +161,6 @@ namespace Player
         {
             _hurtBox.OnGetDamage += DecreaseCurrentHp;
 
-            //todo не забыть убрать золото
-            _gold = 1000000;
-            
             ResetPlayer();
             
             StartCoroutine(MpRegCoroutine());

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Cysharp.Threading.Tasks;
 using Markers;
 using UnityEngine;
@@ -17,9 +18,14 @@ namespace Enemies
             
         }
 
-        protected override async void Attack()
+        protected override void Attack()
         {
-            await UniTask.Delay(TimeSpan.FromSeconds(attackDelay));
+            StartCoroutine(AttackCor());
+        }
+
+        private IEnumerator AttackCor()
+        {
+            yield return new WaitForSeconds(attackDelay);
             
             var attackPoint = AttackPos.transform.position;
             

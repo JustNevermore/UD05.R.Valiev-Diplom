@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Managers_Controllers
 {
-    public class SaveSystemManager: IInitializable, IDisposable, ITickable
+    public class SaveSystemManager: IInitializable, IDisposable
     {
         private  InventoryWindow _inventoryWindow;
         private SaveSystemJson _saveSystem;
@@ -33,22 +33,8 @@ namespace Managers_Controllers
             
         }
 
-        public void Tick()
+        public void SaveData()
         {
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                SaveData();
-            }
-
-            if (Input.GetKeyDown(KeyCode.Y))
-            {
-                LoadData();
-            }
-        }
-
-        private void SaveData()
-        {
-            Debug.Log("Save data");
             var inventoryData = _inventoryWindow.GetInventoryData();
             var stashData = _stash.GetStashData();
             var gameData = new GameSaveData(_playerStats.CurrentGold, _playerStats.ReviveShards, inventoryData.Length, stashData.Length);
@@ -57,10 +43,12 @@ namespace Managers_Controllers
             _saveSystem.SaveData(gameData);
         }
 
-        private void LoadData()
+        public void LoadData()
         {
-            Debug.Log("Load data");
             var data = _saveSystem.LoadData();
+            if (data == null)
+                return;
+            
             _playerStats.SetData(data.Gold, data.Shards);
             _inventoryWindow.SetInventoryData(data.InvItemDatas);
             _stash.SetStashData(data.StashItemDatas);

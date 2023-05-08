@@ -16,6 +16,13 @@ namespace Zenject
             Container.DeclareSignal<OpenChestSignal>();
             Container.DeclareSignal<CloseChestSignal>();
             Container.DeclareSignal<OnItemClickForStatsSignal>();
+            Container.DeclareSignal<CloseStashSignal>();
+            Container.DeclareSignal<OnPlayerDeathSignal>();
+            Container.DeclareSignal<ReturnToSpawnSignal>();
+            Container.DeclareSignal<GoToDungeonSignal>();
+            Container.DeclareSignal<SurrendButtonSignal>();
+            Container.DeclareSignal<AdReviveButtonSignal>();
+            Container.DeclareSignal<ShardReviveButtonSignal>();
         }
     }
 }

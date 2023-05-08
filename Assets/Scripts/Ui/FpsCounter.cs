@@ -12,6 +12,10 @@ namespace Ui
 
         private void Update()
         {
+            if (Time.timeScale == 0)
+                return;
+            
+            
             var a = Mathf.RoundToInt(1f / Time.deltaTime);
             
             DOTween.To(() => _fpsValue, x => _fpsValue = x, a, 0.1f).

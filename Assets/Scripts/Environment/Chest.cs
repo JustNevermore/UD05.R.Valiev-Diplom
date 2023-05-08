@@ -32,6 +32,10 @@ namespace Environment
         {
         }
 
+        public virtual void DeactivateChest()
+        {
+        }
+
         public abstract void UpdateChestLoot(List<ItemData> items);
     }
 }

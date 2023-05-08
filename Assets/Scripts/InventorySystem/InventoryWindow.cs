@@ -357,19 +357,25 @@ namespace InventorySystem
             {
                 if (item.InSlot != EquipmentSlot.None)
                 {
+                    var config = _allItemsContainer.GetConfigById(item.ItemId);
+                    
                     switch (item.InSlot)
                     {
                         case EquipmentSlot.Weapon:
                             weaponSlot.AddItemToSlot(item);
+                            _playerStats.IncreaseStats(config);
                             break;
                         case EquipmentSlot.Necklace:
                             necklaceSlot.AddItemToSlot(item);
+                            _playerStats.IncreaseStats(config);
                             break;
                         case EquipmentSlot.Ring:
                             ringSlot.AddItemToSlot(item);
+                            _playerStats.IncreaseStats(config);
                             break;
                         case EquipmentSlot.Armor:
                             armorSlot.AddItemToSlot(item);
+                            _playerStats.IncreaseStats(config);
                             break;
                         case EquipmentSlot.Cons1:
                             conSlot1.AddItemToSlot(item);
@@ -422,6 +428,42 @@ namespace InventorySystem
             }
 
             _inventoryItems.Remove(item);
+        }
+
+        public void ResetInventory()
+        {
+            _inventoryItems = new List<ItemData>();
+
+            if (weaponSlot.ContainItem != null)
+            {
+                _playerStats.DecreaseStats(_allItemsContainer.GetConfigById(weaponSlot.ContainItem.ItemId));
+                weaponSlot.RemoveItemFromSlot();
+            }
+            
+            if (necklaceSlot.ContainItem != null)
+            {
+                _playerStats.DecreaseStats(_allItemsContainer.GetConfigById(necklaceSlot.ContainItem.ItemId));
+                necklaceSlot.RemoveItemFromSlot();
+            }
+            
+            if (ringSlot.ContainItem != null)
+            {
+                _playerStats.DecreaseStats(_allItemsContainer.GetConfigById(ringSlot.ContainItem.ItemId));
+                ringSlot.RemoveItemFromSlot();
+            }
+            
+            if (armorSlot.ContainItem != null)
+            {
+                _playerStats.DecreaseStats(_allItemsContainer.GetConfigById(armorSlot.ContainItem.ItemId));
+                armorSlot.RemoveItemFromSlot();
+            }
+            
+            conSlot1.RemoveItemFromSlot();
+            conSlot2.RemoveItemFromSlot();
+            conSlot3.RemoveItemFromSlot();
+            conSlot4.RemoveItemFromSlot();
+            
+            RedrawInventory();
         }
     }
 }

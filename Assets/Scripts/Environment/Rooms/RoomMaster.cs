@@ -40,7 +40,7 @@ namespace Environment.Rooms
             _spawnManager = spawnManager;
             _poolManager = pool;
         }
-        
+
         private void Awake()
         {
             _collider = GetComponent<SphereCollider>();
@@ -49,8 +49,10 @@ namespace Environment.Rooms
             _maxSpawnDist = _spawnManager.MaxSpawnDist;
         }
 
-        private void Start()
+        public void Init()
         {
+            _collider.enabled = true;
+            
             if (_type == RoomType.Common)
             {
                 SetDifficulty();
@@ -111,6 +113,7 @@ namespace Environment.Rooms
         {
             _myRoom.SetActiveOtherRooms(false);
             _myRoom.CloseDoors(true);
+            _myRoom.LockChest();
 
             if (_type == RoomType.Common)
             {
@@ -235,6 +238,7 @@ namespace Environment.Rooms
             _myRoom.SetActiveOtherRooms(true);
             _myRoom.CloseDoors(false);
             _myRoom.UnlockChest();
+            _myRoom.ActivatePortal();
             light.color = _greenLight;
             gameObject.SetActive(false);
         }

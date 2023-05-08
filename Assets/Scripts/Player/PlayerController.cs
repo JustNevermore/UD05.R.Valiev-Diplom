@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
+using Enemies;
 using ItemBehaviours.NecklaceBehaviour;
 using ItemBehaviours.WeaponBehaviour;
 using Managers_Controllers;
@@ -30,6 +32,8 @@ namespace Player
         [SerializeField] private float rotateSpeed = 500f;
         [SerializeField, Range(0f, 1f)] private float turnDeadZone = 0.5f;
         [SerializeField] private GameObject barrierViewPrefab;
+        [SerializeField] private LayerMask enemyLayer;
+        [SerializeField] private LayerMask wallsLayer;
 
         private GameObject _barrierView;
 
@@ -60,6 +64,13 @@ namespace Player
         private bool _attackCd;
         private bool _specialCd;
         private bool _defenceCd;
+        
+        private int _pushTargets;
+        private Collider[] _pushColliders;
+        private readonly float _pushRadius = 20f;
+        private readonly float _jumpForce = 3f;
+        private readonly float _hitDistanceOffset = 1f;
+        private readonly float _scaleTime = 0.3f;
 
         public Rigidbody Rigbody => _rigidbody;
         public HurtBox DamageBox => _hurtBox;
@@ -88,6 +99,13 @@ namespace Player
 
             _barrierView = Instantiate(barrierViewPrefab, transform);
             _barrierView.SetActive(false);
+            _pushColliders = new Collider[30];
+        }
+
+        private void OnEnable()
+        {
+            _signalBus.Subscribe<OnWeaponBehaviourChangeSignal>(UpdateMoveSet);
+            _signalBus.Subscribe<OnDefenceSkillChangeSignal>(UpdateDefenceSkill);
         }
 
         private void Start()
@@ -96,9 +114,6 @@ namespace Player
             _canAttack = true;
             _canSpecial = true;
             _canDefend = true;
-            
-            _signalBus.Subscribe<OnWeaponBehaviourChangeSignal>(UpdateMoveSet);
-            _signalBus.Subscribe<OnDefenceSkillChangeSignal>(UpdateDefenceSkill);
         }
 
         private void OnDestroy()
@@ -275,6 +290,35 @@ namespace Player
             _canMove = false;
             yield return new WaitForSeconds(delay);
             _canMove = true;
+        }
+
+        public void PushEnemies()
+        {
+            _pushTargets = Physics.OverlapSphereNonAlloc(_zeroPos.transform.position, _pushRadius, _pushColliders, enemyLayer);
+            
+            if (_pushTargets > 0)
+            {
+                for (int i = 0; i < _pushTargets; i++)
+                {
+                    if (_pushColliders[i].GetComponent<EnemyBase>())
+                    {
+                        var dir = (_pushColliders[i].transform.position - _rigidbody.transform.position).normalized;
+                        var pos = _rigidbody.transform.position + dir * _pushRadius;
+                        
+                        var startPos = _zeroPos.transform.position;
+
+                        Ray ray = new Ray(startPos, dir);
+
+                        if (Physics.Raycast(ray, out RaycastHit hit, _pushRadius, wallsLayer))
+                        {
+                            var endPos = new Vector3(hit.point.x, hit.point.y - 1, hit.point.z);
+                            pos = endPos - dir * _hitDistanceOffset;
+                        }
+
+                        _pushColliders[i].transform.DOJump(pos, _jumpForce, 1, _scaleTime);
+                    }
+                }
+            }
         }
     }
 }

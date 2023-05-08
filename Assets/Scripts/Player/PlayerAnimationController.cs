@@ -1,4 +1,5 @@
-﻿using ItemBehaviours;
+﻿using System;
+using ItemBehaviours;
 using Signals;
 using UnityEngine;
 using Zenject;
@@ -32,7 +33,7 @@ namespace Player
             _animator = GetComponentInChildren<Animator>();
         }
 
-        private void Start()
+        private void OnEnable()
         {
             _signalBus.Subscribe<OnChangeWeaponTypeSignal>(UpdateAnimator);
         }

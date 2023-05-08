@@ -28,6 +28,7 @@ namespace Environment
             if (col.GetComponent<PlayerController>())
             {
                 SignalBus.Fire<CloseChestSignal>();
+                SignalBus.Fire<CloseStashSignal>();
             }
         }
 

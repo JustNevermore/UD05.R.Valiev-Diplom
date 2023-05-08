@@ -22,6 +22,8 @@ namespace Enemies
         [SerializeField] private float attackCooldown;
         [SerializeField] protected float attackDelay;
 
+        private float _moveSpeed;
+
         private readonly float _targetUpdateTime = 0.5f;
 
         private readonly float _rndOffset = 10f;
@@ -90,6 +92,8 @@ namespace Enemies
         private void OnEnable()
         {
             _actionCor = StartCoroutine(ActionUpdateCoroutine());
+
+            _moveSpeed = moveSpeed;
             
             CanMove = true;
             CanAttack = false;
@@ -227,7 +231,7 @@ namespace Enemies
         
         private void Move()
         {
-            Rb.MovePosition(transform.position + transform.forward * (moveSpeed * Time.deltaTime));
+            Rb.MovePosition(transform.position + transform.forward * (_moveSpeed * Time.deltaTime));
         }
         
         private void GetSlow()
@@ -241,7 +245,7 @@ namespace Enemies
                 else
                 {
                     StopCoroutine(_slowCor);
-                    moveSpeed *= SlowValue;
+                    _moveSpeed *= SlowValue;
                     _slowCor = StartCoroutine(SlowCoroutine());
                 }
             }
@@ -249,11 +253,11 @@ namespace Enemies
 
         private IEnumerator SlowCoroutine()
         {
-            moveSpeed /= SlowValue;
+            _moveSpeed /= SlowValue;
             
             yield return new WaitForSeconds(SlowDuration);
 
-            moveSpeed *= SlowValue;
+            _moveSpeed *= SlowValue;
 
             _slowCor = null;
         }

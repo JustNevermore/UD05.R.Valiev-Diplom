@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -11,14 +12,19 @@ namespace Enemies
             
         }
 
-        protected override async void Attack()
+        protected override void Attack()
+        {
+            StartCoroutine(AttackCor());
+        }
+
+        private IEnumerator AttackCor()
         {
             var dir = (Player.transform.position - transform.position).normalized;
             
             var rotation = Quaternion.LookRotation(dir, Vector3.up);
             transform.rotation = rotation;
             
-            await UniTask.Delay(TimeSpan.FromSeconds(attackDelay));
+            yield return new WaitForSeconds(attackDelay);
             
             dir = (Player.transform.position - transform.position).normalized;
             

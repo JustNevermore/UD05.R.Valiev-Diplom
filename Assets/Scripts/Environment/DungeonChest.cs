@@ -14,7 +14,7 @@ namespace Environment
 
         private bool _isActive;
         
-        private void Start()
+        private void Awake()
         {
             _spawnItemsCount = LootManager.ChestSpawnItemsCount;
             _isActive = false;
@@ -27,6 +27,11 @@ namespace Environment
 
             GenerateLoot();
             _isActive = true;
+        }
+
+        public override void DeactivateChest()
+        {
+            _isActive = false;
         }
 
         private void OnTriggerEnter(Collider col)
