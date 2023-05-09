@@ -21,6 +21,7 @@ namespace ItemBehaviours.WeaponBehaviour
         protected Animator Anim;
         protected Rigidbody Rb;
         protected PoolManager Pool;
+        protected FxPoolManager FxPool;
 
         #region SwordProperties
         
@@ -43,13 +44,14 @@ namespace ItemBehaviours.WeaponBehaviour
 
         #endregion
         
-        public virtual void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
+        public virtual void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager, FxPoolManager fxPoolManager)
         {
             Controller = controller;
             Stats = stats;
             Anim = animator;
             Rb = controller.Rigbody;
             Pool = poolManager;
+            FxPool = fxPoolManager;
         }
 
         public abstract void Attack();

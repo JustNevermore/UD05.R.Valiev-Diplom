@@ -111,13 +111,13 @@ namespace InventorySystem
                                 {
                                     flag = true;
                                     chestItem.ItemAmount += item.ItemAmount;
-                                    _inventoryWindow.DeleteItemFromInventory(item);
+                                    _inventoryWindow.RemoveItemFromInventory(item);
                                 }
                             }
 
                             if (!flag)
                             {
-                                _inventoryWindow.DeleteItemFromInventory(item);
+                                _inventoryWindow.RemoveItemFromInventory(item);
                                 
                                 _currentChestItems.Add(item);
                                 item.InStash = true;
@@ -125,7 +125,7 @@ namespace InventorySystem
                         }
                         else // предмет не стакается
                         {
-                            _inventoryWindow.DeleteItemFromInventory(item);
+                            _inventoryWindow.RemoveItemFromInventory(item);
                             
                             _currentChestItems.Add(item);
                             item.InSlot = EquipmentSlot.None;
@@ -144,7 +144,7 @@ namespace InventorySystem
                                 {
                                     flag = true;
                                     chestItem.ItemAmount += item.ItemAmount;
-                                    _inventoryWindow.DeleteItemFromInventory(item);
+                                    _inventoryWindow.RemoveItemFromInventory(item);
 
                                     RemoveFromInventorySlot(item);
                                 }
@@ -152,7 +152,7 @@ namespace InventorySystem
 
                             if (!flag)
                             {
-                                _inventoryWindow.DeleteItemFromInventory(item);
+                                _inventoryWindow.RemoveItemFromInventory(item);
                                 
                                 RemoveFromInventorySlot(item);
                                 
@@ -164,7 +164,7 @@ namespace InventorySystem
                         else // предмет не стакается
                         {
                             _playerStats.DecreaseStats(itemConfig);
-                            _inventoryWindow.DeleteItemFromInventory(item);
+                            _inventoryWindow.RemoveItemFromInventory(item);
                             
                             RemoveFromInventorySlot(item);
                             

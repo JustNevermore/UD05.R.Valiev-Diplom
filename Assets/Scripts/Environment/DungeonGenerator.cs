@@ -208,7 +208,7 @@ namespace Environment
             return true;
         }
         
-        public void DestroyDungeon()
+        private void DestroyDungeon()
         {
             foreach (var room in _spawnedRooms)
             {

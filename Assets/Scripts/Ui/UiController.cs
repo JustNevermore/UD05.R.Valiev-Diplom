@@ -6,6 +6,7 @@ using Ui.InventorySecondaryUi;
 using Ui.MoveHandlers;
 using Ui.Status;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Ui
@@ -22,7 +23,7 @@ namespace Ui
         [Space]
         [SerializeField] private float animDuration;
         
-        private float _storagePanelWidth;
+        private float _storagePanelOffset;
 
         private float _iconOffset = 75f;
         private float _canvasHeight;
@@ -44,12 +45,21 @@ namespace Ui
             _itemStatsWindow = itemStatsWindow;
         }
 
+        private void Awake()
+        {
+            var width = Screen.width;
+            var height = Screen.height;
+            
+            var canvas = GetComponent<CanvasScaler>();
+            canvas.referenceResolution = new Vector2(width, height);
+        }
+
         private void Start()
         {
-            _canvasHeight = GetComponent<RectTransform>().sizeDelta.y;
-            _canvasWidth = GetComponent<RectTransform>().sizeDelta.x;
-            _statsHeightOffset = _itemStatsWindow.GetComponent<RectTransform>().sizeDelta.y * 0.5f;
-            _statsWidthOffset = _itemStatsWindow.GetComponent<RectTransform>().sizeDelta.x * 0.5f;
+            _canvasHeight = GetComponent<RectTransform>().rect.height;
+            _canvasWidth = GetComponent<RectTransform>().rect.width;
+            _statsHeightOffset = _itemStatsWindow.GetComponent<RectTransform>().rect.height * 0.5f;
+            _statsWidthOffset = _itemStatsWindow.GetComponent<RectTransform>().rect.width * 0.5f;
             
             _signalBus.Subscribe<OnItemClickForStatsSignal>(ShowItemStatsWindow);
             _signalBus.Subscribe<OpenMerchantSignal>(OpenMerchant);
@@ -60,7 +70,7 @@ namespace Ui
             _itemStatsWindow.gameObject.SetActive(false);
             _merchantWindow.gameObject.SetActive(false);
             _chestWindow.gameObject.SetActive(false);
-            _storagePanelWidth = storageMoveHandler.GetComponent<RectTransform>().sizeDelta.x;
+            _storagePanelOffset = storageMoveHandler.GetComponent<RectTransform>().rect.width * 0.5f;
         }
 
         private void OnDestroy()
@@ -109,7 +119,7 @@ namespace Ui
                     BlockAnimation();
                     
                     inventoryMoveHandler.gameObject.SetActive(true);
-                    inventoryMoveHandler.OpenInventory(animDuration, _storagePanelWidth);
+                    inventoryMoveHandler.OpenInventory(animDuration, _storagePanelOffset);
                     _inventoryOpen = true;
                     storageMoveHandler.gameObject.SetActive(true);
                     storageMoveHandler.OpenStorage(animDuration);
@@ -120,7 +130,7 @@ namespace Ui
             {
                 BlockAnimation();
                 
-                inventoryMoveHandler.PushInventory(_storagePanelWidth, animDuration);
+                inventoryMoveHandler.PushInventory(_storagePanelOffset, animDuration);
                 storageMoveHandler.gameObject.SetActive(true);
                 storageMoveHandler.OpenStorage(animDuration);
                 _storageOpen = true;
@@ -133,7 +143,7 @@ namespace Ui
             {
                 BlockAnimation();
             
-                inventoryMoveHandler.CloseInventory(animDuration, _storagePanelWidth);
+                inventoryMoveHandler.CloseInventory(animDuration, _storagePanelOffset);
                 _inventoryOpen = false;
                 storageMoveHandler.CloseStorage(animDuration);
                 _storageOpen = false;
@@ -177,7 +187,7 @@ namespace Ui
             
             float xOffset;
             float yOffset;
-            
+
             if (signal.Coord.x > _canvasWidth * 0.5f)
             {
                 xOffset = signal.Coord.x - _statsWidthOffset - _iconOffset;

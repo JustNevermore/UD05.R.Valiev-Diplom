@@ -22,9 +22,9 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
         private Collider[] _colliders = new Collider[30];
         private readonly float _fallDelay = 1f;
 
-        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
+        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager, FxPoolManager fxPoolManager)
         {
-            base.Init(controller, stats, animator, poolManager);
+            base.Init(controller, stats, animator, poolManager, fxPoolManager);
             attackCooldown = attackCooldownValue;
             specialCooldown = specialCooldownValue;
             animTimeout = animTimeoutValue;
@@ -53,6 +53,8 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
             var attackPos = Controller.AttackPos.transform.position;
             
             await UniTask.Delay(TimeSpan.FromSeconds(_fallDelay));
+            
+            FxPool.PlayArrowHailEffect(attackPos);
             
             _specialHit = Physics.OverlapSphereNonAlloc(attackPos, effectRadius, _colliders, effectLayer);
 

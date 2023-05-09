@@ -28,6 +28,7 @@ namespace Managers_Controllers
         private bool _inDungeon;
         private bool _useAdRevive;
         private readonly float _reviveDamageBlockTime = 5f;
+        private readonly float _delay = 2f;
 
         public bool UseAdRevive => _useAdRevive;
 
@@ -60,11 +61,12 @@ namespace Managers_Controllers
             _signalBus.Subscribe<ShardReviveButtonSignal>(PlayerRevive);
             _rewardedButton.OnShowAdComplete += PlayerAdRevive;
 
-            _player.transform.position = _spawnPoint.transform.position;
             _saveSystem.LoadData();
+            _player.transform.position = _spawnPoint.transform.position;
+            _player.isActive = true;
             
-            //todo не забыть убрать
-            _stats.SetData(50000, 5);
+            // //todo не забыть убрать
+            // _stats.SetData(50000, 5);
         }
 
         private void OnDestroy()
@@ -78,33 +80,45 @@ namespace Managers_Controllers
             _rewardedButton.OnShowAdComplete -= PlayerAdRevive;
         }
 
-        private void PlayerDeath()
+        private async void PlayerDeath()
         {
+            _player.isActive = false;
+            _player.DamageBox.EnableBlock();
+            await UniTask.Delay(TimeSpan.FromSeconds(_delay));
+            
             Time.timeScale = 0;
             _deathPopup.gameObject.SetActive(true);
         }
 
-        private void PlayerSurrend()
+        private async void PlayerSurrend()
         {
+            _deathPopup.gameObject.SetActive(false);
             Time.timeScale = 1;
+            
+            await UniTask.Delay(TimeSpan.FromSeconds(_delay));
+            
             _signalBus.Fire<DisableAllPoolObjectsSignal>();
             _inDungeon = false;
             _useAdRevive = false;
-            _deathPopup.gameObject.SetActive(false);
-            _player.transform.position = _spawnPoint.transform.position;
             _inventory.ResetInventory();
             _stats.ResetPlayer();
+            _player.transform.position = _spawnPoint.transform.position;
+            _player.DamageBox.DisableBlock();
+            _player.isActive = true;
         }
         
         private async void PlayerAdRevive()
         {
-            Time.timeScale = 1;
             _deathPopup.gameObject.SetActive(false);
             _useAdRevive = true;
+            Time.timeScale = 1;
+            
+            await UniTask.Delay(TimeSpan.FromSeconds(_delay));
+            
             _stats.ResetPlayer();
             _player.PushEnemies();
-            _player.DamageBox.EnableBlock();
             _player.BarrierView.SetActive(true);
+            _player.isActive = true;
 
             await UniTask.Delay(TimeSpan.FromSeconds(_reviveDamageBlockTime));
             
@@ -114,13 +128,16 @@ namespace Managers_Controllers
 
         private async void PlayerRevive()
         {
-            Time.timeScale = 1;
             _deathPopup.gameObject.SetActive(false);
             _stats.RemoveReviveShards(1);
+            Time.timeScale = 1;
+            
+            await UniTask.Delay(TimeSpan.FromSeconds(_delay));
+            
             _stats.ResetPlayer();
             _player.PushEnemies();
-            _player.DamageBox.EnableBlock();
             _player.BarrierView.SetActive(true);
+            _player.isActive = true;
 
             await UniTask.Delay(TimeSpan.FromSeconds(_reviveDamageBlockTime));
             
@@ -142,7 +159,7 @@ namespace Managers_Controllers
         private void ReturnToSpawn()
         {
             _saveSystem.SaveData();
-            _dungeonGenerator.DestroyDungeon();
+            _signalBus.Fire<DisableAllPoolObjectsSignal>();
             _inDungeon = false;
             _useAdRevive = false;
         }

@@ -10,7 +10,7 @@ namespace PoolObjects
     public class Rune : MonoBehaviour
     {
         private PlayerStats _stats;
-        private FxManager _fxManager;
+        private FxPoolManager _fxPoolManager;
         
         private readonly float _disableTime = 10f;
         private float _damage;
@@ -25,10 +25,10 @@ namespace PoolObjects
 
         
         [Inject]
-        private void Construct(PlayerStats stats, FxManager fxManager)
+        private void Construct(PlayerStats stats, FxPoolManager fxPoolManager)
         {
             _stats = stats;
-            _fxManager = fxManager;
+            _fxPoolManager = fxPoolManager;
         }
         
         public void Init()

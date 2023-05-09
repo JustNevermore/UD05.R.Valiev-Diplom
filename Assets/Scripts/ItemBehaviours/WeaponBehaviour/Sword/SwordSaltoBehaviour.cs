@@ -26,9 +26,9 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
         private Collider[] _colliders = new Collider[30];
         private readonly float _pushTime = 0.1f;
 
-        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
+        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager, FxPoolManager fxPoolManager)
         {
-            base.Init(controller, stats, animator, poolManager);
+            base.Init(controller, stats, animator, poolManager, fxPoolManager);
             attackCooldown = attackCooldownValue;
             specialCooldown = specialCooldownValue;
             animTimeout = animTimeoutValue;
@@ -37,6 +37,8 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
         public override async void Attack()
         {
             Anim.SetTrigger(AttackTrigger);
+            
+            FxPool.PlaySlashEffect(Controller.AttackPos.transform.position, Controller.transform.rotation);
             
             await UniTask.Delay(TimeSpan.FromSeconds(SwordDamageDelay));
             
@@ -65,8 +67,10 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
             Anim.SetTrigger(SaltoTrigger);
             
             await UniTask.Delay(TimeSpan.FromSeconds(animTimeout));
-            
+
             var attackPos = Controller.AttackPos.transform.position;
+            
+            FxPool.PlayShocwaveEffect(attackPos);
             
             _specialHit = Physics.OverlapSphereNonAlloc(attackPos, effectRadius, _colliders, effectLayer);
 

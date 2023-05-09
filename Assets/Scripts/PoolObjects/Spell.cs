@@ -10,7 +10,7 @@ namespace PoolObjects
     public class Spell : MonoBehaviour
     {
         private PlayerStats _stats;
-        private FxManager _fxManager;
+        private FxPoolManager _fxPoolManager;
         
         private readonly float _disableTime = 5;
         private readonly float _effectRadius = 3;
@@ -28,10 +28,10 @@ namespace PoolObjects
         
 
         [Inject]
-        private void Construct(PlayerStats stats, FxManager fxManager)
+        private void Construct(PlayerStats stats, FxPoolManager fxPoolManager)
         {
             _stats = stats;
-            _fxManager = fxManager;
+            _fxPoolManager = fxPoolManager;
         }
         
         public void Init(Vector3 direction)

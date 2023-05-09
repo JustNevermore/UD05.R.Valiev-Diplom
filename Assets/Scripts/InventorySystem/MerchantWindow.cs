@@ -79,7 +79,7 @@ namespace InventorySystem
                     {
                         _playerStats.IncreaseGold(Convert.ToInt32(_allItemsContainer
                             .GetConfigById(item.ItemId).ItemCost * sellMultiplier * item.ItemAmount));
-                        _inventoryWindow.DeleteItemFromInventory(item);
+                        _inventoryWindow.RemoveItemFromInventory(item);
                         Destroy(obj.gameObject);
                         
                         // todo звук покупки
@@ -90,7 +90,7 @@ namespace InventorySystem
                         
                         _playerStats.IncreaseGold(Convert.ToInt32(_allItemsContainer
                             .GetConfigById(item.ItemId).ItemCost * sellMultiplier * item.ItemAmount));
-                        _inventoryWindow.DeleteItemFromInventory(item);
+                        _inventoryWindow.RemoveItemFromInventory(item);
                         Destroy(obj.gameObject);
                         
                         // todo звук покупки

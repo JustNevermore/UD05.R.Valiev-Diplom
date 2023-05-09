@@ -26,6 +26,7 @@ namespace Player
         private SignalBus _signalBus;
         private PlayerStats _playerStats;
         private PoolManager _poolManager;
+        private FxPoolManager _fxManager;
 
         [Header("Variables")]
         [SerializeField] private float moveSpeed = 5f;
@@ -56,6 +57,7 @@ namespace Player
         private float _specialCooldown;
         private float _defenceCooldown;
 
+        public bool isActive;
         private bool _isMoving;
         private bool _canMove;
         private bool _canAttack;
@@ -81,11 +83,12 @@ namespace Player
 
 
         [Inject]
-        private void Construct(SignalBus signalBus , PlayerStats playerStats, PoolManager poolManager)
+        private void Construct(SignalBus signalBus , PlayerStats playerStats, PoolManager poolManager, FxPoolManager fxPoolManager)
         {
             _signalBus = signalBus;
             _playerStats = playerStats;
             _poolManager = poolManager;
+            _fxManager = fxPoolManager;
         }
 
         private void Awake()
@@ -124,6 +127,9 @@ namespace Player
 
         private void Update()
         {
+            if (!isActive)
+                return;
+
             GetActionInput();
             GetMoveInput();
 
@@ -132,6 +138,9 @@ namespace Player
 
         private void FixedUpdate()
         {
+            if (!isActive)
+                return;
+            
             if (!_canMove)
                 return;
             
@@ -144,7 +153,7 @@ namespace Player
             _moveSet = signal.Behaviour;
             if (_moveSet != null)
             {
-                _moveSet.Init(this, _playerStats, _anim.Anim, _poolManager);
+                _moveSet.Init(this, _playerStats, _anim.Anim, _poolManager, _fxManager);
                 _attackCooldown = _moveSet.attackCooldown;
                 _specialCooldown = _moveSet.specialCooldown;
                 _specialTimeout = _moveSet.animTimeout;

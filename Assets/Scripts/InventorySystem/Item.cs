@@ -108,7 +108,7 @@ namespace InventorySystem
 
             if (_itemData.ItemAmount == 0)
             {
-                _inventoryWindow.RemoveItem(_itemData);
+                _inventoryWindow.RemoveItemFromInventory(_itemData);
                 Destroy(gameObject);
             }
         }

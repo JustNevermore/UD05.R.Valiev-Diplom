@@ -23,9 +23,9 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
 
         private readonly float _specialDelay = 1f;
         
-        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
+        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager, FxPoolManager fxPoolManager)
         {
-            base.Init(controller, stats, animator, poolManager);
+            base.Init(controller, stats, animator, poolManager, fxPoolManager);
             attackCooldown = attackCooldownValue;
             specialCooldown = specialCooldownValue;
             animTimeout = animTimeoutValue;
@@ -34,6 +34,8 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
         public override async void Attack()
         {
             Anim.SetTrigger(AttackTrigger);
+            
+            FxPool.PlaySlashEffect(Controller.AttackPos.transform.position, Controller.transform.rotation);
             
             await UniTask.Delay(TimeSpan.FromSeconds(SwordDamageDelay));
 
@@ -64,6 +66,8 @@ namespace ItemBehaviours.WeaponBehaviour.Sword
             var attackPos = Controller.AttackPos.transform.position;
 
             await UniTask.Delay(TimeSpan.FromSeconds(_specialDelay));
+            
+            FxPool.PlaySwordGroundEffect(attackPos);
 
             _specialHit = Physics.OverlapSphereNonAlloc(attackPos, effectRadius, _colliders, effectLayer);
 

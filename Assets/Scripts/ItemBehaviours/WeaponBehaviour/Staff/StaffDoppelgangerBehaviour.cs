@@ -14,9 +14,9 @@ namespace ItemBehaviours.WeaponBehaviour.Staff
         [SerializeField] private float specialCooldownValue;
         [SerializeField] private float animTimeoutValue;
 
-        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
+        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager, FxPoolManager fxPoolManager)
         {
-            base.Init(controller, stats, animator, poolManager);
+            base.Init(controller, stats, animator, poolManager, fxPoolManager);
             attackCooldown = attackCooldownValue;
             specialCooldown = specialCooldownValue;
             animTimeout = animTimeoutValue;

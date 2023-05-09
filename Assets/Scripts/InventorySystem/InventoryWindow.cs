@@ -68,8 +68,39 @@ namespace InventorySystem
             return itemDuplicate;
         }
 
-        public void DeleteItemFromInventory(ItemData item)
+        public void RemoveItemFromInventory(ItemData item)
         {
+            if (item.InSlot != EquipmentSlot.None)
+            {
+                switch (item.InSlot)
+                {
+                    case EquipmentSlot.Weapon:
+                        weaponSlot.RemoveItemFromSlot();
+                        break;
+                    case EquipmentSlot.Necklace:
+                        necklaceSlot.RemoveItemFromSlot();
+                        break;
+                    case EquipmentSlot.Ring:
+                        ringSlot.RemoveItemFromSlot();
+                        break;
+                    case EquipmentSlot.Armor:
+                        armorSlot.RemoveItemFromSlot();
+                        break;
+                    case EquipmentSlot.Cons1:
+                        conSlot1.RemoveItemFromSlot();
+                        break;
+                    case EquipmentSlot.Cons2:
+                        conSlot2.RemoveItemFromSlot();
+                        break;
+                    case EquipmentSlot.Cons3:
+                        conSlot3.RemoveItemFromSlot();
+                        break;
+                    case EquipmentSlot.Cons4:
+                        conSlot4.RemoveItemFromSlot();
+                        break;
+                }
+            }
+
             _inventoryItems.Remove(item);
             
             RedrawInventory();
@@ -392,42 +423,6 @@ namespace InventorySystem
                     }
                 }
             }
-        }
-
-        public void RemoveItem(ItemData item)
-        {
-            if (item.InSlot != EquipmentSlot.None)
-            {
-                switch (item.InSlot)
-                {
-                    case EquipmentSlot.Weapon:
-                        weaponSlot.RemoveItemFromSlot();
-                        break;
-                    case EquipmentSlot.Necklace:
-                        necklaceSlot.RemoveItemFromSlot();
-                        break;
-                    case EquipmentSlot.Ring:
-                        ringSlot.RemoveItemFromSlot();
-                        break;
-                    case EquipmentSlot.Armor:
-                        armorSlot.RemoveItemFromSlot();
-                        break;
-                    case EquipmentSlot.Cons1:
-                        conSlot1.RemoveItemFromSlot();
-                        break;
-                    case EquipmentSlot.Cons2:
-                        conSlot2.RemoveItemFromSlot();
-                        break;
-                    case EquipmentSlot.Cons3:
-                        conSlot3.RemoveItemFromSlot();
-                        break;
-                    case EquipmentSlot.Cons4:
-                        conSlot4.RemoveItemFromSlot();
-                        break;
-                }
-            }
-
-            _inventoryItems.Remove(item);
         }
 
         public void ResetInventory()

@@ -9,7 +9,7 @@ namespace PoolObjects
 {
     public class BossRune : MonoBehaviour
     {
-        private FxManager _fxManager;
+        private FxPoolManager _fxPoolManager;
         
         private readonly float _disableTime = 1f;
         private float _damage;
@@ -21,9 +21,9 @@ namespace PoolObjects
 
         
         [Inject]
-        private void Construct(FxManager fxManager)
+        private void Construct(FxPoolManager fxPoolManager)
         {
-            _fxManager = fxManager;
+            _fxPoolManager = fxPoolManager;
         }
         
         public void Init(float damage)

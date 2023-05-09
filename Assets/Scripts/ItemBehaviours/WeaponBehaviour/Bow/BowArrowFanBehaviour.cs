@@ -16,9 +16,9 @@ namespace ItemBehaviours.WeaponBehaviour.Bow
         private List<Vector3> _directions = new List<Vector3>(7);
         private float _fanShootDelay = 0.0001f;
 
-        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager)
+        public override void Init(PlayerController controller, PlayerStats stats, Animator animator, PoolManager poolManager, FxPoolManager fxPoolManager)
         {
-            base.Init(controller, stats, animator, poolManager);
+            base.Init(controller, stats, animator, poolManager, fxPoolManager);
             attackCooldown = attackCooldownValue;
             specialCooldown = specialCooldownValue;
             animTimeout = animTimeoutValue;

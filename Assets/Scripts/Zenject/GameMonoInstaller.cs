@@ -21,7 +21,7 @@ namespace Zenject
         [SerializeField] private EnemySpawnManager enemySpawnManager;
         [SerializeField] private PoolManager poolManager;
         [SerializeField] private RoomPoolManager roomPoolManager;
-        [SerializeField] private FxManager fxManager;
+        [SerializeField] private FxPoolManager fxPoolManager;
         [SerializeField] private InventoryWindow inventoryWindow;
         [SerializeField] private MerchantWindow merchantWindow;
         [SerializeField] private ChestWindow chestWindow;
@@ -47,7 +47,7 @@ namespace Zenject
             Container.BindInstance(enemySpawnManager).AsSingle().NonLazy();
             Container.BindInstance(poolManager).AsSingle().NonLazy();
             Container.BindInstance(roomPoolManager).AsSingle().NonLazy();
-            Container.BindInstance(fxManager).AsSingle().NonLazy();
+            Container.BindInstance(fxPoolManager).AsSingle().NonLazy();
             Container.BindInstance(inventoryWindow).AsSingle().NonLazy();
             Container.BindInstance(merchantWindow).AsSingle().NonLazy();
             Container.BindInstance(chestWindow).AsSingle().NonLazy();
